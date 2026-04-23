@@ -5,6 +5,8 @@ comptes externes jusqu'à la mise en route de Vercel. Il complète
 [`README.md`](../README.md) (stack locale Docker) et
 [`ADMIN.md`](./ADMIN.md) (opérations courantes).
 
+**Hébergement alternatif (conteneur)** : pour déployer `apps/web` sur Northflank avec le `Dockerfile` du monorepo, voir [`NORTHFLANK.md`](./NORTHFLANK.md).
+
 ---
 
 ## 0. Vue d'ensemble

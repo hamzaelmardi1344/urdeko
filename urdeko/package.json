@@ -11,7 +11,9 @@
     "test": "turbo run test",
     "db:push": "turbo run db:push",
     "db:studio": "turbo run db:studio",
-    "scrape": "turbo run scrape --filter=@urdeko/scraper"
+    "scrape": "turbo run scrape --filter=@urdeko/scraper",
+    "northflank:sync-env": "node scripts/sync-northflank-env.mjs",
+    "northflank:sync-env:dry": "node scripts/sync-northflank-env.mjs --dry-run"
   },
   "devDependencies": {
     "turbo": "^2.1.3",

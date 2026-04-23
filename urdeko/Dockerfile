@@ -34,6 +34,13 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV SKIP_ENV_VALIDATION=1
 ENV NODE_ENV=production
 
+# Next.js inline les NEXT_PUBLIC_* au moment du `next build` : les passer en
+# --build-arg (ex. « Build arguments » sur Northflank) ou en ENV avant cette ligne.
+ARG NEXT_PUBLIC_SANITY_PROJECT_ID
+ARG NEXT_PUBLIC_SANITY_DATASET=production
+ARG NEXT_PUBLIC_SENTRY_DSN
+ENV NEXT_PUBLIC_SANITY_PROJECT_ID=$NEXT_PUBLIC_SANITY_PROJECT_ID NEXT_PUBLIC_SANITY_DATASET=$NEXT_PUBLIC_SANITY_DATASET NEXT_PUBLIC_SENTRY_DSN=$NEXT_PUBLIC_SENTRY_DSN
+
 RUN pnpm exec turbo run build --filter=@urdeko/web
 
 # --- Runtime -----------------------------------------------------------
@@ -45,14 +52,15 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-RUN addgroup --system --gid 1001 nodejs \
-  && adduser --system --uid 1001 --ingroup nodejs nextjs
+# L'image `node:*-bookworm-slim` fournit déjà un utilisateur non-root `node`
+# (uid 1000). On s'en sert plutôt que de recréer un utilisateur, ce qui évite
+# les soucis `SYS_UID_MAX` / `adduser` sous BuildKit (Northflank).
 
 # Artefact standalone Next 15 (app dans apps/web)
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=builder --chown=node:node /app/apps/web/public ./apps/web/public
+COPY --from=builder --chown=node:node /app/apps/web/.next/standalone ./
+COPY --from=builder --chown=node:node /app/apps/web/.next/static ./apps/web/.next/static
 
-USER nextjs
+USER node
 EXPOSE 3000
 CMD ["node", "apps/web/server.js"]
