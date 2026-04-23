@@ -68,10 +68,10 @@ Suis ces étapes **dans l’ordre**. Les détails techniques sont dans les secti
     - Depuis **`urdeko/`** : `pnpm northflank:sync-env:dry` pour vérifier, puis `pnpm northflank:sync-env`.  
     - Sur Northflank, **relance un build** du service (les *build arguments* `NEXT_PUBLIC_*` ne s’appliquent qu’au build).
 
-16. **Schéma base de données**  
-    Sur ta machine :  
-    `cd urdeko && DATABASE_URL="postgresql://…copie addon…" pnpm --filter @urdeko/web db:push`  
-    (une fois, contre la base prod du service.)
+16. **Schéma base de données (Drizzle)**  
+    Rien à lancer à la main : au **démarrage du conteneur**, `docker/entrypoint.sh` exécute `drizzle-kit push` avec `DATABASE_URL` (réseau interne Northflank → Postgres OK).  
+    Pour désactiver ce pas (debug) : variable runtime **`SKIP_DB_PUSH=1`**.  
+    Depuis ton Mac, l’URL `primary.*.addon.code.run` peut rester `ENOTFOUND` : ce n’est plus bloquant pour les migrations.
 
 17. **URL publique et Auth**  
     Note l’URL HTTPS du service (domaine Northflank ou custom). Mets **`AUTH_URL`** à cette valeur (dans `.env.northflank.local` puis `pnpm northflank:sync-env` à nouveau si besoin).  
@@ -129,11 +129,13 @@ docker run --env-file .env.prod -p 3000:3000 urdeko-web
   - `DATABASE_URL` (Postgres, avec `sslmode=require` si fourni par la plateforme).
   - `REDIS_URL` (souvent `rediss://` en TLS).
 
-Appliquer le schéma Drizzle **une fois** avant ou juste après la première mise en ligne (depuis ta machine avec accès réseau à la base, ou job one-shot) :
+Le schéma Drizzle est appliqué **automatiquement** au démarrage du conteneur (`docker/entrypoint.sh` + bundle sous `/app/db-migrate`). Assure-toi que **`DATABASE_URL`** (runtime) pointe vers l’hôte **primary** seul, au format URL `postgresql://…` (pas la forme multi-host avec `,read.`).
+
+Pour appliquer le schéma **depuis ta machine** (optionnel, si Postgres est exposé publiquement) :
 
 ```bash
 cd urdeko
-DATABASE_URL="postgresql://..." pnpm --filter @urdeko/web db:push
+DATABASE_URL="postgresql://…" pnpm --filter @urdeko/web db:push
 ```
 
 ---

@@ -1,6 +1,19 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalPassThroughEnv": [
+    "POSTGRES_HOST_PORT",
+    "MINIO_HOST_PORT",
+    "MINIO_CONSOLE_PORT",
+    "REDIS_HOST_PORT",
+    "WEB_HOST_PORT",
+    "SCRAPER_HOST_PORT",
+    "SKIP_ENV_VALIDATION",
+    "VERCEL",
+    "VERCEL_ENV",
+    "VERCEL_URL",
+    "CI"
+  ],
   "tasks": {
     "dev": {
       "cache": false,
@@ -25,7 +38,11 @@
         "INNGEST_*",
         "REDIS_URL",
         "SENTRY_*",
-        "LEGAL_*"
+        "LEGAL_*",
+        "ADMIN_EMAILS",
+        "AI_IMAGE_MAX_EDGE",
+        "AI_EMPTY_ROOM_TEMPERATURE",
+        "AI_EMPTY_ROOM_SEED"
       ]
     },
     "lint": {
