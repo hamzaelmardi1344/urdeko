@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>UrdeKo - Photo Guide</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"surface-tint": "#a63300", "on-tertiary-fixed-variant": "#681f7a", "primary-fixed-dim": "#f7652f", "secondary-dim": "#902c2a", "inverse-surface": "#0e0e0d", "on-primary-fixed": "#000000", "on-error-container": "#570008", secondary: "#a03834", "outline-variant": "#aeadaa", outline: "#777774", "tertiary-fixed-dim": "#e190f1", error: "#b31b25", "on-tertiary-fixed": "#400050", "surface-dim": "#d5d4d0", "secondary-fixed-dim": "#ffafa9", "on-surface-variant": "#5b5c59", "on-surface": "#2e2f2d", "primary-fixed": "#ff7949", "on-background": "#2e2f2d", "on-error": "#ffefee", "surface-container-highest": "#deddd8", "surface-variant": "#deddd8", "on-primary-container": "#451000", "on-primary": "#ffefeb", "on-secondary-fixed": "#6a0f12", "surface-container-lowest": "#ffffff", "inverse-primary": "#fe6a34", "tertiary-dim": "#78308a", "on-tertiary-container": "#5e1470", "on-primary-fixed-variant": "#551600", "on-secondary-container": "#852422", "surface-container-high": "#e4e2de", primary: "#a63300", "tertiary-container": "#ef9dff", "surface-bright": "#f8f6f2", "on-secondary": "#ffefed", background: "#f8f6f2", tertiary: "#853d97", "primary-container": "#ff7949", "on-secondary-fixed-variant": "#912d2b", "on-tertiary": "#ffeefc", "surface-container-low": "#f2f1ec", "error-dim": "#9f0519", "inverse-on-surface": "#9e9d99", "surface-container": "#e9e8e4", "secondary-container": "#ffc3be", "error-container": "#fb5151", "primary-dim": "#922c00", surface: "#f8f6f2", "tertiary-fixed": "#ef9dff", "secondary-fixed": "#ffc3be"}, borderRadius: {DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px"}, spacing: {}, fontFamily: {headline: ["Manrope"], body: ["Manrope"], label: ["Manrope"], display: "Manrope"}}}};</script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #f8f6f2; /* surface */
+            color: #2e2f2d; /* on-surface */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        /* Hide scrollbar for clean carousel */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen flex flex-col relative pb-32">
+<!-- TopAppBar JSON execution -->
+<header class="docked full-width top-0 sticky z-50 flex flex-col no-border shadow-none bg-[#f2f1ec] dark:bg-[#252624]">
+<div class="flex items-center justify-between px-6 py-4 w-full bg-[#f8f6f2]/70 dark:bg-[#1a1917]/70 backdrop-blur-2xl">
+<button aria-label="Go back" class="flex items-center justify-center p-2 -ml-2 text-[#a63300] dark:text-[#ff7949] hover:opacity-80 transition-all duration-300 active:scale-95 duration-200 rounded-full bg-surface-container-lowest shadow-[0_40px_40px_-5px_rgba(46,47,45,0.06)]" style="">
+<span class="material-symbols-outlined" style='font-variation-settings: "FILL" 0;'>arrow_back</span>
+</button>
+<h1 class="font-['Manrope'] font-bold tracking-tight text-xl text-[#a63300] dark:text-[#ff7949] mx-auto absolute left-1/2 -translate-x-1/2" style="">Guide photo</h1>
+<div class="w-10"></div> <!-- Spacer for centering -->
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow px-6 pt-8 pb-12 flex flex-col gap-10 max-w-2xl mx-auto w-full">
+<!-- Header Section -->
+<section class="flex flex-col gap-4 pl-2">
+<h2 class="text-4xl font-headline font-bold text-on-surface tracking-tight leading-tight" style="">
+                Ajoutez une photo <br/><span class="text-primary-container" style="">de votre pièce</span>
+</h2>
+<p class="text-on-surface-variant font-body text-base leading-relaxed mt-2 max-w-[90%]" style="">Suivez ces quelques conseils pour obtenir le meilleur résultat possible.</p>
+</section>
+<!-- Guidance List -->
+<section class="bg-surface-container-low rounded-lg p-6">
+<ul class="flex flex-col gap-5">
+<li class="flex items-start gap-4" style="">
+<div class="flex-shrink-0 w-8 h-8 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-sm text-primary">
+<span class="material-symbols-outlined text-[1.125rem]" style='font-variation-settings: "FILL" 1;'>panorama</span>
+</div>
+<div class="pt-1">
+<p class="font-body font-semibold text-on-surface text-[1.0625rem]" style="">Montrez la pièce en entier</p>
+<p class="text-sm text-on-surface-variant mt-1" style="">Reculez au maximum pour capter l'espace.</p>
+</div>
+</li>
+<li class="flex items-start gap-4" style="">
+<div class="flex-shrink-0 w-8 h-8 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-sm text-primary">
+<span class="material-symbols-outlined text-[1.125rem]" style='font-variation-settings: "FILL" 1;'>light_mode</span>
+</div>
+<div class="pt-1">
+<p class="font-body font-semibold text-on-surface text-[1.0625rem]" style="">Privilégiez une photo claire</p>
+<p class="text-sm text-on-surface-variant mt-1" style="">Ouvrez les rideaux ou allumez la lumière.</p>
+</div>
+</li>
+<li class="flex items-start gap-4" style="">
+<div class="flex-shrink-0 w-8 h-8 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-sm text-primary">
+<span class="material-symbols-outlined text-[1.125rem]" style='font-variation-settings: "FILL" 1;'>aspect_ratio</span>
+</div>
+<div class="pt-1">
+<p class="font-body font-semibold text-on-surface text-[1.0625rem]" style="">Choisissez un format horizontal</p>
+<p class="text-sm text-on-surface-variant mt-1" style="">Tenez votre téléphone à l'horizontale (paysage).</p>
+</div>
+</li>
+</ul>
+</section>
+<!-- Carousel Section -->
+<section class="flex flex-col gap-5 mt-2">
+<h3 class="font-headline font-bold text-lg text-on-surface px-2" style="">Exemples recommandés</h3>
+<div class="flex overflow-x-auto gap-6 pb-6 pt-2 px-2 hide-scrollbar snap-x snap-mandatory">
+<!-- Slide 1 -->
+<div class="flex-shrink-0 w-[85%] sm:w-[280px] flex flex-col gap-4 snap-center relative">
+<div class="aspect-[4/3] rounded-lg overflow-hidden bg-surface-container relative shadow-[0_20px_40px_-10px_rgba(46,47,45,0.08)]">
+<img alt="Wide angle interior photography of a bright modern living room showing the full space" class="w-full h-full object-cover" data-alt="Wide angle interior photography of a bright modern living room showing the full space" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5nS1DzVeGLrY_OuJMTAgCH3WdCxnKh3MXZDO_PV8SzcIS-j3abXorUFsheMg0QrX18QZFuvgVbqpe7DZvgZQIMLxa9gBjqwesuZ1669Bk6n-IoiZ2rZjJmqIbSDgHUvj1_7tbrRuvRH0sHIm39BKJbaca3dwWknT-wDm8J5Ng23XmF_SLc1f2HuzlKUVanMoMt0MoS17m_ogbo-bkDS_qZ7njSnVddKI3kaxKxJxZyMD96v9QSG2STd8_7KiEssI2FNuuJAhIqic" style=""/>
+<!-- Success Badge -->
+<div class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container-lowest/90 backdrop-blur-md flex items-center justify-center text-primary-container shadow-sm">
+<span class="material-symbols-outlined text-lg" style='font-variation-settings: "FILL" 1;'>check_circle</span>
+</div>
+</div>
+<div class="px-2">
+<p class="font-body text-sm text-on-surface-variant leading-relaxed" style="">
+<strong class="text-on-surface font-semibold">Bon cadrage</strong> — la pièce est bien visible dans son ensemble.
+                        </p>
+</div>
+</div>
+<!-- Slide 2 -->
+<div class="flex-shrink-0 w-[85%] sm:w-[280px] flex flex-col gap-4 snap-center relative">
+<div class="aspect-[4/3] rounded-lg overflow-hidden bg-surface-container relative shadow-[0_20px_40px_-10px_rgba(46,47,45,0.08)]">
+<img alt="Well lit interior living space with natural sunlight coming through large windows" class="w-full h-full object-cover" data-alt="Well lit interior living space with natural sunlight coming through large windows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlJzY4lLr2ezoRGe9XcQ5uKJzec7SWYroGhHgm3ZglDhAYdAs6w7ZiXZDRxF3o4gS1s0T__yF7DJBIS-PrqtAMjXXBm2ylL2lC7LQXsjGYPH_hz4MP-RnmbOahl1uP16MZ34GDr9XM5hsF-ed0kt8yMKGbywrifKqZ48zP34wH5gXl1iDnY0f4FE7XILjNuncsQXPk-i7U6HrsXsTIr1jZ-GZnZAdnO41QLPr6bqqwPieLq3lIxsYm-2n_bX4Pr9zJR5Sh7bsXDZI" style=""/>
+<!-- Success Badge -->
+<div class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container-lowest/90 backdrop-blur-md flex items-center justify-center text-primary-container shadow-sm">
+<span class="material-symbols-outlined text-lg" style='font-variation-settings: "FILL" 1;'>check_circle</span>
+</div>
+</div>
+<div class="px-2">
+<p class="font-body text-sm text-on-surface-variant leading-relaxed" style="">
+<strong class="text-on-surface font-semibold">Bonne lumière</strong> — photo claire, nette et facilement lisible.
+                        </p>
+</div>
+</div>
+<!-- spacer for scroll padding -->
+<div class="flex-shrink-0 w-2"></div>
+</div>
+<!-- Carousel Indicators -->
+<div class="flex justify-center gap-2 mt-[-10px]">
+<div class="w-6 h-1.5 rounded-full bg-primary-container"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-surface-container-highest"></div>
+</div>
+</section>
+</main>
+<!-- Sticky Bottom Action Area (Transactional, no BottomNavBar) -->
+<div class="fixed bottom-0 left-0 w-full p-6 pb-safe bg-surface/80 backdrop-blur-2xl z-40">
+<div class="max-w-2xl mx-auto w-full">
+<button class="w-full py-4 rounded-xl font-headline font-bold text-lg text-on-primary-container bg-gradient-to-br from-primary-container to-primary shadow-[0_20px_40px_-5px_rgba(166,51,0,0.2)] active:scale-[0.98] transition-transform duration-200" style="">
+                J’ai compris
+            </button>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UrdeKo - Sélection Type Espace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {secondary: "#a03834", "outline-variant": "#aeadaa", "error-container": "#fb5151", "inverse-surface": "#0e0e0d", "primary-fixed-dim": "#f7652f", "secondary-dim": "#902c2a", "on-primary-fixed-variant": "#551600", "surface-dim": "#d5d4d0", "secondary-fixed": "#ffc3be", "on-primary-fixed": "#000000", "surface-container-high": "#e4e2de", "surface-bright": "#f8f6f2", "tertiary-fixed-dim": "#e190f1", "secondary-container": "#ffc3be", "on-surface-variant": "#5b5c59", "surface-tint": "#a63300", "surface-container-lowest": "#ffffff", "inverse-on-surface": "#9e9d99", "primary-fixed": "#ff7949", "on-error": "#ffefee", "surface-variant": "#deddd8", "on-tertiary": "#ffeefc", outline: "#777774", "on-tertiary-fixed": "#400050", "on-secondary-fixed": "#6a0f12", "on-error-container": "#570008", "secondary-fixed-dim": "#ffafa9", "surface-container-highest": "#deddd8", primary: "#a63300", "on-secondary": "#ffefed", tertiary: "#853d97", "on-secondary-fixed-variant": "#912d2b", "on-tertiary-fixed-variant": "#681f7a", surface: "#f8f6f2", "tertiary-dim": "#78308a", "on-primary": "#ffefeb", "inverse-primary": "#fe6a34", "on-primary-container": "#451000", "tertiary-container": "#ef9dff", "on-background": "#2e2f2d", "error-dim": "#9f0519", background: "#f8f6f2", error: "#b31b25", "primary-container": "#ff7949", "on-surface": "#2e2f2d", "primary-dim": "#922c00", "on-secondary-container": "#852422", "on-tertiary-container": "#5e1470", "surface-container-low": "#f2f1ec", "surface-container": "#e9e8e4", "tertiary-fixed": "#ef9dff"}, borderRadius: {DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px"}, fontFamily: {headline: ["Manrope"], body: ["Manrope"], label: ["Manrope"], display: "Manrope"}}}};</script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col antialiased">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex items-center justify-between px-6 py-4 w-full bg-[#f8f6f2]/70 dark:bg-stone-950/70 backdrop-blur-xl">
+<button class="p-2 -ml-2 text-primary hover:opacity-80 transition-opacity scale-95 duration-200" style="">
+<span class="material-symbols-outlined" data-icon="arrow_back" style="">arrow_back</span>
+</button>
+<h1 class="text-xl font-extrabold tracking-tighter text-[#a63300] dark:text-[#ff7949] font-headline" style="">UrdeKo</h1>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="Portrait of a young woman with natural makeup in soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4R-SYnQ05I0qz4M77zk2QCUU65sBJTHJl23wBTzw91O7Kwz7ZtT2pwI-e5RAds7HfmTEBLZ42wpdwj7SnSER_QPht5qP44GIOzDhAjHi9VvQtZtIsjggaB_-NVckN_vJe2TrmoDhnb6M9VJJo1X3h1z4ll_X4QkU27lwCRZ26SWotrYB2AKRkPaLGyQvb6zo6GAEHEFfzg4de6kS2vNFSmrhTB47sopluiADSSNXq61vcB3PS00S6O49uk5QFITigTB3EahZwPa4" style=""/>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-grow pt-24 pb-32 px-6 max-w-2xl mx-auto w-full flex flex-col">
+<div class="mb-10 text-center">
+<h2 class="font-headline text-2xl md:text-3xl font-bold tracking-tight text-on-surface mb-3" style="">Sélectionnez l’espace que vous souhaitez aménager.</h2>
+<p class="font-body text-base text-on-surface-variant max-w-md mx-auto" style="">Choisissez la pièce principale pour commencer votre projet de design intérieur.</p>
+</div>
+<!-- Room Grid -->
+<div class="grid grid-cols-2 gap-4 md:gap-6 mb-12">
+<!-- Card 1: Salon (Selected) -->
+<button class="group relative flex flex-col w-full text-left bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_4px_20px_-5px_rgba(46,47,45,0.06)] border-2 border-primary-container transition-all" style="">
+<div class="relative aspect-square w-full overflow-hidden">
+<img alt="Salon" class="w-full h-full object-cover" data-alt="Modern living room with warm sunlight, beige sofa, wooden accents, and a large plant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdhfcBdunwtK8iLvLQcTiAqtzeuv57JapcNGjtTMdrZt4MPvUsg2fF-GdPXrzvrlgpQO-kCwYNlBD0wk2diDprXxP6Lf6V7gVzX9hcqNUrpChjR-D4g3p3ggY4VveIvn8860ms-t8akTf26NkY-Uu7LPOL__-Wd9lp0ps1emBZ7da4_kiliMwPzOKlHDR2w9F4wxB535IiMpkeV832jXrdOpzdEi5VxsOqpX45D3g6yDJ1TK89EMMI5oPBG_7tIQJnl8H2DGKmkYQ" style=""/>
+<!-- Selected Overlay/Badge -->
+<div class="absolute inset-0 bg-primary-container/10"></div>
+<div class="absolute top-3 right-3 bg-primary-container text-white rounded-full p-1 shadow-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-sm font-bold" data-icon="check" style="">check</span>
+</div>
+</div>
+<div class="p-4 bg-primary-container/5">
+<h3 class="font-headline text-lg font-bold text-primary" style="">Salon</h3>
+</div>
+</button>
+<!-- Card 2: Chambre -->
+<button class="group relative flex flex-col w-full text-left bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_4px_20px_-5px_rgba(46,47,45,0.06)] border border-surface-container-highest hover:border-outline-variant/30 transition-all" style="">
+<div class="relative aspect-square w-full overflow-hidden">
+<img alt="Chambre" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Serene minimalist bedroom with neutral linens, soft morning light, and wooden bedside table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzdO97ebblfF6zqbd9AIWEHboC7vVtQEz97YuZG2AWL9kGM5mDeR9vjwquP33uBEPai5jfLZzyQHn1xMQ6RgjjbNupiskxaGcGHibcErQMEpVNg7ReZA1ypo9XoX3cEA0wrNz_5_0NQOxIfW5LR_K1FmuH7SHOwsu22M2id0A_-f7hCN2h1zwxJUC9Mz5X10S41Vk6H9LR97O0LQLiFueDc1C1pMPRlaq8WtpwnBgFkzmoI5v9dbGCH_coKsB7vq4Wh5uSBfzEETY" style=""/>
+</div>
+<div class="p-4">
+<h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors" style="">Chambre</h3>
+</div>
+</button>
+<!-- Card 3: Salle à manger -->
+<button class="group relative flex flex-col w-full text-left bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_4px_20px_-5px_rgba(46,47,45,0.06)] border border-surface-container-highest hover:border-outline-variant/30 transition-all" style="">
+<div class="relative aspect-square w-full overflow-hidden">
+<img alt="Salle à manger" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Elegant dining room with modern wooden table, linen chairs, and a statement pendant light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdeZFU2QTcYsDpoMMXGpcBLPiLebM_iGPa6-asFvwFiyWVdM0MqnBZsSnTTB6UpxJWUgJ7qR5SpPgBv06ro994NxuV_NWJefe2UcZS_nBTZnsB15POaYHe6o7ItXZt2QN6pDLeggK7H5OWz_sQEAWaoDDX7uDDCK6W-RNkhklAMp6_VoZ6XwSLBEaUthhp48ZO3vLfcy351cVl01-OcEu6lpivQn_TfeP8MqKtXbtTtYa05qPBwFl_p3jNXRoEHodKH_cvp2ZKewg" style=""/>
+</div>
+<div class="p-4">
+<h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors" style="">Salle à manger</h3>
+</div>
+</button>
+<!-- Card 4: Bureau -->
+<button class="group relative flex flex-col w-full text-left bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_4px_20px_-5px_rgba(46,47,45,0.06)] border border-surface-container-highest hover:border-outline-variant/30 transition-all" style="">
+<div class="relative aspect-square w-full overflow-hidden">
+<img alt="Bureau" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Bright home office with minimal desk, ergonomic chair, and natural light pouring through window" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIGF3XHYR2NFvYIgN1JjAw27reVMR2-Xr5GN88TUIF65DWfp-plhe2D2u9tF4AoeaJ8zaSepEnIeeKjMIbxaB6-eyWbI6IK7ecLUtaJTJIIHGh9U24RpL7pPYJqg9uJ5kEkv5f75O5FXxcrAWmul8y-6i6Tijj8_nr7KzNvnBBJDoYhxqxeAwHYQqopgUsfxl2C3qKc2UOsXHkX5Y07R2AcrpCdI8BmyKVwrmeVCWMuRZuzJjgTEPvn1dmGTjDfke2mNCyiNq9SAs" style=""/>
+</div>
+<div class="p-4">
+<h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors" style="">Bureau</h3>
+</div>
+</button>
+<!-- Card 5: Espace jardin -->
+<button class="group relative flex flex-col w-full text-left bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_4px_20px_-5px_rgba(46,47,45,0.06)] border border-surface-container-highest hover:border-outline-variant/30 transition-all col-span-2 md:col-span-1 md:col-start-1" style="">
+<div class="relative h-48 md:aspect-square w-full overflow-hidden">
+<img alt="Espace jardin" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Beautiful outdoor patio with comfortable lounge seating, ambient lighting, and lush green plants" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfR5njt4XgQvhJwNzTjPo9yVYTSwYhjCJ7-qYtlH0rXqVR4u3s0tzIgtVoap-iZHb7hKpZvR2I_zXHHjMJQLYd2Vq20pTTQHoWGyOPuFP5itReQGCuTN3gAPA0pLeMu8ixBN1U6AArCLzuyQMQxRrelOTtpQNxr-Qvin3H72nbdntf8oAqi70AIijIk_8zxeis2ECezryeCC34qnb1wxnIbETM4p2rays2-2kYV34AhuH_c332gyPMIZonMeKQwYYK5Mx_ItprVvs" style=""/>
+</div>
+<div class="p-4">
+<h3 class="font-headline text-lg font-bold text-on-surface group-hover:text-primary transition-colors" style="">Espace jardin</h3>
+</div>
+</button>
+</div>
+</main>
+<!-- Bottom CTA Fixed Area -->
+<div class="fixed bottom-0 left-0 w-full p-6 md:p-8 bg-gradient-to-t from-surface via-surface/95 to-transparent z-40 pointer-events-none">
+<div class="max-w-md mx-auto pointer-events-auto">
+<button class="w-full py-4 px-8 bg-gradient-to-br from-primary-container to-primary text-white font-headline font-bold text-lg rounded-xl shadow-[0_10px_40px_-5px_rgba(166,51,0,0.3)] hover:opacity-90 active:scale-95 transition-all" style="">
+                Confirmer
+            </button>
+</div>
+</div>
+</body></html>

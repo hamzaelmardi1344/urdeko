@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UrdeKo - Aperçu de la photo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-secondary": "#ffefed", "on-primary-fixed-variant": "#551600", tertiary: "#853d97", "primary-dim": "#922c00", "on-secondary-fixed-variant": "#912d2b", "secondary-fixed-dim": "#ffafa9", error: "#b31b25", "on-primary-container": "#451000", "surface-container-high": "#e4e2de", "surface-container": "#e9e8e4", "primary-fixed": "#ff7949", "surface-tint": "#a63300", "on-primary-fixed": "#000000", "on-background": "#2e2f2d", "on-error": "#ffefee", "tertiary-container": "#ef9dff", "outline-variant": "#aeadaa", primary: "#a63300", "secondary-fixed": "#ffc3be", outline: "#777774", "on-tertiary-fixed": "#400050", "inverse-on-surface": "#9e9d99", "tertiary-dim": "#78308a", "on-secondary-container": "#852422", "tertiary-fixed": "#ef9dff", "primary-container": "#ff7949", "surface-container-low": "#f2f1ec", "secondary-dim": "#902c2a", "surface-variant": "#deddd8", "surface-dim": "#d5d4d0", "surface-bright": "#f8f6f2", surface: "#f8f6f2", "on-surface": "#2e2f2d", "inverse-primary": "#fe6a34", "on-primary": "#ffefeb", secondary: "#a03834", "on-error-container": "#570008", "on-tertiary": "#ffeefc", "on-secondary-fixed": "#6a0f12", "on-tertiary-fixed-variant": "#681f7a", "tertiary-fixed-dim": "#e190f1", "on-surface-variant": "#5b5c59", "error-dim": "#9f0519", "secondary-container": "#ffc3be", "error-container": "#fb5151", "on-tertiary-container": "#5e1470", "inverse-surface": "#0e0e0d", "surface-container-highest": "#deddd8", background: "#f8f6f2", "surface-container-lowest": "#ffffff", "primary-fixed-dim": "#f7652f"}, borderRadius: {DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px"}, fontFamily: {headline: ["Manrope"], body: ["Manrope"], label: ["Manrope"], display: "Manrope"}}}};</script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glow-gradient {
+            background: linear-gradient(135deg, #ff7949 0%, #a63300 100%);
+        }
+        .frosted-glass {
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-50 bg-[#f8f6f2]/70 dark:bg-stone-950/70 backdrop-blur-xl flex justify-between items-center w-full px-6 h-16">
+<div class="flex items-center gap-4">
+<button aria-label="Retour" class="p-2 -ml-2 hover:opacity-80 transition-opacity active:scale-95">
+<span class="material-symbols-outlined text-[#a63300] dark:text-[#ff7949]">arrow_back</span>
+</button>
+<span class="font-['Manrope'] font-bold tracking-tight text-xl text-[#a63300] dark:text-[#ff7949]">UrdeKo</span>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">person</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow container mx-auto max-w-2xl px-6 pt-8 pb-32 flex flex-col">
+<!-- Typography Header Section -->
+<div class="mb-10 text-center md:text-left">
+<h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-on-surface mb-3 leading-tight">
+                Ajoutez une photo de votre pièce
+            </h1>
+<p class="text-on-surface-variant font-medium leading-relaxed max-w-lg mx-auto md:mx-0">
+                Prenez une photo horizontale, claire et bien cadrée pour obtenir un meilleur résultat.
+            </p>
+</div>
+<!-- Central Visual Focus: Room Photo -->
+<div class="relative group">
+<div class="bg-surface-container-low rounded-lg p-3 shadow-none overflow-hidden aspect-[4/3] md:aspect-video relative">
+<img alt="Uploaded room preview" class="w-full h-full object-cover rounded-[1.5rem]" data-alt="Wide angle shot of a bright empty living room with light oak floors and large windows during daytime" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH-wQP7SdZhe8AnYWUqgUcKETROvATKfaZEmRmnHntL5y2RLEgDtqRVmBN1ZHERCrVANQITKIS3fDg7xomnJDkxTrC4CIuyf-smc_4YQ4H_2t4AYnDNm5csXVIoN_LfvalwTOWrPuvPRTHE0xA5CLnpfkzdpM6s1Vf1e_BzEgvXUDAjErNCsUKo9dTcrYz1SmLmk9Ym3ZznxTZYtwmDIroQD5aQAou-2DFNpelA5_0WIErb5ArsOoxaARxTHhLHMaxByazc_1eBl4"/>
+<!-- Subtle Glass Overlay for UI interaction -->
+<div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-[1.5rem]"></div>
+</div>
+<!-- Action: Replace Photo -->
+<div class="flex justify-center mt-6">
+<button class="flex items-center gap-2 px-6 py-3 rounded-full bg-surface-container-highest text-on-surface font-semibold hover:opacity-80 transition-all active:scale-95 border border-outline-variant/20 shadow-sm">
+<span class="material-symbols-outlined">sync</span>
+<span class="label-md tracking-wide">Remplacer la photo</span>
+</button>
+</div>
+</div>
+<!-- Helper Information -->
+<div class="mt-12 flex items-start gap-4 p-6 bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-primary-fixed text-2xl mt-0.5">info</span>
+<p class="text-sm md:text-base text-on-surface-variant leading-relaxed">
+                Votre photo servira à préparer et transformer votre espace sans modifier sa structure.
+            </p>
+</div>
+</main>
+<!-- Bottom Action Shell -->
+<footer class="fixed bottom-0 left-0 w-full z-50 flex justify-center items-center px-6 py-6 bg-[#f8f6f2]/80 backdrop-blur-2xl">
+<div class="max-w-2xl w-full">
+<button class="w-full glow-gradient text-white font-extrabold text-lg py-5 rounded-xl shadow-[0_8px_30px_rgb(166,51,0,0.2)] hover:shadow-[0_8px_40px_rgb(166,51,0,0.3)] transition-all active:scale-95 flex items-center justify-center gap-3">
+<span>Continuer</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</footer>
+<!-- Invisible spacer for bottom bar padding -->
+<div class="h-24"></div>
+</body></html>

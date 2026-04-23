@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UrdeKo - Votre rendu final</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"surface-container": "#e9e8e4", secondary: "#a03834", "primary-fixed-dim": "#f7652f", "on-error-container": "#570008", "surface-container-lowest": "#ffffff", "error-dim": "#9f0519", "on-secondary-fixed-variant": "#912d2b", "secondary-fixed": "#ffc3be", "secondary-container": "#ffc3be", "on-primary-fixed-variant": "#551600", error: "#b31b25", background: "#f8f6f2", "primary-fixed": "#ff7949", "on-tertiary-fixed": "#400050", "surface-container-high": "#e4e2de", "surface-tint": "#a63300", primary: "#a63300", "on-secondary": "#ffefed", "surface-dim": "#d5d4d0", "surface-bright": "#f8f6f2", "on-surface-variant": "#5b5c59", "on-secondary-fixed": "#6a0f12", "on-primary": "#ffefeb", "on-tertiary-container": "#5e1470", "on-surface": "#2e2f2d", "surface-container-highest": "#deddd8", "inverse-surface": "#0e0e0d", "inverse-primary": "#fe6a34", tertiary: "#853d97", "tertiary-fixed": "#ef9dff", "secondary-dim": "#902c2a", "on-primary-fixed": "#000000", surface: "#f8f6f2", "primary-container": "#ff7949", "tertiary-dim": "#78308a", "on-secondary-container": "#852422", "tertiary-fixed-dim": "#e190f1", outline: "#777774", "on-tertiary-fixed-variant": "#681f7a", "error-container": "#fb5151", "outline-variant": "#aeadaa", "on-tertiary": "#ffeefc", "on-error": "#ffefee", "on-background": "#2e2f2d", "surface-variant": "#deddd8", "on-primary-container": "#451000", "tertiary-container": "#ef9dff", "secondary-fixed-dim": "#ffafa9", "primary-dim": "#922c00", "surface-container-low": "#f2f1ec", "inverse-on-surface": "#9e9d99"}, borderRadius: {DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px"}, fontFamily: {headline: ["Manrope"], body: ["Manrope"], label: ["Manrope"], display: "Manrope"}}}};</script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f8f6f2]/70 backdrop-blur-3xl shadow-[0_40px_40px_-5px_rgba(46,47,45,0.06)]">
+<div class="flex justify-between items-center w-full px-6 h-20 max-w-7xl mx-auto">
+<button class="w-12 h-12 flex items-center justify-center rounded-full text-[#a63300] hover:bg-[#f2f1ec]/50 transition-colors duration-300 active:scale-95 group">
+<span class="material-symbols-outlined text-2xl group-hover:-translate-x-1 transition-transform">arrow_back</span>
+</button>
+<h1 class="font-headline font-bold tracking-[-0.02em] text-lg text-[#a63300]">Votre rendu final</h1>
+<div class="w-12 h-12"></div> <!-- Spacer for center alignment -->
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow pt-28 pb-32 px-6 max-w-5xl mx-auto w-full space-y-12">
+<!-- Hero Render Section -->
+<section class="space-y-6">
+<div class="relative w-full aspect-[4/3] md:aspect-[16/9] rounded-lg overflow-hidden bg-surface-container-highest shadow-[0_40px_40px_-5px_rgba(46,47,45,0.06)] group">
+<img alt="Rendu 3D du salon" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Photorealistic interior design render of a sophisticated living room with a large modular sofa, designer coffee table, and warm atmospheric lighting." src="https://lh3.googleusercontent.com/aida/ADBb0uhs_RlhBlwg-dwliqaMqfZlaLy3EnMUEEn1SAKt0UJY4C5GdXjvFC-sgKSqWnFHisVHs9d8zazJ5a6BC_G6EYXUq1X2ik9zKZZs6gFOMoTJ8qLuFm7HW7HKl0dZ8lNmlGivr7rm6QEaJ4JnwTRFACBEG0ZfumLl03ixUC9HrWMa7gDFAnnpLCYRhs3tmRMIJFzCfU__XXUrLuruxsvFUioHbukHXv-oPFUFG4l9YwqitJ4Gi3dO9eQ3LA"/>
+<!-- Floating Expand Button -->
+<button class="absolute bottom-6 right-6 w-12 h-12 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center text-primary hover:bg-surface-container-lowest transition-colors shadow-lg group/btn">
+<span class="material-symbols-outlined transition-transform group-hover/btn:scale-110">fullscreen</span>
+</button>
+</div>
+<div class="flex items-center justify-end space-x-4">
+<button class="flex items-center space-x-2 text-on-surface-variant hover:text-primary transition-colors text-sm font-medium">
+<span class="material-symbols-outlined text-lg">download</span>
+<span>Télécharger HD</span>
+</button>
+</div>
+</section>
+<!-- Bento Grid Information -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Expert Advice -->
+<div class="md:col-span-7 bg-surface-container-low rounded-lg p-8 relative overflow-hidden flex flex-col justify-center">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/10 rounded-bl-full -mr-4 -mt-4"></div>
+<div class="flex items-center space-x-3 mb-4 relative z-10">
+<div class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+</div>
+<h2 class="font-headline font-bold text-xl text-primary">Le conseil UrdeKo</h2>
+</div>
+<p class="text-body-lg text-on-surface leading-relaxed relative z-10">
+                    Nous avons privilégié une composition harmonieuse et cohérente avec votre espace. Le rendu met en valeur les produits choisis tout en conservant une circulation agréable et une ambiance équilibrée.
+                </p>
+</div>
+<!-- Project Summary -->
+<div class="md:col-span-5 bg-surface-container-highest rounded-lg p-8 flex flex-col justify-between">
+<h3 class="font-headline font-bold text-lg mb-6 text-on-surface">Résumé du projet</h3>
+<ul class="space-y-4">
+<li class="flex justify-between items-center border-b border-surface-variant/30 pb-3">
+<span class="text-on-surface-variant text-sm tracking-wider uppercase">Espace</span>
+<span class="font-semibold text-on-surface">Salon</span>
+</li>
+<li class="flex justify-between items-center border-b border-surface-variant/30 pb-3">
+<span class="text-on-surface-variant text-sm tracking-wider uppercase">Style</span>
+<span class="font-semibold text-on-surface">Moderne</span>
+</li>
+<li class="flex justify-between items-center border-b border-surface-variant/30 pb-3">
+<span class="text-on-surface-variant text-sm tracking-wider uppercase">Produits intégrés</span>
+<span class="font-semibold text-on-surface">4</span>
+</li>
+<li class="flex justify-between items-center pt-2">
+<span class="text-on-surface-variant text-sm tracking-wider uppercase">Budget estimé</span>
+<span class="font-bold text-primary text-lg">5 900 MAD</span>
+</li>
+</ul>
+</div>
+</section>
+<!-- Reaction Block -->
+<section class="bg-surface-container-lowest rounded-lg p-8 shadow-[0_20px_40px_-5px_rgba(46,47,45,0.04)] border border-outline-variant/10 text-center flex flex-col items-center">
+<h3 class="font-headline font-bold text-xl mb-6 text-on-surface">Que pensez-vous de cette proposition ?</h3>
+<div class="flex flex-wrap justify-center gap-4">
+<button class="flex items-center space-x-2 bg-surface-container-low hover:bg-primary-container/20 text-primary px-6 py-3 rounded-md transition-colors shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="font-semibold">J’aime</span>
+</button>
+<button class="flex items-center space-x-2 bg-surface-container-low hover:bg-surface-container-highest text-on-surface px-6 py-3 rounded-md transition-colors shadow-sm">
+<span class="material-symbols-outlined">tune</span>
+<span class="font-semibold">À ajuster</span>
+</button>
+</div>
+</section>
+<!-- Main Actions -->
+<section class="space-y-4 pt-6">
+<button class="w-full bg-gradient-to-br from-primary-container to-primary text-on-primary-container rounded-xl py-5 px-8 font-bold text-lg shadow-[0_15px_30px_-5px_rgba(166,51,0,0.2)] hover:shadow-[0_20px_40px_-5px_rgba(166,51,0,0.3)] transition-all duration-300 transform hover:-translate-y-1 flex justify-center items-center space-x-3">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span>Voir les produits intégrés</span>
+</button>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<button class="w-full bg-surface-container-lowest text-primary border border-outline-variant/20 rounded-xl py-4 px-6 font-semibold hover:bg-surface-container-low transition-colors shadow-sm flex justify-center items-center space-x-2">
+<span class="material-symbols-outlined text-lg">edit</span>
+<span>Modifier mes choix</span>
+</button>
+<button class="w-full bg-surface-container-lowest text-on-surface border border-outline-variant/20 rounded-xl py-4 px-6 font-semibold hover:bg-surface-container-low transition-colors shadow-sm flex justify-center items-center space-x-2">
+<span class="material-symbols-outlined text-lg">autorenew</span>
+<span>Créer une autre version</span>
+</button>
+</div>
+</section>
+<!-- Footer Actions -->
+<section class="flex justify-center space-x-8 pt-8 border-t border-surface-variant/30">
+<button class="flex flex-col items-center space-y-2 text-on-surface-variant hover:text-primary transition-colors group">
+<div class="w-12 h-12 rounded-full bg-surface-container-low group-hover:bg-primary-container/10 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined">bookmark_add</span>
+</div>
+<span class="text-sm font-medium">Sauvegarder le projet</span>
+</button>
+<button class="flex flex-col items-center space-y-2 text-on-surface-variant hover:text-primary transition-colors group">
+<div class="w-12 h-12 rounded-full bg-surface-container-low group-hover:bg-primary-container/10 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined">share</span>
+</div>
+<span class="text-sm font-medium">Partager</span>
+</button>
+</section>
+</main>
+</body></html>

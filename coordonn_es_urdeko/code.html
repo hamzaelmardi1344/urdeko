@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UrdeKo - Contact Details</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Design System Configuration -->
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-secondary": "#ffefed", "error-container": "#fb5151", "surface-container-highest": "#deddd8", "outline-variant": "#aeadaa", "on-tertiary-fixed": "#400050", "surface-container-high": "#e4e2de", error: "#b31b25", "inverse-surface": "#0e0e0d", "primary-fixed-dim": "#f7652f", "tertiary-fixed-dim": "#e190f1", "surface-bright": "#f8f6f2", "surface-container": "#e9e8e4", "secondary-fixed": "#ffc3be", "primary-dim": "#922c00", "on-secondary-container": "#852422", "on-primary-fixed": "#000000", "secondary-fixed-dim": "#ffafa9", "surface-container-low": "#f2f1ec", "on-secondary-fixed-variant": "#912d2b", "primary-container": "#ff7949", primary: "#a63300", "secondary-dim": "#902c2a", secondary: "#a03834", "surface-container-lowest": "#ffffff", "on-primary-container": "#451000", "on-secondary-fixed": "#6a0f12", "on-surface-variant": "#5b5c59", "surface-tint": "#a63300", "on-tertiary-fixed-variant": "#681f7a", "on-error-container": "#570008", "on-tertiary-container": "#5e1470", background: "#f8f6f2", surface: "#f8f6f2", "on-tertiary": "#ffeefc", "on-surface": "#2e2f2d", "surface-dim": "#d5d4d0", "on-error": "#ffefee", "primary-fixed": "#ff7949", tertiary: "#853d97", "on-background": "#2e2f2d", "tertiary-container": "#ef9dff", "surface-variant": "#deddd8", "inverse-on-surface": "#9e9d99", "on-primary-fixed-variant": "#551600", "tertiary-fixed": "#ef9dff", "inverse-primary": "#fe6a34", "on-primary": "#ffefeb", "tertiary-dim": "#78308a", "error-dim": "#9f0519", "secondary-container": "#ffc3be", outline: "#777774"}, borderRadius: {DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px"}, spacing: {}, fontFamily: {headline: ["Manrope"], body: ["Manrope"], label: ["Manrope"], display: "Manrope"}}}};</script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    .peer:checked ~ div span { opacity: 1; }
+    .peer:checked ~ div { background-color: theme('colors.primary-container'); }
+</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body min-h-screen flex flex-col antialiased selection:bg-primary-container/30">
+<!-- TopAppBar (From Shared Components JSON) -->
+<!-- Note: BottomNavBar is suppressed due to strict Semantic Shell logic for Transactional/Checkout pages -->
+<header class="sticky top-0 z-50 bg-surface/70 backdrop-blur-2xl shadow-[0_40px_40px_-5px_rgba(46,47,45,0.06)]">
+<div class="flex justify-between items-center w-full px-6 py-4">
+<button class="text-primary hover:bg-surface-container-low transition-colors active:scale-95 duration-200 transition-transform p-2 -ml-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">arrow_back</span>
+</button>
+<span class="font-headline font-black text-primary text-xl tracking-tight">UrdeKo</span>
+<div class="w-10"></div> <!-- Spacer to perfectly center brand -->
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 px-6 pt-6 pb-40 flex flex-col gap-10">
+<!-- Header Section -->
+<section class="flex flex-col gap-4 pl-2">
+<h1 class="text-[2.25rem] leading-[1.15] font-headline font-bold tracking-tight text-on-surface">
+                Dernière étape avant votre rendu
+            </h1>
+<p class="text-body-lg text-on-surface-variant leading-relaxed pr-4">
+                Renseignez vos coordonnées pour recevoir votre rendu final et finaliser votre projet UrdeKo.
+            </p>
+</section>
+<!-- Project Summary Card (Glassmorphism / Tonal Shift) -->
+<section class="bg-surface-container-low rounded-lg p-6 flex flex-col gap-5 shadow-[0_10px_30px_-10px_rgba(46,47,45,0.03)] relative overflow-hidden">
+<!-- Decorative background element -->
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-surface-container-highest rounded-full opacity-50 blur-2xl"></div>
+<div class="flex items-center gap-4 relative z-10">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary-dim">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">chair</span>
+</div>
+<div class="flex-1 flex flex-col">
+<span class="text-label-sm font-label uppercase tracking-widest text-on-surface-variant mb-1">Espace</span>
+<span class="text-body-lg font-bold text-on-surface">4 produits sélectionnés</span>
+</div>
+</div>
+<div class="flex items-center gap-4 relative z-10">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary-dim">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">palette</span>
+</div>
+<div class="flex-1 flex flex-col">
+<span class="text-label-sm font-label uppercase tracking-widest text-on-surface-variant mb-1">Style</span>
+<span class="text-body-lg font-bold text-on-surface">4 produits sélectionnés</span>
+</div>
+</div>
+<div class="flex items-center gap-4 relative z-10">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary-dim">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">view_in_ar</span>
+</div>
+<div class="flex-1 flex flex-col">
+<span class="text-label-sm font-label uppercase tracking-widest text-on-surface-variant mb-1">Produits sélectionnés</span>
+<span class="text-body-lg font-bold text-on-surface">4 produits sélectionnés</span>
+</div>
+</div>
+</section>
+<!-- Form Section -->
+<form class="flex flex-col gap-8">
+<!-- Input: Nom complet -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-bold uppercase tracking-[0.15em] text-on-surface-variant ml-1" for="fullName">Nom complet *</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-primary transition-colors">person</span>
+<input class="w-full bg-surface-container-lowest/50 border-b-2 border-outline-variant/30 focus:border-primary rounded-t-lg py-5 pl-10 pr-4 text-body-lg text-on-surface placeholder:text-outline-variant/40 focus:outline-none transition-all outline-none" id="fullName" placeholder="Ex: Jean Dupont" type="text"/>
+</div>
+</div>
+<!-- Input: E-mail -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-bold uppercase tracking-[0.15em] text-on-surface-variant ml-1" for="email">E-mail *</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-primary transition-colors">mail</span>
+<input class="w-full bg-surface-container-lowest/50 border-b-2 border-outline-variant/30 focus:border-primary rounded-t-lg py-5 pl-10 pr-4 text-body-lg text-on-surface placeholder:text-outline-variant/40 focus:outline-none transition-all outline-none" id="email" placeholder="jean.dupont@exemple.com" type="email"/>
+</div>
+</div>
+<!-- Input: Ville -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-bold uppercase tracking-[0.15em] text-on-surface-variant ml-1" for="city">Ville *</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-primary transition-colors">location_on</span>
+<input class="w-full bg-surface-container-lowest/50 border-b-2 border-outline-variant/30 focus:border-primary rounded-t-lg py-5 pl-10 pr-4 text-body-lg text-on-surface placeholder:text-outline-variant/40 focus:outline-none transition-all outline-none" id="city" placeholder="Paris" type="text"/>
+</div>
+</div>
+<!-- Input: Téléphone -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-bold uppercase tracking-[0.15em] text-on-surface-variant ml-1" for="phone">Téléphone (optionnel)</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-primary transition-colors">call</span>
+<input class="w-full bg-surface-container-lowest/50 border-b-2 border-outline-variant/30 focus:border-primary rounded-t-lg py-5 pl-10 pr-4 text-body-lg text-on-surface placeholder:text-outline-variant/40 focus:outline-none transition-all outline-none" id="phone" placeholder="+33 6 12 34 56 78" type="tel"/>
+</div>
+</div>
+</form>
+<!-- Preferences (Elegant Toggles) -->
+<section class="flex flex-col gap-4">
+<label class="group flex items-center justify-between p-6 rounded-xl bg-surface-container-low/40 hover:bg-surface-container-low transition-colors cursor-pointer">
+<span class="text-body-lg font-semibold text-on-surface flex-1 pr-6">Je souhaite recevoir mon rendu par e-mail</span>
+<div class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-14 h-8 bg-outline-variant/30 peer-checked:bg-primary-container rounded-full transition-all duration-300 ease-in-out relative">
+<div class="absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out peer-checked:translate-x-6 peer-checked:bg-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+</div>
+</div>
+</label>
+<label class="group flex items-center justify-between p-6 rounded-xl bg-surface-container-low/40 hover:bg-surface-container-low transition-colors cursor-pointer">
+<span class="text-body-lg font-semibold text-on-surface flex-1 pr-6">Je souhaite être recontacté pour mon projet</span>
+<div class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-14 h-8 bg-outline-variant/30 peer-checked:bg-primary-container rounded-full transition-all duration-300 ease-in-out relative">
+<div class="absolute top-1 left-1 w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out peer-checked:translate-x-6 peer-checked:bg-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-primary opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+</div>
+</div>
+</label>
+</section>
+<!-- Reassurance -->
+<div class="flex items-start gap-3 px-2 pt-2">
+<span class="material-symbols-outlined text-outline-variant text-xl mt-0.5">lock</span>
+<p class="text-label-sm text-on-surface-variant leading-relaxed">
+                Vos informations sont utilisées uniquement pour finaliser votre projet et vous envoyer votre rendu.
+            </p>
+</div>
+</main>
+<!-- Fixed Bottom CTA Area (Glassmorphism overlap) -->
+<div class="fixed bottom-0 left-0 w-full px-6 pb-8 pt-12 bg-gradient-to-t from-surface via-surface/95 to-transparent z-40 pointer-events-none">
+<button class="w-full pointer-events-auto rounded-xl bg-gradient-to-br from-primary-container to-primary text-on-primary py-4 px-6 font-headline font-bold text-lg flex items-center justify-center gap-3 shadow-[0_20px_40px_-10px_rgba(166,51,0,0.3)] hover:shadow-[0_25px_40px_-10px_rgba(166,51,0,0.4)] hover:-translate-y-1 transition-all duration-300 active:scale-95">
+<span>Recevoir mon rendu final</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</button>
+</div>
+</body></html>

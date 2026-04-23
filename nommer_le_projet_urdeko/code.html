@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UrdeKo - Étape 1</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"inverse-on-surface": "#9e9d99", background: "#f8f6f2", "primary-fixed": "#ff7949", outline: "#777774", "on-primary-fixed-variant": "#551600", "on-tertiary-fixed": "#400050", "surface-container": "#e9e8e4", "secondary-fixed": "#ffc3be", "error-container": "#fb5151", "secondary-fixed-dim": "#ffafa9", "surface-container-lowest": "#ffffff", surface: "#f8f6f2", "on-primary-container": "#451000", error: "#b31b25", "primary-container": "#ff7949", "tertiary-container": "#ef9dff", "primary-fixed-dim": "#f7652f", "on-tertiary-fixed-variant": "#681f7a", "on-background": "#2e2f2d", tertiary: "#853d97", "tertiary-fixed-dim": "#e190f1", "surface-container-low": "#f2f1ec", "primary-dim": "#922c00", "surface-dim": "#d5d4d0", "surface-container-highest": "#deddd8", "on-error-container": "#570008", "secondary-dim": "#902c2a", "on-surface": "#2e2f2d", "on-error": "#ffefee", "inverse-surface": "#0e0e0d", "inverse-primary": "#fe6a34", "on-secondary-fixed": "#6a0f12", secondary: "#a03834", "tertiary-fixed": "#ef9dff", "on-secondary": "#ffefed", "tertiary-dim": "#78308a", "on-tertiary-container": "#5e1470", "surface-bright": "#f8f6f2", "surface-tint": "#a63300", "on-surface-variant": "#5b5c59", "on-primary-fixed": "#000000", "error-dim": "#9f0519", "surface-container-high": "#e4e2de", "secondary-container": "#ffc3be", "on-primary": "#ffefeb", "outline-variant": "#aeadaa", "on-secondary-container": "#852422", "on-tertiary": "#ffeefc", "on-secondary-fixed-variant": "#912d2b", "surface-variant": "#deddd8", primary: "#a63300"}, borderRadius: {DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px"}, spacing: {}, fontFamily: {headline: ["Manrope"], body: ["Manrope"], label: ["Manrope"], display: "Manrope"}}}};</script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col font-body">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-6 py-4 w-full bg-[#f2f1ec] dark:bg-stone-800 font-['Manrope'] headline-sm font-bold tracking-tight text-[#a63300] dark:text-[#ff7949] docked full-width top-0 z-50">
+<button class="hover:opacity-80 transition-opacity Active: scale-95 duration-150 flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined text-2xl text-[#2e2f2d] dark:text-[#f8f6f2]">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold text-[#2e2f2d] dark:text-[#f8f6f2]">New Project</h1>
+<div class="text-[#2e2f2d]/60 dark:text-[#f8f6f2]/60 text-sm font-medium tracking-wide uppercase">
+            Step 1 of 4
+        </div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-6 py-12 md:py-24">
+<div class="w-full max-w-2xl bg-surface-container-lowest rounded-xl shadow-[0_40px_40px_-5px_rgba(46,47,45,0.06)] p-8 md:p-12 relative overflow-hidden">
+<!-- Glassmorphism overlay hint -->
+<div class="absolute inset-0 bg-surface-container-lowest/50 backdrop-blur-3xl -z-10"></div>
+<!-- Header Section -->
+<div class="mb-10 text-center md:text-left">
+<h2 class="text-3xl md:text-4xl font-headline font-bold text-on-surface tracking-tight mb-3">Donnez un nom à votre projet</h2>
+<p class="text-on-surface-variant text-lg leading-relaxed">Vous pourrez ainsi le retrouver facilement plus tard.</p>
+</div>
+<!-- Context Thumbnail -->
+<!-- Form Area -->
+<form class="space-y-8">
+<div>
+<label class="block text-sm font-bold text-on-surface mb-3 tracking-wide" for="projectName">Nom du projet</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg px-5 py-4 text-on-surface text-lg placeholder-outline-variant focus:ring-2 focus:ring-primary-container transition-all" id="projectName" placeholder="Ex. : Salon appartement Anfa" type="text"/>
+</div>
+<!-- Suggestions -->
+<div>
+<span class="block text-xs font-label uppercase tracking-widest text-on-surface-variant mb-3">Suggestions</span>
+<div class="flex flex-wrap gap-3">
+<button class="px-5 py-2.5 bg-surface-container-highest text-on-surface rounded-md text-sm font-medium hover:bg-surface-variant transition-colors shadow-sm" type="button">
+                            Salon appartement Anfa
+                        </button>
+<button class="px-5 py-2.5 bg-surface-container-highest text-on-surface rounded-md text-sm font-medium hover:bg-surface-variant transition-colors shadow-sm" type="button">
+                            Chambre villa Californie
+                        </button>
+</div>
+</div>
+<!-- Helper Note -->
+<p class="text-sm text-outline font-medium italic mt-4 text-center md:text-left">
+                    "Si vous laissez ce champ vide, un nom sera généré automatiquement."
+                </p>
+<!-- Action Area -->
+<div class="pt-8 flex justify-end">
+<button class="w-full md:w-auto px-8 py-4 bg-gradient-to-br from-primary-container to-primary text-on-primary-container rounded-xl font-bold text-lg shadow-[0_40px_40px_-5px_rgba(46,47,45,0.06)] hover:opacity-90 transition-opacity flex items-center justify-center gap-2" type="button">
+                        Continuer
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">arrow_forward</span>
+</button>
+</div>
+</form>
+</div>
+</main>
+</body></html>

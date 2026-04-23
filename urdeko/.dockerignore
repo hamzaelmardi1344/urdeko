@@ -1,0 +1,27 @@
+# Git & métadonnées
+.git
+.github
+**/.DS_Store
+
+# Dépendances & builds locaux
+node_modules
+**/node_modules
+**/.next
+**/dist
+.turbo
+
+# Env local (les secrets passent par Northflank / CI)
+.env
+.env.*
+!.env.example
+!.env.local.example
+
+# Tests & outils
+**/coverage
+**/.playwright
+**/playwright-report
+**/*.log
+
+# Lourds / inutiles en image
+**/node_modules/.cache
+apps/web/.next/cache

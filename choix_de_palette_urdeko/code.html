@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UrdeKo - Choisissez la palette</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"error-container": "#fb5151", "on-error-container": "#570008", secondary: "#a03834", "on-primary-fixed-variant": "#551600", "inverse-on-surface": "#9e9d99", background: "#f8f6f2", "surface-container-highest": "#deddd8", outline: "#777774", "on-secondary-container": "#852422", "secondary-fixed-dim": "#ffafa9", "on-primary": "#ffefeb", "tertiary-fixed": "#ef9dff", "primary-fixed-dim": "#f7652f", "surface-container": "#e9e8e4", "on-secondary-fixed": "#6a0f12", "surface-tint": "#a63300", "on-error": "#ffefee", surface: "#f8f6f2", "primary-dim": "#922c00", "on-tertiary-fixed": "#400050", "surface-variant": "#deddd8", "on-background": "#2e2f2d", "tertiary-fixed-dim": "#e190f1", "tertiary-container": "#ef9dff", "secondary-fixed": "#ffc3be", "inverse-primary": "#fe6a34", tertiary: "#853d97", "secondary-dim": "#902c2a", "secondary-container": "#ffc3be", "surface-bright": "#f8f6f2", "surface-container-low": "#f2f1ec", "outline-variant": "#aeadaa", error: "#b31b25", "on-secondary-fixed-variant": "#912d2b", "surface-dim": "#d5d4d0", "on-secondary": "#ffefed", "on-tertiary-fixed-variant": "#681f7a", "on-surface": "#2e2f2d", "on-primary-fixed": "#000000", "inverse-surface": "#0e0e0d", "primary-container": "#ff7949", primary: "#a63300", "on-tertiary-container": "#5e1470", "on-primary-container": "#451000", "surface-container-high": "#e4e2de", "on-tertiary": "#ffeefc", "error-dim": "#9f0519", "tertiary-dim": "#78308a", "on-surface-variant": "#5b5c59", "primary-fixed": "#ff7949", "surface-container-lowest": "#ffffff"}, borderRadius: {DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px"}, fontFamily: {headline: ["Manrope"], body: ["Manrope"], label: ["Manrope"], display: "Manrope"}}}};</script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .glow-gradient { background: linear-gradient(135deg, #ff7949 0%, #a63300 100%); }
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+        .ambient-shadow { box-shadow: 0 40px 40px -5px rgba(46, 47, 45, 0.06); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col relative pb-24">
+<!-- TopAppBar -->
+<header class="bg-[#f8f6f2]/70 backdrop-blur-2xl docked full-width top-0 sticky z-40">
+<div class="flex justify-between items-center w-full px-6 py-4">
+<button class="text-[#a63300] scale-95 active:scale-90 transition-transform duration-200 p-2 -ml-2 rounded-full hover:bg-[#f2f1ec]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<h1 class="font-['Manrope'] font-bold tracking-tight text-[#2e2f2d] text-xl absolute left-1/2 -translate-x-1/2">Choisissez la palette</h1>
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-high border-2 border-surface-container-lowest shadow-sm flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-variation-settings: 'FILL' 1;">person</span>
+</div>
+</div>
+</header>
+<main class="flex-1 px-6 pt-4 pb-12 flex flex-col gap-8 max-w-md mx-auto w-full">
+<!-- Header Text -->
+<section>
+<h2 class="font-headline text-3xl font-extrabold tracking-tight text-on-surface mb-2">Quelle ambiance pour votre projet ?</h2>
+<p class="font-body text-base text-on-surface-variant leading-relaxed">Optez pour la recommandation automatique Harmonie UrdeKo ou choisissez manuellement une harmonie classique parmi la sélection ci-dessous.</p>
+</section>
+<!-- Primary Option (IA) -->
+<section>
+<button class="w-full text-left bg-surface-container-lowest rounded-lg p-6 ambient-shadow relative overflow-hidden group hover:bg-surface-container-low transition-colors duration-300">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-8xl text-primary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div class="relative z-10 flex items-start gap-4">
+<div class="w-12 h-12 rounded-full glow-gradient flex items-center justify-center flex-shrink-0 text-white shadow-lg shadow-primary-container/30">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div>
+<h3 class="font-headline text-xl font-bold text-on-surface mb-1 flex items-center gap-2">
+                            Harmonie UrdeKo
+                            <span class="bg-primary-container/10 text-primary text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">Recommandé</span>
+</h3>
+<p class="font-body text-sm text-on-surface-variant leading-relaxed">UrDeko harmonise la palette selon votre photo et votre style.</p>
+</div>
+</div>
+<!-- Selected Indicator -->
+<div class="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full border-2 border-primary bg-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</button>
+</section>
+<!-- Secondary Options Grid -->
+<section>
+<h3 class="font-headline text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-6 ml-2">Harmonies Classiques</h3>
+<div class="grid grid-cols-2 gap-4">
+<!-- Terre Cuite -->
+<button class="bg-surface-container-lowest rounded-DEFAULT p-4 flex flex-col gap-4 text-left hover:bg-surface-container-low transition-colors ambient-shadow group relative">
+<h4 class="font-headline font-bold text-on-surface text-base">Terre Cuite</h4>
+<div class="flex gap-1 w-full h-8 rounded-full overflow-hidden">
+<div class="flex-1 bg-[#D97A62]"></div>
+<div class="flex-1 bg-[#E8A589]"></div>
+<div class="flex-1 bg-[#F5D8CA]"></div>
+<div class="flex-1 bg-[#8C4B3A]"></div>
+</div>
+<div class="absolute inset-0 rounded-DEFAULT border-2 border-transparent group-hover:border-outline-variant/20 transition-colors"></div>
+</button>
+<!-- Minéral -->
+<button class="bg-surface-container-lowest rounded-DEFAULT p-4 flex flex-col gap-4 text-left hover:bg-surface-container-low transition-colors ambient-shadow group relative">
+<h4 class="font-headline font-bold text-on-surface text-base">Minéral</h4>
+<div class="flex gap-1 w-full h-8 rounded-full overflow-hidden">
+<div class="flex-1 bg-[#A5AFA0]"></div>
+<div class="flex-1 bg-[#C9D1C5]"></div>
+<div class="flex-1 bg-[#E6E8E3]"></div>
+<div class="flex-1 bg-[#6D7769]"></div>
+</div>
+<div class="absolute inset-0 rounded-DEFAULT border-2 border-transparent group-hover:border-outline-variant/20 transition-colors"></div>
+</button>
+<!-- Forêt -->
+<button class="bg-surface-container-lowest rounded-DEFAULT p-4 flex flex-col gap-4 text-left hover:bg-surface-container-low transition-colors ambient-shadow group relative">
+<h4 class="font-headline font-bold text-on-surface text-base">Forêt</h4>
+<div class="flex gap-1 w-full h-8 rounded-full overflow-hidden">
+<div class="flex-1 bg-[#2C4C3B]"></div>
+<div class="flex-1 bg-[#4A7059]"></div>
+<div class="flex-1 bg-[#88A392]"></div>
+<div class="flex-1 bg-[#D1DDD5]"></div>
+</div>
+<div class="absolute inset-0 rounded-DEFAULT border-2 border-transparent group-hover:border-outline-variant/20 transition-colors"></div>
+</button>
+<!-- Océan -->
+<button class="bg-surface-container-lowest rounded-DEFAULT p-4 flex flex-col gap-4 text-left hover:bg-surface-container-low transition-colors ambient-shadow group relative">
+<h4 class="font-headline font-bold text-on-surface text-base">Océan</h4>
+<div class="flex gap-1 w-full h-8 rounded-full overflow-hidden">
+<div class="flex-1 bg-[#1E3F5A]"></div>
+<div class="flex-1 bg-[#456A8E]"></div>
+<div class="flex-1 bg-[#8CAAC7]"></div>
+<div class="flex-1 bg-[#DCE6F0]"></div>
+</div>
+<div class="absolute inset-0 rounded-DEFAULT border-2 border-transparent group-hover:border-outline-variant/20 transition-colors"></div>
+</button>
+<!-- Sable -->
+<button class="bg-surface-container-lowest rounded-DEFAULT p-4 flex flex-col gap-4 text-left hover:bg-surface-container-low transition-colors ambient-shadow group relative">
+<h4 class="font-headline font-bold text-on-surface text-base">Sable</h4>
+<div class="flex gap-1 w-full h-8 rounded-full overflow-hidden">
+<div class="flex-1 bg-[#E1C699]"></div>
+<div class="flex-1 bg-[#F2E3C6]"></div>
+<div class="flex-1 bg-[#FAF4EA]"></div>
+<div class="flex-1 bg-[#A88C5D]"></div>
+</div>
+<div class="absolute inset-0 rounded-DEFAULT border-2 border-transparent group-hover:border-outline-variant/20 transition-colors"></div>
+</button>
+<!-- Urbain -->
+<button class="bg-surface-container-lowest rounded-DEFAULT p-4 flex flex-col gap-4 text-left hover:bg-surface-container-low transition-colors ambient-shadow group relative">
+<h4 class="font-headline font-bold text-on-surface text-base">Urbain</h4>
+<div class="flex gap-1 w-full h-8 rounded-full overflow-hidden">
+<div class="flex-1 bg-[#4A4A4A]"></div>
+<div class="flex-1 bg-[#7D7D7D]"></div>
+<div class="flex-1 bg-[#B5B5B5]"></div>
+<div class="flex-1 bg-[#EAEAEA]"></div>
+</div>
+<div class="absolute inset-0 rounded-DEFAULT border-2 border-transparent group-hover:border-outline-variant/20 transition-colors"></div>
+</button>
+</div>
+</section>
+</main>
+<!-- CTA Bottom Container -->
+<div class="fixed bottom-0 left-0 w-full z-50 bg-gradient-to-t from-surface via-surface/90 to-transparent pt-6 pb-6 px-6">
+<!-- Floating CTA -->
+<div class="w-full max-w-md mx-auto">
+<button class="w-full glow-gradient text-on-primary-container font-headline font-bold py-4 rounded-xl shadow-lg shadow-primary-container/20 flex items-center justify-center gap-2 active:scale-95 transition-transform duration-200">
+                Confirmer
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_forward</span>
+</button>
+</div>
+</div>
+</body></html>

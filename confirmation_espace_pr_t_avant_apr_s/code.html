@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UrdeKo - Votre espace est prêt</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"surface-container-low": "#f2f1ec", "outline-variant": "#aeadaa", "on-error": "#ffefee", "surface-container": "#e9e8e4", "surface-tint": "#a63300", "on-secondary-fixed-variant": "#912d2b", "on-tertiary-fixed": "#400050", "tertiary-fixed-dim": "#e190f1", "primary-fixed-dim": "#f7652f", error: "#b31b25", "on-secondary-container": "#852422", "primary-container": "#ff7949", secondary: "#a03834", "error-container": "#fb5151", "on-tertiary-fixed-variant": "#681f7a", "on-primary-container": "#451000", tertiary: "#853d97", "primary-fixed": "#ff7949", "on-tertiary-container": "#5e1470", "on-primary-fixed": "#000000", "error-dim": "#9f0519", "tertiary-fixed": "#ef9dff", "surface-variant": "#deddd8", "secondary-container": "#ffc3be", "on-primary-fixed-variant": "#551600", "on-background": "#2e2f2d", "secondary-dim": "#902c2a", "surface-container-highest": "#deddd8", "surface-container-high": "#e4e2de", background: "#f8f6f2", "inverse-primary": "#fe6a34", "secondary-fixed-dim": "#ffafa9", "on-secondary": "#ffefed", "tertiary-dim": "#78308a", "on-surface-variant": "#5b5c59", "on-error-container": "#570008", outline: "#777774", "tertiary-container": "#ef9dff", primary: "#a63300", "inverse-on-surface": "#9e9d99", "secondary-fixed": "#ffc3be", "on-primary": "#ffefeb", "surface-container-lowest": "#ffffff", "primary-dim": "#922c00", "inverse-surface": "#0e0e0d", "on-tertiary": "#ffeefc", "surface-bright": "#f8f6f2", "surface-dim": "#d5d4d0", surface: "#f8f6f2", "on-surface": "#2e2f2d", "on-secondary-fixed": "#6a0f12"}, borderRadius: {DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px"}, fontFamily: {headline: ["Manrope"], body: ["Manrope"], label: ["Manrope"], display: "Manrope"}}}};</script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col md:hidden pb-10">
+<!-- Header (Transactional logic, no global nav shell) -->
+<header class="flex items-center justify-between px-6 pt-12 pb-4">
+<button aria-label="Retour" class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-lowest shadow-[0_4px_40px_-5px_rgba(46,47,45,0.06)] text-on-surface active:scale-95 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<div class="flex-1 text-center">
+<!-- Space for balance -->
+</div>
+<div class="w-12"></div> <!-- Spacer for flex balance -->
+</header>
+<main class="flex-1 px-6 flex flex-col gap-8">
+<!-- Header Text -->
+<div class="flex flex-col gap-2 mt-4">
+<h1 class="text-[2.5rem] font-extrabold leading-tight tracking-tight text-on-surface">
+                Votre espace<br/>est prêt
+            </h1>
+<p class="text-base text-on-surface-variant leading-relaxed font-medium">
+                Nous avons préparé votre espace pour accueillir votre sélection.
+            </p>
+</div>
+<!-- Main Visual Container - Before/After Component -->
+<div class="relative w-full aspect-[4/5] rounded-[2rem] overflow-hidden bg-surface-container shadow-[0_10px_40px_-5px_rgba(46,47,45,0.06)] group">
+<!-- Avant (Left Side - Underneath, filling container) -->
+<img alt="Avant: Pièce encombrée" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANXExTk07lCoqaq643btrXJVHmv3vBPZQlN9Ub0hPwsQngFn2M6lBdLAUziJ7Mi_1ztVm99gC6MuyBGyP4I1iU4cCJE50bKTS31FUGKzPpCs8N2mNhu3FuZCR_HFftosCyjKxtqAbC_Sc0XSG_6G9LoaAXvWd2En-whWVNjLfCK1GEzyHPMiwy9K7n9GJIg8pfDjnFkawQYAdxVYBegXmEOuDPiJeyRvkqW-BfndWOcfysoZyPm0Ek3Wgwr0QhqPTMpMSPOBkzGg0"/>
+<!-- Après (Right Side - On top, clipped to show 50%) -->
+<div class="absolute inset-0 w-full h-full" style="clip-path: polygon(50% 0, 100% 0, 100% 100%, 50% 100%);">
+<img alt="Après: Pièce vidée prête" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-Cpjpgta9VOXMeajHZGe-4eOcDQCmwGF7bHhExkWIfWBqkpO-YIN40TlqFN7CGIASlMJBmFwL4KTljEDXlynlyWBx49bh2gOCj3e04QLELBStGYlOV5NKtWa8xtqrfdefLTufjklxEwu8bFR_f2d28VoyUZP6gOFnifTK-fKJod0cIn2de4q0TnCsjIhf8ka8lck72ivzUYHmch7IZFBju0feXPPrCcacFSjZKX9VNfA_B7kAw0_2vX7kNM6F4YCWER3CkhF7tto"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary-container/10 to-transparent mix-blend-overlay"></div>
+</div>
+<!-- Slider Handle -->
+<div class="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-1 bg-surface-container-lowest shadow-[0_0_10px_rgba(0,0,0,0.3)] z-10 flex items-center justify-center">
+<div class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-lg border border-outline-variant/20 text-primary-container">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 0;">swap_horiz</span>
+</div>
+</div>
+<!-- Labels -->
+<div class="absolute top-4 left-4 bg-surface-container-lowest/80 backdrop-blur-md px-3 py-1.5 rounded-full shadow-sm z-20">
+<span class="text-[0.65rem] font-bold uppercase tracking-wider text-on-surface">Avant</span>
+</div>
+<div class="absolute top-4 right-4 bg-primary-container/90 backdrop-blur-md px-3 py-1.5 rounded-full shadow-sm z-20">
+<span class="text-[0.65rem] font-bold uppercase tracking-wider text-on-primary-container">Après</span>
+</div>
+<!-- Success Badge -->
+<div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-surface-container-lowest/90 backdrop-blur-xl px-4 py-2 rounded-full flex items-center gap-2 shadow-[0_4px_20px_rgba(46,47,45,0.1)] z-20">
+<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface">Analyse terminée</span>
+</div>
+</div>
+<!-- Reassurance Block -->
+<div class="bg-surface-container-low rounded-[1.5rem] p-6 flex flex-col gap-4">
+<div class="flex items-start gap-4">
+<div class="w-8 h-8 rounded-full bg-surface-container-lowest flex items-center justify-center shrink-0 shadow-[0_4px_10px_-2px_rgba(46,47,45,0.05)]">
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<p class="text-sm font-semibold text-on-surface pt-1">Structure conservée</p>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-8 h-8 rounded-full bg-surface-container-lowest flex items-center justify-center shrink-0 shadow-[0_4px_10px_-2px_rgba(46,47,45,0.05)]">
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<p class="text-sm font-semibold text-on-surface pt-1">Volumes reconnus</p>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-8 h-8 rounded-full bg-surface-container-lowest flex items-center justify-center shrink-0 shadow-[0_4px_10px_-2px_rgba(46,47,45,0.05)]">
+<span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<p class="text-sm font-semibold text-on-surface pt-1">Base prête pour la projection</p>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col gap-4 mt-4">
+<button class="w-full py-4 rounded-full bg-gradient-to-br from-primary-container to-primary text-on-primary-container font-bold text-lg shadow-[0_10px_40px_-5px_rgba(255,121,73,0.3)] active:scale-[0.98] transition-transform">
+                Continuer
+            </button>
+<div class="flex flex-col gap-2">
+<button class="w-full py-3 rounded-full border border-outline-variant/20 text-on-surface font-semibold active:bg-surface-container-low transition-colors">
+                    Changer de photo
+                </button>
+<button class="w-full py-3 rounded-full text-on-surface-variant font-medium active:text-on-surface transition-colors">
+                    Réessayer le traitement
+                </button>
+</div>
+</div>
+</main>
+</body></html>

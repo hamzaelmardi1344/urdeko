@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UrdeKo - Nous créons votre rendu final</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"secondary-fixed": "#ffc3be", "inverse-primary": "#fe6a34", tertiary: "#853d97", "secondary-dim": "#902c2a", "secondary-container": "#ffc3be", "surface-variant": "#deddd8", "on-background": "#2e2f2d", "tertiary-fixed-dim": "#e190f1", "tertiary-container": "#ef9dff", "on-error": "#ffefee", surface: "#f8f6f2", "primary-dim": "#922c00", "on-tertiary-fixed": "#400050", "surface-container": "#e9e8e4", "on-secondary-fixed": "#6a0f12", "surface-tint": "#a63300", "secondary-fixed-dim": "#ffafa9", "on-primary": "#ffefeb", "tertiary-fixed": "#ef9dff", "primary-fixed-dim": "#f7652f", outline: "#777774", "on-secondary-container": "#852422", secondary: "#a03834", "on-primary-fixed-variant": "#551600", "inverse-on-surface": "#9e9d99", background: "#f8f6f2", "surface-container-highest": "#deddd8", "error-container": "#fb5151", "on-error-container": "#570008", "error-dim": "#9f0519", "tertiary-dim": "#78308a", "on-surface-variant": "#5b5c59", "primary-fixed": "#ff7949", "surface-container-lowest": "#ffffff", "on-primary-container": "#451000", "surface-container-high": "#e4e2de", "on-tertiary": "#ffeefc", primary: "#a63300", "on-tertiary-container": "#5e1470", "inverse-surface": "#0e0e0d", "primary-container": "#ff7949", "on-surface": "#2e2f2d", "on-primary-fixed": "#000000", "surface-dim": "#d5d4d0", "on-secondary": "#ffefed", "on-tertiary-fixed-variant": "#681f7a", error: "#b31b25", "on-secondary-fixed-variant": "#912d2b", "surface-bright": "#f8f6f2", "surface-container-low": "#f2f1ec", "outline-variant": "#aeadaa"}, borderRadius: {DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px"}, fontFamily: {headline: ["Manrope"], body: ["Manrope"], label: ["Manrope"], display: "Manrope"}}}};</script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface flex flex-col min-h-screen">
+<!-- TopAppBar (From JSON, modified for transition screen - minimal) -->
+<header class="flex justify-center items-center w-full px-6 py-4 bg-surface/80 backdrop-blur-md sticky top-0 z-50">
+<div class="text-2xl font-bold tracking-tighter text-primary">
+            UrdeKo
+        </div>
+</header>
+<main class="flex-grow flex flex-col items-center justify-start px-6 pt-8 pb-12 max-w-md mx-auto w-full">
+<!-- Header Text -->
+<div class="text-center mb-8 space-y-4">
+<h1 class="font-headline text-3xl font-bold tracking-tight text-on-surface">Nous créons votre rendu final</h1>
+<p class="font-body text-on-surface-variant text-base leading-relaxed max-w-[320px] mx-auto">
+                UrdeKo assemble votre espace, vos sélections et votre style pour générer une visualisation cohérente et réaliste.
+            </p>
+</div>
+<!-- Premium Visual Card (Shimmering Interior) -->
+<div class="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-surface-container-low shadow-[0_20px_40px_-5px_rgba(46,47,45,0.06)] mb-8">
+<!-- Blur overlay to suggest processing -->
+<div class="absolute inset-0 bg-surface-container-lowest/30 backdrop-blur-sm z-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-5xl opacity-80" data-icon="blur_on" style="font-variation-settings: 'FILL' 1;">blur_on</span>
+</div>
+<img alt="En cours de rendu" class="w-full h-full object-cover opacity-80" data-alt="A high-quality, professional photo of a modern living room being digitally processed for interior design renovation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-E-IAyeXzNC1bib4JnjUoka_w6esZN0H82SYttnn6ui5pHr2PffNXM_Vi2XYOE-Audi-EltTqEMh40TtNcF6AdKK4YC-8FWQhvZTjU17yx13bEkuoikMmdTkz3RO0SpedRA1Ln-c-F2OKtqvrcIdU4HWtzfBRjxks56ammfTyjt1A2chUVueh-LxDwE7QqEPu_Hx8rc7wyTBso_OKKwtw_IwA4d1XZTyqw-nHcLaDKssMpfTcnvR9WJxoGgx7WxlSR3DPkjNT8Rc"/>
+<!-- Progress Bar Overlay -->
+<div class="absolute bottom-0 left-0 right-0 h-1.5 bg-surface-container-highest z-20">
+<div class="h-full bg-gradient-to-r from-primary-container to-primary w-1/2 rounded-r-full shadow-[0_0_15px_rgba(255,121,73,0.5)]"></div>
+</div>
+</div>
+<!-- Progress Steps -->
+<div class="w-full space-y-6 mb-12 px-4">
+<!-- Step 1: Completed -->
+<div class="flex items-start gap-4">
+<div class="flex flex-col items-center mt-0.5">
+<div class="w-6 h-6 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shadow-[0_4px_10px_-2px_rgba(255,121,73,0.4)]">
+<span class="material-symbols-outlined text-[14px]" data-icon="check" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="w-0.5 h-8 bg-primary-container/30 my-1"></div>
+</div>
+<div class="flex-grow pt-0.5">
+<h3 class="font-headline font-semibold text-on-surface text-base">Préparation de l’espace</h3>
+</div>
+</div>
+<!-- Step 2: Active -->
+<div class="flex items-start gap-4">
+<div class="flex flex-col items-center mt-0.5">
+<div class="relative w-6 h-6 flex items-center justify-center">
+<div class="absolute inset-0 rounded-full bg-primary-container opacity-20"></div>
+<div class="w-3 h-3 rounded-full bg-primary shadow-[0_0_10px_rgba(166,51,0,0.6)]"></div>
+</div>
+<div class="w-0.5 h-8 bg-surface-container-high my-1"></div>
+</div>
+<div class="flex-grow pt-0.5">
+<h3 class="font-headline font-bold text-primary text-base">Placement des produits</h3>
+</div>
+</div>
+<!-- Step 3: Upcoming -->
+<div class="flex items-start gap-4 opacity-50">
+<div class="flex flex-col items-center mt-0.5">
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center bg-surface">
+</div>
+<div class="w-0.5 h-8 bg-surface-container-high my-1"></div>
+</div>
+<div class="flex-grow pt-0.5">
+<h3 class="font-headline font-medium text-on-surface text-base">Ajustement de l’éclairage</h3>
+</div>
+</div>
+<!-- Step 4: Upcoming -->
+<div class="flex items-start gap-4 opacity-50">
+<div class="flex flex-col items-center mt-0.5">
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center bg-surface">
+</div>
+</div>
+<div class="flex-grow pt-0.5">
+<h3 class="font-headline font-medium text-on-surface text-base">Finalisation du rendu</h3>
+</div>
+</div>
+</div>
+<!-- Reassurance Note -->
+<div class="mt-auto text-center px-4">
+<div class="inline-flex items-center justify-center p-4 rounded-lg bg-surface-container-lowest shadow-[0_10px_30px_-5px_rgba(46,47,45,0.04)]">
+<span class="material-symbols-outlined text-primary-container mr-3" data-icon="hourglass_top">hourglass_top</span>
+<p class="font-body text-sm text-on-surface-variant leading-tight">
+                    Cela peut prendre quelques instants. Merci de patienter pendant la création de votre visualisation.
+                </p>
+</div>
+</div>
+</main>
+</body></html>

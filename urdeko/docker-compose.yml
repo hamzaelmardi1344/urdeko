@@ -1,0 +1,88 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: urdeko-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: urdeko
+      POSTGRES_PASSWORD: urdeko
+      POSTGRES_DB: urdeko
+    ports:
+      # On évite le port 5432 par défaut (souvent déjà pris par un Postgres local).
+      - "${POSTGRES_HOST_PORT:-55432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U urdeko -d urdeko"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    container_name: urdeko-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: urdeko
+      MINIO_ROOT_PASSWORD: urdeko-dev-secret
+    ports:
+      - "${MINIO_HOST_PORT:-59000}:9000"
+      - "${MINIO_CONSOLE_PORT:-59001}:9001"
+    volumes:
+      - minio:/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:9000/minio/health/live"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: urdeko-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      sh -c "
+      mc alias set local http://minio:9000 urdeko urdeko-dev-secret &&
+      mc mb --ignore-existing local/urdeko &&
+      mc anonymous set download local/urdeko &&
+      echo 'Bucket urdeko ready (public read).'
+      "
+
+  inngest:
+    image: inngest/inngest:latest
+    container_name: urdeko-inngest
+    restart: unless-stopped
+    # `inngest dev` démarre le serveur local sans auth (pas de signing key).
+    command:
+      - inngest
+      - dev
+      - --sdk-url
+      - http://host.docker.internal:${WEB_HOST_PORT:-3300}/api/inngest
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8288"
+    ports:
+      - "${INNGEST_HOST_PORT:-58288}:8288"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  redis:
+    image: redis:7-alpine
+    container_name: urdeko-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_HOST_PORT:-56379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
+  minio:

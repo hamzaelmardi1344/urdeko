@@ -1,0 +1,54 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": [
+        "NODE_ENV",
+        "NEXT_PUBLIC_*",
+        "DATABASE_URL",
+        "AUTH_SECRET",
+        "AUTH_URL",
+        "AUTH_EMAIL_FROM",
+        "RESEND_API_KEY",
+        "GEMINI_API_KEY",
+        "GEMINI_TEXT_MODEL",
+        "GEMINI_IMAGE_MODEL",
+        "S3_*",
+        "SANITY_*",
+        "INNGEST_*",
+        "REDIS_URL",
+        "SENTRY_*",
+        "LEGAL_*"
+      ]
+    },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "dependsOn": ["^build"]
+    },
+    "db:push": {
+      "cache": false
+    },
+    "db:studio": {
+      "cache": false,
+      "persistent": true
+    },
+    "scrape": {
+      "cache": false
+    },
+    "seed": {
+      "cache": false
+    }
+  }
+}

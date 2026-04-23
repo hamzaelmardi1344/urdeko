@@ -1,0 +1,11 @@
+{
+  "extends": "@urdeko/tsconfig/base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "ES2022"],
+    "types": ["react"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler"
+  },
+  "include": ["./**/*.ts", "./**/*.tsx"]
+}

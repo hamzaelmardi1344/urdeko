@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UrdeKo - Photo à améliorer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"primary-container": "#ff7949", "on-surface": "#2e2f2d", "primary-dim": "#922c00", "error-dim": "#9f0519", background: "#f8f6f2", error: "#b31b25", "surface-container": "#e9e8e4", "tertiary-fixed": "#ef9dff", "surface-container-low": "#f2f1ec", "on-secondary-container": "#852422", "on-tertiary-container": "#5e1470", "on-tertiary-fixed-variant": "#681f7a", primary: "#a63300", "on-secondary": "#ffefed", tertiary: "#853d97", "on-secondary-fixed-variant": "#912d2b", "on-primary-container": "#451000", "inverse-primary": "#fe6a34", "on-background": "#2e2f2d", "tertiary-container": "#ef9dff", surface: "#f8f6f2", "tertiary-dim": "#78308a", "on-primary": "#ffefeb", "on-error": "#ffefee", "primary-fixed": "#ff7949", "surface-variant": "#deddd8", "on-tertiary": "#ffeefc", "surface-tint": "#a63300", "surface-container-lowest": "#ffffff", "inverse-on-surface": "#9e9d99", "secondary-fixed-dim": "#ffafa9", "on-error-container": "#570008", "surface-container-highest": "#deddd8", outline: "#777774", "on-secondary-fixed": "#6a0f12", "on-tertiary-fixed": "#400050", "secondary-dim": "#902c2a", "on-primary-fixed-variant": "#551600", "inverse-surface": "#0e0e0d", "primary-fixed-dim": "#f7652f", secondary: "#a03834", "outline-variant": "#aeadaa", "error-container": "#fb5151", "tertiary-fixed-dim": "#e190f1", "secondary-container": "#ffc3be", "on-surface-variant": "#5b5c59", "surface-dim": "#d5d4d0", "secondary-fixed": "#ffc3be", "on-primary-fixed": "#000000", "surface-bright": "#f8f6f2", "surface-container-high": "#e4e2de"}, borderRadius: {DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px"}, fontFamily: {headline: ["Manrope"], body: ["Manrope"], label: ["Manrope"], display: "Manrope"}}}};</script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glow-gradient {
+            background: linear-gradient(135deg, theme('colors.primary-container') 0%, theme('colors.primary') 100%);
+        }
+        .ambient-shadow {
+            box-shadow: 0 40px 40px -5px rgba(46, 47, 45, 0.06);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface antialiased min-h-screen pb-32">
+<!-- TopAppBar from JSON -->
+<header class="fixed top-0 w-full z-50 bg-[#f8f6f2]/70 dark:bg-[#1c1b19]/70 backdrop-blur-xl shadow-[0_40px_40px_-5px_rgba(46,47,45,0.06)] no-border bg-[#f2f1ec] dark:bg-[#252422]">
+<div class="flex justify-between items-center h-16 px-6">
+<button class="flex items-center text-[#a63300] dark:text-[#ff7949] hover:opacity-80 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="arrow_back" data-weight="regular">arrow_back</span>
+</button>
+<h1 class="font-['Manrope'] font-bold text-lg tracking-tight text-[#a63300] dark:text-[#ff7949]">Photo à améliorer</h1>
+<div class="w-6 h-6"></div> <!-- Spacer for centering -->
+</div>
+</header>
+<main class="pt-24 px-6 max-w-md mx-auto space-y-8">
+<!-- Main Visual -->
+<div class="relative w-full aspect-[4/3] rounded-lg overflow-hidden ambient-shadow bg-surface-container">
+<img alt="Blurred living room" class="w-full h-full object-cover filter blur-[2px] brightness-75" data-alt="slightly blurred and dark interior photography of a living room, soft muted lighting, slightly imperfect framing" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6oefByzxiijKtWaI6Yr8HeVx-2kvO8oYwyzJxl_HUpS6eh_eC_8Y_wda6tE0cZ9NDEHa21TU234xexkDvNMp20EGOcMU8-8kdZObedpERohwvHkOSBAPe9ki-Q_dcwjxb0RMGTRBaKkaD-Xro7eyfQQ9ddEbGkmc3Ka7toTcxqlRtI8PFErx25c56h1Cl_nWNn6MY-lcMxLuUPREFlqgOnpCKv5IckXWYs713khC9FvdrBKrxA58f89swVJrwOx3fwnbKM5i8QU8"/>
+<div class="absolute inset-0 flex items-center justify-center bg-black/10">
+<div class="bg-surface-container-lowest/80 backdrop-blur-md w-16 h-16 rounded-full flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="info" data-weight="fill" style="font-variation-settings: 'FILL' 1;">info</span>
+</div>
+</div>
+</div>
+<!-- Main Text -->
+<div class="text-center px-4">
+<p class="font-body text-lg leading-relaxed text-on-surface font-medium">
+                Cette photo ne nous permet pas encore de préparer correctement votre espace.
+            </p>
+</div>
+<!-- Reasons List -->
+<div class="bg-surface-container-lowest rounded-lg p-6 ambient-shadow">
+<h2 class="font-headline font-bold text-lg mb-4 text-primary">Raisons possibles :</h2>
+<ul class="space-y-4">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-outline mt-0.5" data-icon="visibility_off">visibility_off</span>
+<span class="font-body text-on-surface-variant">La pièce n’est pas assez visible</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-outline mt-0.5" data-icon="brightness_low">brightness_low</span>
+<span class="font-body text-on-surface-variant">La photo est trop sombre</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-outline mt-0.5" data-icon="crop_free">crop_free</span>
+<span class="font-body text-on-surface-variant">Le cadrage est trop serré</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-outline mt-0.5" data-icon="blur_on">blur_on</span>
+<span class="font-body text-on-surface-variant">L’image est floue</span>
+</li>
+</ul>
+</div>
+<!-- Reminder Block -->
+<div class="bg-surface-container-low rounded-lg p-6">
+<h3 class="font-headline font-bold text-md mb-3 text-on-surface">Pour un meilleur résultat :</h3>
+<ul class="space-y-2">
+<li class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<span class="font-body text-sm text-on-surface">Montrez la pièce en entier</span>
+</li>
+<li class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<span class="font-body text-sm text-on-surface">Privilégiez une photo claire</span>
+</li>
+<li class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<span class="font-body text-sm text-on-surface">Choisissez un format horizontal</span>
+</li>
+</ul>
+</div>
+<!-- Actions -->
+<div class="flex flex-col gap-4 pt-4">
+<button class="w-full bg-[#FF6B35] text-white font-headline font-bold text-lg py-5 rounded-full shadow-[0_8px_20px_-6px_rgba(255,107,53,0.5)] hover:brightness-110 transition-all active:scale-95 duration-200">
+                Prendre une nouvelle photo
+            </button>
+<button class="w-full border-2 border-[#FF6B35] text-[#FF6B35] font-headline font-bold text-md py-4 rounded-full hover:bg-[#FF6B35]/5 transition-colors active:scale-95 duration-200">
+                Choisir une autre image
+            </button>
+<button class="w-full text-[#FF6B35] font-headline text-sm font-bold py-2 hover:underline transition-all">
+                Voir les conseils photo
+            </button>
+</div>
+</main>
+</body></html>

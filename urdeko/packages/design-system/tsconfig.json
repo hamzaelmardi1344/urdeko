@@ -1,0 +1,10 @@
+{
+  "extends": "@urdeko/tsconfig/base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "ES2022"],
+    "types": ["react"],
+    "outDir": "dist"
+  },
+  "include": ["src"]
+}

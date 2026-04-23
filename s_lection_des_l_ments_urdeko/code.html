@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UrdeKo - Choisissez les éléments</title>
+<!-- Google Fonts: Manrope -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-error": "#ffefee", "primary-fixed": "#ff7949", "on-tertiary": "#ffeefc", "surface-dim": "#d5d4d0", "on-surface": "#2e2f2d", background: "#f8f6f2", "on-tertiary-container": "#5e1470", surface: "#f8f6f2", "on-tertiary-fixed-variant": "#681f7a", "on-error-container": "#570008", "surface-tint": "#a63300", "on-surface-variant": "#5b5c59", "on-secondary-fixed": "#6a0f12", outline: "#777774", "secondary-container": "#ffc3be", "tertiary-dim": "#78308a", "error-dim": "#9f0519", "on-primary": "#ffefeb", "tertiary-fixed": "#ef9dff", "inverse-primary": "#fe6a34", "on-primary-fixed-variant": "#551600", "tertiary-container": "#ef9dff", "on-background": "#2e2f2d", "surface-variant": "#deddd8", "inverse-on-surface": "#9e9d99", tertiary: "#853d97", "surface-container": "#e9e8e4", "on-primary-fixed": "#000000", "secondary-fixed": "#ffc3be", "primary-dim": "#922c00", "on-secondary-container": "#852422", "surface-bright": "#f8f6f2", "tertiary-fixed-dim": "#e190f1", "primary-fixed-dim": "#f7652f", error: "#b31b25", "inverse-surface": "#0e0e0d", "surface-container-high": "#e4e2de", "on-tertiary-fixed": "#400050", "surface-container-highest": "#deddd8", "outline-variant": "#aeadaa", "on-secondary": "#ffefed", "error-container": "#fb5151", secondary: "#a03834", "on-primary-container": "#451000", "surface-container-lowest": "#ffffff", "secondary-dim": "#902c2a", primary: "#a63300", "primary-container": "#ff7949", "on-secondary-fixed-variant": "#912d2b", "surface-container-low": "#f2f1ec", "secondary-fixed-dim": "#ffafa9"}, borderRadius: {DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px"}, fontFamily: {headline: ["Manrope"], body: ["Manrope"], label: ["Manrope"], display: "Manrope"}}}};</script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body antialiased min-h-screen relative flex flex-col selection:bg-primary-container selection:text-white">
+<!-- Shared Component: TopAppBar -->
+<header class="bg-[#f8f6f2]/70 dark:bg-[#2e2f2d]/70 backdrop-blur-xl font-manrope font-bold tracking-tight text-lg docked full-width top-0 sticky shadow-none flat flex items-center justify-between px-6 py-4 w-full z-50">
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center text-[#a63300] dark:text-[#ff7949] hover:opacity-80 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<h1 class="font-manrope font-black text-[#a63300] dark:text-[#ff7949] tracking-tighter">Select Elements</h1>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 px-6 pt-6 pb-40 w-full max-w-md mx-auto">
+<!-- Header Section -->
+<section class="mb-10">
+<h2 class="font-headline text-[2rem] leading-tight font-extrabold tracking-tight text-on-surface mb-3 pr-4">
+                Choisissez les éléments
+            </h2>
+<p class="font-body text-base text-on-surface-variant leading-relaxed">
+                Sélectionnez les éléments que vous souhaitez intégrer dans votre projet.
+            </p>
+</section>
+<!-- Options Grid -->
+<div class="grid grid-cols-2 gap-4">
+<!-- Item 1: Canapé (Selected) -->
+<div class="group relative flex flex-col cursor-pointer active:scale-95 transition-transform duration-300">
+<div class="relative w-full aspect-[4/5] rounded bg-surface-container-low overflow-hidden ring-[3px] ring-primary-container shadow-[0_10px_30px_-10px_rgba(255,121,73,0.3)]">
+<img alt="Canapé" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="Modern curved modular sofa in warm beige bouclé fabric bathed in natural sunlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD16bVFFN1PpXlNtPYchbRi_HXk4E09sHGFW2FnFEx6OT4yJr9yQc_Jan1TqPlTqQYJkbvYcXvDvb9duCVF5LGJwEnl54MNow73f9qZbvKzQCpJM48UFZIoq55c-KeRCe7BXQH-HEXrSD8SoWs731qex2TKGLY4WRfbW6BvyQYU15CylKKyoSDDFdALFfd-5bGMnFE7GSIwwioXF-CSrzF1x7-0cBZc4aRoq6vXhdOg0Tp020DVFJJ3jBLIQZ230kc0ikFzU3CwEtU"/>
+<!-- Selected Badge -->
+<div class="absolute top-3 right-3 w-7 h-7 rounded-full bg-primary-container text-white flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1; font-weight: 700;">check</span>
+</div>
+</div>
+<div class="pt-3 px-1">
+<span class="font-headline font-bold text-on-surface text-[15px]">Canapé</span>
+</div>
+</div>
+<!-- Item 2: Table basse (Unselected) -->
+<div class="group relative flex flex-col cursor-pointer active:scale-95 transition-transform duration-300">
+<div class="relative w-full aspect-[4/5] rounded bg-surface-container-low overflow-hidden outline outline-1 outline-outline-variant/20 group-hover:outline-outline-variant/50 transition-all">
+<img alt="Table basse" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-90" data-alt="Minimalist travertine coffee table styled with art books and ceramic vase" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCSiQfhS_dnnEKaNULsaDi3QxfAOlIPfcyGhufEmG3yayqRf5x24iPrjKHKQqOZyGMTs6dff0dVO62-hIUA6deSHIsSFvEhSF9g7kJ9cSy1lub50yXvu_Cx2IWdFxbEbz8c41mGEwk4k-Pgf4q5fJWE3_xWUgs9Dnw9kdkaU8L9B1Ry7XUEJwWcFSfo6QKpp3KJEFcaBmzN45FwGTtJ3O5NXaoEzAbm3rD9V_OecKXBmA9N0T2PEGLYM-KCQYLpTCxMNsODEAmn0o"/>
+<div class="absolute inset-0 bg-surface/10 group-hover:bg-transparent transition-colors duration-300"></div>
+</div>
+<div class="pt-3 px-1">
+<span class="font-headline font-semibold text-on-surface-variant text-[15px]">Table basse</span>
+</div>
+</div>
+<!-- Item 3: Tapis (Unselected) -->
+<div class="group relative flex flex-col cursor-pointer active:scale-95 transition-transform duration-300">
+<div class="relative w-full aspect-[4/5] rounded bg-surface-container-low overflow-hidden outline outline-1 outline-outline-variant/20 group-hover:outline-outline-variant/50 transition-all">
+<img alt="Tapis" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-90" data-alt="Textured Moroccan Berber rug with subtle geometric patterns in warm cream tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCw0TsMLG-FvPNZqAWbjG1OBaeUCGBkp7su_QPDhPtcBXXwMKuoLfr1LsgmOCYQdfJZh1FTyuXoGHXmJiAGef6uHzftxFe9cKif6U0VQ47iVLQ4zTBWJCq1j4eWPDvmaKOBbdZdw61vud-6ERCwDwrLSXzsh9oQzkK5ZWH4JAlBUNRcyfkfHqX6P0hgQtMXDbZvkCdrejOH-yfvw3bVxlx1_cqlz2pEMmZmiRuSLzlvJ_wvacwGRXGk4kkSzYIaeAAuO9i2w8MRWw"/>
+<div class="absolute inset-0 bg-surface/10 group-hover:bg-transparent transition-colors duration-300"></div>
+</div>
+<div class="pt-3 px-1">
+<span class="font-headline font-semibold text-on-surface-variant text-[15px]">Tapis</span>
+</div>
+</div>
+<!-- Item 4: Luminaire (Selected) -->
+<div class="group relative flex flex-col cursor-pointer active:scale-95 transition-transform duration-300">
+<div class="relative w-full aspect-[4/5] rounded bg-surface-container-low overflow-hidden ring-[3px] ring-primary-container shadow-[0_10px_30px_-10px_rgba(255,121,73,0.3)]">
+<img alt="Luminaire" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="Sculptural brass pendant light hanging in a softly lit moody interior space" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAa-gd1aMYIT6VlXcnvfQffgntE5ysJzcRDwOUIk1b4n2MVuuv2IC1EweS2ajY3h9dtxFbYCYs0VkHkJJ85EqDL_Z72yst9Ik5yQCHP9DrRzsV8jo0PNvjlHOkc0TE78nX6A75WVeh04TDZuJQU23rlOjdfSvnBsq48d_--guI07ffgRsP76j9sr0U-W_jCsivqlMQscJFvEttqZ5jcAIHTu4PhMubRQ97GW8bRs351mCfQlEEQPq4jEb3_A2WaUIxQmdcO4NCIQSg"/>
+<!-- Selected Badge -->
+<div class="absolute top-3 right-3 w-7 h-7 rounded-full bg-primary-container text-white flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1; font-weight: 700;">check</span>
+</div>
+</div>
+<div class="pt-3 px-1">
+<span class="font-headline font-bold text-on-surface text-[15px]">Luminaire</span>
+</div>
+</div>
+<!-- Item 5: Décoration (Unselected) -->
+<div class="group relative flex flex-col cursor-pointer active:scale-95 transition-transform duration-300">
+<div class="relative w-full aspect-[4/5] rounded bg-surface-container-low overflow-hidden outline outline-1 outline-outline-variant/20 group-hover:outline-outline-variant/50 transition-all">
+<img alt="Décoration" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-90" data-alt="Collection of organic ceramic vases on an oak wooden shelf" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALbV0epXJiDs3ldPYyd2O552a958FRFDCjjK4BhzbNtiHwoQn6iAd0Ufq9RqvZUPTdXKJnYWe5t99GuRnQNWGqy_dYkDfKfVsqNMsZdgT1rsKIva2YYsALYXGlhbngGAKqRa1smZknPIW-El8zyGG68fbvK5ocRnlu6c_sBEc4JHmWsgmheUSRLssE-SbmI5LjvUjrBTkDP4uxVN_j_acqg4pSePhXPA187H29Ep-a9oh8rzXTp9ga8hHfWYtWzIV-VPYAy03IQys"/>
+<div class="absolute inset-0 bg-surface/10 group-hover:bg-transparent transition-colors duration-300"></div>
+</div>
+<div class="pt-3 px-1">
+<span class="font-headline font-semibold text-on-surface-variant text-[15px]">Décoration</span>
+</div>
+</div>
+<!-- Item 6: Meuble TV (Unselected) -->
+<div class="group relative flex flex-col cursor-pointer active:scale-95 transition-transform duration-300">
+<div class="relative w-full aspect-[4/5] rounded bg-surface-container-low overflow-hidden outline outline-1 outline-outline-variant/20 group-hover:outline-outline-variant/50 transition-all">
+<img alt="Meuble TV" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-90" data-alt="Sleek low-profile walnut wood TV console with slatted doors in natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgU7drWcr3iqtkvZ2C3Vv9k_1Z29XW_1V43kyYpBzXv0dThLFtMa_XeAq5tN54NasPAdTPMbEStkNt-6csUSB6CMvIcmWhMEwnklO_9bRNbyxY3rvHnva_At0jS20rR46aSdUoMf_bet3cz_zKICh7b1SBHcTrYF8gCuBBDGAyegumdE42L1vTAePfe6gwhLVVtLHlwuyOsWJEJKiDEBIUKrrWR8Z6-TfsR7agIg7S475Lbmf2i1raO0JUI11k2hWdVwM-y59Ti7c"/>
+<div class="absolute inset-0 bg-surface/10 group-hover:bg-transparent transition-colors duration-300"></div>
+</div>
+<div class="pt-3 px-1">
+<span class="font-headline font-semibold text-on-surface-variant text-[15px]">Meuble TV</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Sticky Counter & CTA Area -->
+<div class="fixed bottom-0 left-0 w-full z-40">
+<!-- Gradient masking for smooth scroll transition -->
+<div class="h-12 w-full bg-gradient-to-t from-surface-container-lowest/90 to-transparent pointer-events-none"></div>
+<div class="bg-surface-container-lowest/80 backdrop-blur-2xl px-6 pt-2 pb-8 rounded-t-[2rem] shadow-[0_-10px_40px_-5px_rgba(46,47,45,0.06)] flex flex-col items-center">
+<!-- Summary Counter -->
+<div class="mb-4 text-center w-full">
+<span class="font-label text-[11px] font-bold tracking-[0.1em] uppercase text-on-surface-variant">
+                    2 éléments sélectionnés
+                </span>
+</div>
+<!-- Primary Action Button -->
+<button class="w-full max-w-md bg-gradient-to-br from-primary-container to-primary text-white font-headline font-bold text-[17px] py-4 px-8 rounded-xl shadow-[0_15px_30px_-5px_rgba(166,51,0,0.25)] hover:opacity-90 active:scale-[0.98] transition-all duration-300 flex justify-center items-center gap-2">
+                Confirmer
+            </button>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UrdeKo - Choisissez votre canapé</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {tertiary: "#853d97", "on-surface-variant": "#5b5c59", "on-error-container": "#570008", "on-secondary": "#ffefed", "inverse-surface": "#0e0e0d", "inverse-primary": "#fe6a34", secondary: "#a03834", "secondary-fixed": "#ffc3be", "surface-tint": "#a63300", "on-secondary-container": "#852422", "on-background": "#2e2f2d", "primary-dim": "#922c00", background: "#f8f6f2", "surface-container-low": "#f2f1ec", "on-secondary-fixed-variant": "#912d2b", "on-tertiary-fixed": "#400050", "outline-variant": "#aeadaa", "on-primary-fixed": "#000000", error: "#b31b25", "surface-container-high": "#e4e2de", "tertiary-fixed": "#ef9dff", "surface-container-highest": "#deddd8", "on-tertiary-fixed-variant": "#681f7a", "error-container": "#fb5151", "on-error": "#ffefee", primary: "#a63300", "surface-variant": "#deddd8", "secondary-container": "#ffc3be", outline: "#777774", "surface-bright": "#f8f6f2", "primary-fixed-dim": "#f7652f", "primary-fixed": "#ff7949", "on-tertiary-container": "#5e1470", "on-surface": "#2e2f2d", surface: "#f8f6f2", "surface-container-lowest": "#ffffff", "tertiary-dim": "#78308a", "on-primary-container": "#451000", "tertiary-fixed-dim": "#e190f1", "surface-dim": "#d5d4d0", "secondary-fixed-dim": "#ffafa9", "on-secondary-fixed": "#6a0f12", "on-primary-fixed-variant": "#551600", "on-tertiary": "#ffeefc", "tertiary-container": "#ef9dff", "primary-container": "#ff7949", "error-dim": "#9f0519", "surface-container": "#e9e8e4", "on-primary": "#ffefeb", "inverse-on-surface": "#9e9d99", "secondary-dim": "#902c2a"}, borderRadius: {DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px"}, fontFamily: {headline: ["Manrope"], body: ["Manrope"], label: ["Manrope"], display: "Manrope"}}}};</script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .glass-panel {
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col md:hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f8f6f2]/70 dark:bg-[#2e2f2d]/70 backdrop-blur-2xl shadow-[0_40px_40px_-5px_rgba(46,47,45,0.06)] flex items-center justify-between px-6 py-4">
+<button class="text-on-surface hover:bg-primary-container/10 transition-colors rounded-full p-2 -ml-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<h1 class="font-headline font-bold text-lg tracking-tight text-on-surface">Choisissez votre canapé</h1>
+<div class="w-10"></div> <!-- Placeholder for balance -->
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow pt-24 pb-48 px-6">
+<!-- Budget Block -->
+<section class="bg-surface-container-lowest rounded-lg p-5 shadow-[0_10px_40px_-5px_rgba(46,47,45,0.06)] mb-8">
+<div class="flex justify-between items-end mb-3">
+<div>
+<p class="font-label uppercase tracking-[0.05em] text-[10px] mb-1 text-on-surface/80">Budget projet</p>
+<p class="font-body font-semibold text-on-surface">10 000 MAD</p>
+</div>
+<div class="text-right">
+<p class="font-label uppercase tracking-[0.05em] text-[10px] mb-1 text-on-surface/80">Il vous reste</p>
+<p class="font-body font-bold text-primary-container text-xl">1 300 MAD</p>
+</div>
+</div>
+<div class="h-[1px] w-full bg-surface-container-low mb-3"></div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<p class="font-label text-sm font-medium text-primary">Statut : Dans le budget</p>
+</div>
+</section>
+<!-- Category Tabs -->
+<div class="flex overflow-x-auto hide-scrollbar gap-3 mb-8 -mx-6 px-6">
+<button class="whitespace-nowrap px-6 py-3 rounded-full bg-primary-container text-on-primary-container font-medium text-sm shadow-[0_10px_20px_-5px_rgba(255,121,73,0.3)]">
+                Canapé
+            </button>
+<button class="whitespace-nowrap px-6 py-3 rounded-full bg-surface-container-highest text-on-surface-variant font-medium text-sm">
+                Table
+            </button>
+<button class="whitespace-nowrap px-6 py-3 rounded-full bg-surface-container-highest text-on-surface-variant font-medium text-sm">
+                Tapis
+            </button>
+<button class="whitespace-nowrap px-6 py-3 rounded-full bg-surface-container-highest text-on-surface-variant font-medium text-sm">
+                Décoration
+            </button>
+</div>
+<!-- Intro Text -->
+<p class="font-body text-base text-on-surface-variant leading-relaxed mb-8">
+            Nous avons sélectionné jusqu’à 3 options adaptées à votre style, votre budget et votre espace.
+        </p>
+<!-- Product List -->
+<div class="space-y-8">
+<!-- Card 1 -->
+<article class="bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_20px_40px_-10px_rgba(46,47,45,0.08)] relative group cursor-pointer border border-transparent hover:border-primary-container/30 transition-all">
+<div class="absolute top-4 left-4 z-10 bg-primary-container text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                    Recommandé
+                </div>
+<div class="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center border border-surface-container-highest"><div class="w-5 h-5 rounded-full bg-primary-container flex items-center justify-center border-2 border-primary-container shadow-sm"><span class="material-symbols-outlined text-white text-[14px] font-bold">check</span></div></div>
+<div class="h-56 bg-surface-container w-full relative overflow-hidden">
+<img alt="Modern stylish sofa" class="w-full h-full object-cover" data-alt="Modern mid-century green sofa in a bright minimal living room with warm sunlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6weNoURFQnv60wd-ZnJARbzjZH0EiUEeG6fz61E9yu2byXi2g_7_GwfRpKGOGyw5SNSsgiBsZYBAQY7Pd97XVpBLMb77WWpcR0XAxnAnYHA6N0VQuVAqjTBsdrqxwbPlgGU821JQShBQEeS-NJYoXCI8DWsEA32Zs4g0m3VtCNkoNfTvB2lxj7ucBZpTKlzFv246B1I_V6UMg2K4wloGfiE7AFyEaBQ2QeeI7Md-w604AuGrU3ETdMLn60skfYlAgTV75H49dJ_g"/>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface">Canapé Noma</h3>
+<p class="font-label text-sm text-on-surface">Luxe Interior</p>
+</div>
+<p class="font-headline font-bold text-primary-container text-lg">4 500 MAD</p>
+</div>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_20px_40px_-10px_rgba(46,47,45,0.05)] relative cursor-pointer">
+<div class="absolute top-4 left-4 z-10 bg-surface-container-highest text-on-surface px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                    Économique
+                </div>
+<div class="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center border border-surface-container-highest">
+<div class="w-4 h-4 rounded-full border-2 border-outline-variant"></div>
+</div>
+<div class="h-56 bg-surface-container w-full relative overflow-hidden">
+<img alt="Minimalist sofa" class="w-full h-full object-cover" data-alt="Clean minimalist light grey sofa against a white wall with subtle shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAt6n7kqal6UgzCDngN3H1zny0FLY2_3-AKbQ9i_efa_OZpzAAcQyohibW63MMHBcp-SWMTAYEEwYlWygBf4YuBuWd6ME8CxSLE2EI8VpJZcggL11wE7cqLoSr2CoSN2dh6QAiXNI3jyefvjNn88hD7R5cPydEoSx7vTIlrD27VKd17KeFfRTpuDhiwkG-dbQOxF7mDTKduytE78Vyfqj4DdwdVGQsHtvHIVlBrW5q_V4NUiDRcxQk8kZl_dL4NjTE7BSG3MOoxrDo"/>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface">Sofa Linear</h3>
+<p class="font-label text-sm text-on-surface">Artisans</p>
+</div>
+<p class="font-headline font-bold text-primary-container text-lg">3 200 MAD</p>
+</div>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_20px_40px_-10px_rgba(46,47,45,0.05)] relative cursor-pointer opacity-70 border-surface-container-high border-2">
+<div class="absolute top-4 left-4 z-10 bg-error-container px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white">
+                    Hors budget
+                </div>
+<div class="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center border border-surface-container-highest">
+<div class="w-4 h-4 rounded-full border-2 border-outline-variant"></div>
+</div>
+<div class="h-56 bg-surface-container w-full relative overflow-hidden">
+<img alt="Elegant velvet sofa" class="w-full h-full object-cover grayscale-[60%]" data-alt="Luxurious deep blue velvet tufted sofa in a dark moody dramatic room setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqxKh1r0pIaN948Qp5TLtfVYDKB20mraLuTzh3lIdsnztKu1hfZl0BDKgOTnR0dHGbpenDtf-09ScYSkPRpM8ZpLCEgja8Fq3cdfZPyGfjYKS0rXienXeHuMtQl5qTlH_e3TXDNje4TOUd9RGwO3vhMeqQs5L8fTfuCBevVATqIwXIKJ7jlaYtbvLq2BmMmhAXgMi1NTHQRiJVPr5V4FL-fyHs7Qnezk9bnZGqp-WAxidqN7k5JvDCErQOELi-dpXN_AVQYxLJOvE"/>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface">Canapé Royal</h3>
+<p class="font-label text-sm text-on-surface">Premium Deco</p>
+</div>
+<p class="font-headline font-bold text-error text-lg">6 800 MAD</p>
+</div>
+</div>
+</article>
+</div>
+</main>
+<!-- Selection Summary Sticky Bottom -->
+<div class="fixed bottom-0 left-0 w-full glass-panel z-40 rounded-t-[2rem] shadow-[0_-20px_40px_rgba(0,0,0,0.05)] border-t border-surface-container-highest/30 pb-safe pt-6 px-6">
+<div class="grid grid-cols-2 gap-y-3 gap-x-4 mb-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary-container" style="font-variation-settings: 'FILL' 1;">chair</span>
+<span class="font-label text-xs text-on-surface font-medium">Canapé : <span class="font-bold">Noma</span></span>
+</div>
+<div class="flex items-center gap-2 opacity-50">
+<span class="material-symbols-outlined text-sm text-on-surface-variant">table_restaurant</span>
+<span class="font-label text-xs text-on-surface-variant">Table : non choisie</span>
+</div>
+<div class="flex items-center gap-2 opacity-50">
+<span class="material-symbols-outlined text-sm text-on-surface-variant">layers</span>
+<span class="font-label text-xs text-on-surface-variant">Tapis : non choisi</span>
+</div>
+<div class="flex items-center gap-2 opacity-50">
+<span class="material-symbols-outlined text-sm text-on-surface-variant">light</span>
+<span class="font-label text-xs text-on-surface-variant">Décoration : non choisie</span>
+</div>
+</div>
+<button class="w-full mb-6 py-4 rounded-xl bg-gradient-to-br from-primary-container to-primary text-white font-headline font-bold text-lg shadow-[0_10px_20px_-5px_rgba(255,121,73,0.4)] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+            Voir les tables
+            <span class="material-symbols-outlined text-xl">arrow_forward</span>
+</button>
+</div>
+</body></html>
