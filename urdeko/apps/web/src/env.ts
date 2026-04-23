@@ -88,7 +88,11 @@ const envSchema = z.object({
 
 // SKIP_ENV_VALIDATION=1 permet les builds CI/CD sans fournir toutes les clés
 // (la validation reste stricte au démarrage du serveur applicatif).
-const SKIP_VALIDATION = process.env.SKIP_ENV_VALIDATION === "1";
+// On skippe aussi automatiquement pendant `next build` via NEXT_PHASE (plus
+// fiable que d'hériter de SKIP_ENV_VALIDATION dans les workers Next 15).
+const SKIP_VALIDATION =
+  process.env.SKIP_ENV_VALIDATION === "1" ||
+  process.env.NEXT_PHASE === "phase-production-build";
 
 const parsed = envSchema.safeParse(process.env);
 
