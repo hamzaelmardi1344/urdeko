@@ -10,7 +10,6 @@ import {
 import { analyzePhoto, emptyRoom, renderFinal, writeAdvice } from "../ai/gemini";
 import { uploadObject } from "../storage";
 import { getProduct } from "../catalogue";
-import { notifyRenderReady } from "../email/notifyRenderReady";
 import { inngest } from "./client";
 
 // =====================================================================
@@ -149,6 +148,7 @@ export const renderProjectJob = inngest.createFunction(
         });
         await db.update(projects).set({ status: "completed" }).where(eq(projects.id, projectId));
         await completeJob(jobId, { imageUrl: uploaded.url });
+        const { notifyRenderReady } = await import("../email/notifyRenderReady");
         await notifyRenderReady(projectId);
       } catch (error) {
         await db.update(projects).set({ status: "failed" }).where(eq(projects.id, projectId));

@@ -1,22 +1,29 @@
-import type { JSX, ReactNode } from "react";
-
-type HtmlProps = JSX.IntrinsicElements["html"];
-type HeadProps = JSX.IntrinsicElements["head"];
+import { createElement, type ReactNode } from "react";
+import type { HTMLAttributes } from "react";
 
 /**
- * Enveloppe email sans importer `Html` / `Head` depuis `@react-email/components` :
- * certains builds Next résolvent `Html` vers `next/document` et déclenchent useHtmlContext().
+ * Enveloppes email : `createElement('html' | 'head', …)` plutôt que du JSX, pour
+ * que Next ne les associe pas au chemin `next/document` (useHtmlContext) lors
+ * du static generation des pages d’erreur.
  */
-export function UrdekoEmailDocument({ children, ...rest }: HtmlProps) {
-  return <html {...rest}>{children as ReactNode}</html>;
+type HtmlEl = HTMLAttributes<HTMLHtmlElement>;
+type HeadEl = HTMLAttributes<HTMLHeadElement>;
+
+export function UrdekoEmailDocument({ children, ...rest }: HtmlEl) {
+  return createElement("html", rest, children as ReactNode);
 }
 
-export function UrdekoEmailHead({ children, ...rest }: HeadProps) {
-  return (
-    <head {...rest}>
-      <meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
-      <meta name="x-apple-disable-message-reformatting" />
-      {children as ReactNode}
-    </head>
-  );
+export function UrdekoEmailHead({ children, ...rest }: HeadEl) {
+  return createElement("head", rest, [
+    createElement("meta", {
+      key: "ct",
+      httpEquiv: "Content-Type",
+      content: "text/html; charset=UTF-8",
+    }),
+    createElement("meta", {
+      key: "xapple",
+      name: "x-apple-disable-message-reformatting",
+    }),
+    children as ReactNode,
+  ]);
 }
