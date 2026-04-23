@@ -1,12 +1,13 @@
 import withPWA from "next-pwa";
 import { withSentryConfig } from "@sentry/nextjs";
 
-// DISABLE_PWA=1 permet de désactiver next-pwa pour débugger un build cassé.
-// En dev, il est déjà désactivé par défaut (next-pwa bypass).
+// next-pwa@5.6 + Next 15 (App Router only) injecte du code dans le pages router
+// (chunk `_document` / `_error`) → casse le prerender de /404.
+// Désactivé par défaut, opt-in via ENABLE_PWA=1.
+const pwaEnabled = process.env.ENABLE_PWA === "1";
 const pwa = withPWA({
   dest: "public",
-  disable:
-    process.env.NODE_ENV === "development" || process.env.DISABLE_PWA === "1",
+  disable: !pwaEnabled || process.env.NODE_ENV === "development",
   register: true,
   skipWaiting: true,
   // Le plugin workbox de next-pwa 5.6 a des soucis avec certaines routes
@@ -17,7 +18,7 @@ const pwa = withPWA({
 /** @type {import("next").NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Image Docker minimale (Northflank, Fly, etc.) : trace les deps serveur.
+  // Image Docker minimale (Fly.io, Railway, k8s, etc.) : trace les deps serveur.
   output: "standalone",
   transpilePackages: ["@urdeko/design-system"],
   images: {
@@ -47,13 +48,16 @@ const nextConfig = {
 
 const withPwa = pwa(nextConfig);
 
-// On enveloppe avec Sentry uniquement si un DSN est configuré, pour
-// éviter d'échouer le build local si l'utilisateur n'a pas encore
-// provisionné Sentry.
-const sentryEnabled = Boolean(
-  process.env.NEXT_PUBLIC_SENTRY_DSN &&
-    !process.env.NEXT_PUBLIC_SENTRY_DSN.startsWith("https://dummy"),
-);
+// Sentry est opt-in via ENABLE_SENTRY=1 + DSN. Le wrapper SDK v8 instrumente
+// le pages router (`_document` / `_error`) ce qui peut casser le prerender de
+// /404 sur un projet App-Router-only ; on évite tant qu’on n’a pas migré vers
+// `app/global-error.tsx` + `Sentry.captureRouterTransitionStart` côté client.
+const sentryEnabled =
+  process.env.ENABLE_SENTRY === "1" &&
+  Boolean(
+    process.env.NEXT_PUBLIC_SENTRY_DSN &&
+      !process.env.NEXT_PUBLIC_SENTRY_DSN.startsWith("https://dummy"),
+  );
 
 export default sentryEnabled
   ? withSentryConfig(withPwa, {
@@ -64,5 +68,9 @@ export default sentryEnabled
       widenClientFileUpload: true,
       hideSourceMaps: true,
       disableLogger: true,
+      sourcemaps: { deleteSourcemapsAfterUpload: true },
+      autoInstrumentServerFunctions: false,
+      autoInstrumentMiddleware: false,
+      excludeServerRoutes: ["/_error", "/404", "/500"],
     })
   : withPwa;
