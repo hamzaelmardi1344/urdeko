@@ -2,10 +2,10 @@ import {
   Body,
   Button,
   Container,
-  Head,
+  Head as EmailHead,
   Heading,
   Hr,
-  Html,
+  Html as EmailRoot,
   Img,
   Preview,
   Section,
@@ -28,8 +28,8 @@ export function RenderReady({
   advice,
 }: Props) {
   return (
-    <Html lang="fr">
-      <Head />
+    <EmailRoot lang="fr">
+      <EmailHead />
       <Preview>Votre rendu UrdeKo "{projectName}" est prêt</Preview>
       <Body
         style={{
@@ -85,7 +85,7 @@ export function RenderReady({
           </Text>
         </Container>
       </Body>
-    </Html>
+    </EmailRoot>
   );
 }
 

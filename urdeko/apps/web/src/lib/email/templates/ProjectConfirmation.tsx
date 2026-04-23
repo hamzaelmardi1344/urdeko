@@ -1,9 +1,9 @@
 import {
   Body,
   Container,
-  Head,
+  Head as EmailHead,
   Heading,
-  Html,
+  Html as EmailRoot,
   Preview,
   Section,
   Text,
@@ -17,8 +17,8 @@ export function ProjectConfirmation({
   projectName: string;
 }) {
   return (
-    <Html lang="fr">
-      <Head />
+    <EmailRoot lang="fr">
+      <EmailHead />
       <Preview>Votre projet UrdeKo "{projectName}" est en cours de génération</Preview>
       <Body
         style={{
@@ -39,7 +39,7 @@ export function ProjectConfirmation({
           </Section>
         </Container>
       </Body>
-    </Html>
+    </EmailRoot>
   );
 }
 
