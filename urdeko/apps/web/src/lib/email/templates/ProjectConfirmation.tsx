@@ -1,13 +1,12 @@
 import {
   Body,
   Container,
-  Head as EmailHead,
   Heading,
-  Html as EmailRoot,
   Preview,
   Section,
   Text,
 } from "@react-email/components";
+import { UrdekoEmailDocument, UrdekoEmailHead } from "../shell";
 
 export function ProjectConfirmation({
   firstName,
@@ -17,8 +16,8 @@ export function ProjectConfirmation({
   projectName: string;
 }) {
   return (
-    <EmailRoot lang="fr">
-      <EmailHead />
+    <UrdekoEmailDocument lang="fr">
+      <UrdekoEmailHead />
       <Preview>Votre projet UrdeKo "{projectName}" est en cours de génération</Preview>
       <Body
         style={{
@@ -39,7 +38,7 @@ export function ProjectConfirmation({
           </Section>
         </Container>
       </Body>
-    </EmailRoot>
+    </UrdekoEmailDocument>
   );
 }
 

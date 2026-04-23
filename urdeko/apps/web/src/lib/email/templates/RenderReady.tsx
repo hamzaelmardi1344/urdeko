@@ -2,15 +2,14 @@ import {
   Body,
   Button,
   Container,
-  Head as EmailHead,
   Heading,
   Hr,
-  Html as EmailRoot,
   Img,
   Preview,
   Section,
   Text,
 } from "@react-email/components";
+import { UrdekoEmailDocument, UrdekoEmailHead } from "../shell";
 
 type Props = {
   firstName: string;
@@ -28,8 +27,8 @@ export function RenderReady({
   advice,
 }: Props) {
   return (
-    <EmailRoot lang="fr">
-      <EmailHead />
+    <UrdekoEmailDocument lang="fr">
+      <UrdekoEmailHead />
       <Preview>Votre rendu UrdeKo "{projectName}" est prêt</Preview>
       <Body
         style={{
@@ -85,7 +84,7 @@ export function RenderReady({
           </Text>
         </Container>
       </Body>
-    </EmailRoot>
+    </UrdekoEmailDocument>
   );
 }
 
