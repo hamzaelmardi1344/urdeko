@@ -1,0 +1,2 @@
+# Cache pnpm (ne jamais versionner — volumineux et reproductible avec pnpm install)
+.pnpm-store/

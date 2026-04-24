@@ -1,3 +1,4 @@
+import { after } from "next/server";
 import { db } from "../db/client";
 import { jobs } from "../db/schema";
 import { env } from "@/env";
@@ -6,16 +7,14 @@ import { env } from "@/env";
 // Mini file de jobs sans broker externe (remplace Inngest).
 //
 // Pourquoi ce design :
-//   1. On insère le job en DB (status=queued) — c'est la source de vérité,
-//      utilisée par /api/projects/[id]/jobs pour le polling client.
-//   2. On lance un fetch fire-and-forget vers /api/jobs/run avec le jobId.
-//      L'init de la requête HTTP est synchrone (la connexion TCP s'ouvre
-//      avant que la function caller termine), donc Vercel ne kill pas
-//      l'appel sortant même si la server action retourne immédiatement.
-//   3. Le route handler /api/jobs/run a maxDuration:300 (Pro) et exécute
-//      le job synchroniquement.
-//   4. Authentifié via INTERNAL_JOB_SECRET pour qu'on ne puisse pas le
-//      déclencher depuis l'extérieur.
+//   1. On insère le job en DB (status=queued) — source de vérité pour le
+//      polling client (/api/projects/[id]/jobs).
+//   2. On déclenche /api/jobs/run (POST) avec INTERNAL_JOB_SECRET pour
+//      exécuter le job dans une invocation avec maxDuration:300.
+//   3. Le dispatch est planifié via `after()` : sans ça, un fetch « fire and
+//      forget » lancé depuis runJob() (chaînage analyze → empty_room) ou
+//      depuis une Server Action est souvent **coupé** quand la fonction
+//      serverless se termine — le job reste bloqué en « queued » à l’infini.
 // =====================================================================
 
 export type JobKind = "analyze_photo" | "empty_room" | "render";
@@ -43,19 +42,28 @@ export async function enqueueJob<K extends JobKind>(input: {
     .returning({ id: jobs.id });
   if (!row) throw new Error("enqueue failed");
 
+  const jobId = row.id;
   const url = `${env.AUTH_URL.replace(/\/$/, "")}/api/jobs/run`;
-  fetch(url, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-internal-secret": env.INTERNAL_JOB_SECRET,
-    },
-    body: JSON.stringify({ jobId: row.id }),
-    cache: "no-store",
-    keepalive: true,
-  }).catch((e) => {
-    console.error("[jobs] dispatch fetch failed", e);
+
+  after(async () => {
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-internal-secret": env.INTERNAL_JOB_SECRET,
+        },
+        body: JSON.stringify({ jobId }),
+        cache: "no-store",
+      });
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        console.error("[jobs] dispatch HTTP", res.status, text);
+      }
+    } catch (e) {
+      console.error("[jobs] dispatch fetch failed", e);
+    }
   });
 
-  return row.id;
+  return jobId;
 }
