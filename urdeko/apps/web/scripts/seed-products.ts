@@ -34,6 +34,27 @@ function assertSeedEnv(): void {
   }
 }
 
+/** Sous-domaines *.localhost : souvent résolus par le navigateur, pas par Node (ENOTFOUND). */
+function assertNoSubdomainLocalhost(): void {
+  for (const key of ["DATABASE_URL", "S3_ENDPOINT", "S3_PUBLIC_URL"] as const) {
+    const raw = process.env[key];
+    if (!raw) continue;
+    try {
+      const { hostname } = new URL(raw);
+      if (/^.+\.localhost$/i.test(hostname)) {
+        throw new Error(
+          `[seed] ${key} utilise l’hôte « ${hostname} » : Node (tsx) ne le résout en général pas → getaddrinfo ENOTFOUND.\n` +
+            `Dans apps/web/.env.local, remplace cet hôte par 127.0.0.1 ou localhost ` +
+            `(ex. postgresql://urdeko:urdeko@127.0.0.1:55432/urdeko, ` +
+            `http://127.0.0.1:59000/… pour MinIO).`,
+        );
+      }
+    } catch (e) {
+      if (e instanceof Error && e.message.startsWith("[seed]")) throw e;
+    }
+  }
+}
+
 // =====================================================================
 // Bootstrap catalogue : insère 20 produits curated réels (marques
 // marocaines + images libres Pexels) pour que le flow produit fonctionne
@@ -391,6 +412,7 @@ async function upsert(
 
 async function run(): Promise<void> {
   assertSeedEnv();
+  assertNoSubdomainLocalhost();
   const [{ db }, { uploadObject }] = await Promise.all([
     import("@/lib/db/client"),
     import("@/lib/storage"),
