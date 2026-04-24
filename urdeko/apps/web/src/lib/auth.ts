@@ -84,10 +84,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    session({ session, token }) {
-      if (token.sub) {
-        session.user.id = token.sub;
+    jwt({ token, user }) {
+      // Premier sign-in : persister profil dans le JWT pour les requêtes suivantes.
+      if (user) {
+        token.sub = user.id;
+        if (user.email) token.email = user.email;
+        if (user.name) token.name = user.name;
       }
+      return token;
+    },
+    session({ session, token }) {
+      if (token.sub) session.user.id = token.sub;
+      // Indispensable pour ADMIN_EMAILS / requireAdmin : sans ça, user.email est
+      // souvent absent en JWT alors que le client le voit par d’autres chemins.
+      if (typeof token.email === "string") session.user.email = token.email;
+      if (typeof token.name === "string") session.user.name = token.name;
       return session;
     },
   },
