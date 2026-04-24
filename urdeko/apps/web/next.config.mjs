@@ -48,10 +48,10 @@ const nextConfig = {
 
 const withPwa = pwa(nextConfig);
 
-// Sentry est opt-in via ENABLE_SENTRY=1 + DSN. Le wrapper SDK v8 instrumente
-// le pages router (`_document` / `_error`) ce qui peut casser le prerender de
-// /404 sur un projet App-Router-only ; on évite tant qu’on n’a pas migré vers
-// `app/global-error.tsx` + `Sentry.captureRouterTransitionStart` côté client.
+// Sentry est opt-in via ENABLE_SENTRY=1 + DSN. Le wrapper SDK v8 a besoin de
+// `app/global-error.tsx` côté App Router pour ne pas faire échouer le prerender
+// de /404 (sinon Next bascule sur le `_error` Pages Router et crashe avec
+// `<Html> should not be imported outside of pages/_document`).
 const sentryEnabled =
   process.env.ENABLE_SENTRY === "1" &&
   Boolean(
