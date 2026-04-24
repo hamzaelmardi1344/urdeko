@@ -69,6 +69,7 @@ export async function selectRoomTypeAction(projectId: string, formData: FormData
 
 // ---------------------------------------------------------------
 // 3. Upload photo + dispatch analyse IA
+// (Le client compresse avant envoi : Vercel ~4,5 Mo max sur le corps de la requête.)
 // ---------------------------------------------------------------
 
 async function currentIdentity(): Promise<string> {

@@ -1,15 +1,16 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useRef, useState } from "react";
 import { Icon } from "@urdeko/design-system";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { uploadProjectPhotoAction } from "@/lib/actions";
+import { compressImageFileForUpload } from "@/lib/flow/compress-image-client";
 
 export function PhotoUploader({ projectId }: { projectId: string }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
+  const [pending, setPending] = useState(false);
 
   const onFile = (file: File | undefined) => {
     if (!file) return;
@@ -25,24 +26,30 @@ export function PhotoUploader({ projectId }: { projectId: string }) {
     setPreview(URL.createObjectURL(file));
   };
 
-  const submit = () => {
+  const submit = async () => {
     const files = inputRef.current?.files;
     if (!files?.[0]) {
       setError("Ajoute une photo avant de continuer.");
       return;
     }
-    const formData = new FormData();
-    formData.append("photo", files[0]);
-    startTransition(() => {
-      void uploadProjectPhotoAction(projectId, formData);
-    });
+    setError(null);
+    setPending(true);
+    try {
+      const file = await compressImageFileForUpload(files[0]);
+      const formData = new FormData();
+      formData.append("photo", file);
+      await uploadProjectPhotoAction(projectId, formData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Envoi impossible, réessaie.");
+      setPending(false);
+    }
   };
 
   return (
     <form
       onSubmit={(event) => {
         event.preventDefault();
-        submit();
+        void submit();
       }}
       className="flex flex-col gap-6"
     >
@@ -71,7 +78,7 @@ export function PhotoUploader({ projectId }: { projectId: string }) {
               Touchez pour ajouter une photo
             </p>
             <p className="text-center text-sm text-on-surface-variant/80">
-              JPG, PNG, HEIC — jusqu'à 20 Mo
+              JPG, PNG, HEIC — jusqu&apos;à 20 Mo (réduction auto avant envoi si besoin)
             </p>
           </>
         )}
