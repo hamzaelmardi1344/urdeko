@@ -2,6 +2,7 @@
 
 ## Comptes / accès
 
+- **`ADMIN_EMAILS` (Vercel)** : liste des emails autorisés pour `/admin`, **minuscules**, séparés par des virgules, sans espaces autour (ex. `hamza@gmail.com`). Doit **coller exactement** à l’email avec lequel tu te connectes (magic link). Sinon tu es redirigé vers `/acces-admin-refuse`.
 - App Vercel : `urdeko-web`
 - DB : Neon `urdeko-prod` (lecture/écriture via psql)
 - Catalogue : table Postgres `products` (admin via `/admin/produits`)

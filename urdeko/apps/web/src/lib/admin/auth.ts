@@ -23,7 +23,9 @@ export async function requireAdmin(opts: { redirectOnFail?: boolean } = {}) {
   const allowed = Boolean(email && env.ADMIN_EMAILS.includes(email));
   if (!allowed) {
     if (redirectOnFail) {
-      redirect(email ? "/" : `/connexion?next=${encodeURIComponent("/admin")}`);
+      redirect(
+        email ? "/acces-admin-refuse" : `/connexion?next=${encodeURIComponent("/admin")}`,
+      );
     }
     throw new AdminForbiddenError();
   }
