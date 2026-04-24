@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { jobs } from "@/lib/db/schema";
+import { getPhotoEmptyRoomPipelineStatus } from "@/lib/jobs/photo-pipeline-status";
 import { ForbiddenError, assertProjectAccess } from "@/lib/projects";
 
 export async function GET(
@@ -18,6 +19,12 @@ export async function GET(
     throw error;
   }
   const url = new URL(request.url);
+  const pipeline = url.searchParams.get("pipeline");
+  if (pipeline === "photo_emptied") {
+    const merged = await getPhotoEmptyRoomPipelineStatus(id);
+    return NextResponse.json(merged);
+  }
+
   const kind = url.searchParams.get("kind");
   const where = kind
     ? and(eq(jobs.projectId, id), eq(jobs.kind, kind))

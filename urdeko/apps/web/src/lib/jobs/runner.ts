@@ -28,6 +28,10 @@ import { enqueueJob, type JobKind, type JobPayload } from "./dispatch";
 
 type JobPayloadOf<K extends JobKind> = JobPayload[K];
 
+async function bumpJobProgress(jobId: string, progress: number): Promise<void> {
+  await db.update(jobs).set({ progress }).where(eq(jobs.id, jobId));
+}
+
 function getPayload<K extends JobKind>(job: Job, _kind: K): JobPayloadOf<K> {
   const stored = (job.resultJson ?? {}) as { payload?: JobPayloadOf<K> };
   if (!stored.payload) {
@@ -79,6 +83,7 @@ async function handleAnalyzePhoto(job: Job): Promise<void> {
   // tout le pipeline, on passe à empty_room avec des conseils par défaut.
   let analysis;
   try {
+    await bumpJobProgress(job.id, 22);
     analysis = await analyzePhoto(originalUrl);
   } catch (error) {
     console.error("[jobs:analyze_photo] fallback: analyse Gemini échouée", error);
@@ -95,16 +100,19 @@ async function handleAnalyzePhoto(job: Job): Promise<void> {
         "Analyse automatique indisponible pour cette photo. Nous continuons avec les réglages par défaut.",
     };
   }
+  await bumpJobProgress(job.id, 58);
 
   await db
     .update(projectPhotos)
     .set({ analysisJson: analysis })
     .where(eq(projectPhotos.id, photoId));
+  await bumpJobProgress(job.id, 78);
   await db
     .update(projects)
     .set({ status: "photo_ok" })
     .where(eq(projects.id, projectId));
 
+  await bumpJobProgress(job.id, 94);
   await completeJob(job.id, analysis);
 
   await enqueueJob({
@@ -117,7 +125,9 @@ async function handleAnalyzePhoto(job: Job): Promise<void> {
 async function handleEmptyRoom(job: Job): Promise<void> {
   const { projectId, photoId, originalUrl } = getPayload(job, "empty_room");
 
+  await bumpJobProgress(job.id, 18);
   const { base64, mimeType } = await emptyRoom(originalUrl);
+  await bumpJobProgress(job.id, 78);
   const { url } = await uploadObject({
     buffer: Buffer.from(base64, "base64"),
     contentType: mimeType,
@@ -142,6 +152,7 @@ async function handleRender(job: Job): Promise<void> {
   }
 
   try {
+    await bumpJobProgress(job.id, 14);
     const image = await renderFinal({
       emptiedUrl: context.emptiedUrl,
       productImages: context.productImages,
@@ -149,17 +160,20 @@ async function handleRender(job: Job): Promise<void> {
       palette: context.palette,
       roomType: context.roomType,
     });
+    await bumpJobProgress(job.id, 42);
     const uploaded = await uploadObject({
       buffer: Buffer.from(image.base64, "base64"),
       contentType: image.mimeType,
       keyPrefix: `projects/${projectId}/renders`,
       extension: image.mimeType === "image/png" ? ".png" : ".jpg",
     });
+    await bumpJobProgress(job.id, 62);
     const advice = await writeAdvice({
       style: context.style,
       palette: context.palette,
       products: context.productImages.map((p) => ({ category: p.category, name: p.name })),
     });
+    await bumpJobProgress(job.id, 84);
     await db.insert(projectRenders).values({
       projectId,
       imageUrl: uploaded.url,

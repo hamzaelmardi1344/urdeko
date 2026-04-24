@@ -36,12 +36,19 @@ export function PreparationScreen({
         ];
 
   return (
-    <JobPoller projectId={projectId} kind={targetKind} redirectTo={redirectTo}>
+    <JobPoller
+      projectId={projectId}
+      kind={targetKind}
+      pipeline={targetKind === "empty_room" ? "photo_emptied" : undefined}
+      redirectTo={redirectTo}
+    >
       {(state) => {
-        const progress = state.status === "succeeded" ? 100 : Math.max(state.progress, 8);
+        const progress = state.status === "succeeded" ? 100 : Math.min(99, Math.round(state.progress));
         const activeStep = Math.min(
           analysisSteps.length - 1,
-          Math.floor((progress / 100) * analysisSteps.length),
+          typeof state.stepIndex === "number"
+            ? state.stepIndex
+            : Math.floor((progress / 100) * analysisSteps.length),
         );
 
         return (
