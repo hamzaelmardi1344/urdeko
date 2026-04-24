@@ -329,7 +329,7 @@ if [ "$DO_BUILD" = "1" ]; then
   fi
 
   # Nettoyage systématique : un .next partiel d'un run précédent échoué
-  # provoque des PageNotFoundError sur /_not-found avec Next 15 + next-pwa.
+  # provoque des PageNotFoundError sur /_not-found avec Next 15.
   log "Nettoyage du cache .next (évite les manifestes stales)"
   # Un next dev/build toujours en cours garde .next verrouillé → on le tue.
   if pgrep -f "next (dev|build)" >/dev/null 2>&1; then
@@ -374,7 +374,7 @@ if [ "$DO_BUILD" = "1" ]; then
   if env ${build_env[@]+"${build_env[@]}"} pnpm --filter @urdeko/web build; then
     ok "Build Next.js OK (.next/)"
   else
-    err "Build échoué. Retente avec DISABLE_PWA=1 env var si next-pwa est en cause."
+    err "Build échoué. Vérifie les logs ci-dessus."
     exit 1
   fi
 else
