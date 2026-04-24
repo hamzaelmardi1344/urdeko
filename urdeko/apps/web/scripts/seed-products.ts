@@ -1,10 +1,38 @@
 /* eslint-disable no-console */
-import "dotenv/config";
+import { config as loadEnv } from "dotenv";
 import { setTimeout as delay } from "node:timers/promises";
 import { sql } from "drizzle-orm";
-import { db } from "@/lib/db/client";
+import type { DB } from "@/lib/db/client";
 import { products as productsTable } from "@/lib/db/schema";
-import { uploadObject } from "@/lib/storage";
+
+// drizzle-kit charge .env.local avant le schéma ; ici on fait pareil.
+// Sans ça, les imports de @/lib/db/client et @/lib/storage exécutent env.ts
+// avant que dotenv n'ait rempli process.env → erreur « Required ».
+loadEnv({ path: ".env.local" });
+loadEnv({ path: ".env" });
+process.env.SKIP_ENV_VALIDATION ??= "1";
+process.env.S3_REGION ??= "auto";
+process.env.S3_FORCE_PATH_STYLE ??= "false";
+
+const SEED_REQUIRED = [
+  "DATABASE_URL",
+  "S3_ENDPOINT",
+  "S3_ACCESS_KEY_ID",
+  "S3_SECRET_ACCESS_KEY",
+  "S3_BUCKET",
+  "S3_PUBLIC_URL",
+] as const;
+
+function assertSeedEnv(): void {
+  const missing = SEED_REQUIRED.filter((k) => !process.env[k]?.trim());
+  if (missing.length) {
+    throw new Error(
+      `[seed] Variables manquantes : ${missing.join(", ")}.\n` +
+        `Renseigne-les dans apps/web/.env.local (ou exporte-les), puis relance.\n` +
+        `Le seed n'a besoin que de Postgres + S3, pas de Redis/Gemini/Resend.`,
+    );
+  }
+}
 
 // =====================================================================
 // Bootstrap catalogue : insère 20 produits curated réels (marques
@@ -296,7 +324,13 @@ async function fetchImage(url: string): Promise<Buffer> {
   return Buffer.from(await res.arrayBuffer());
 }
 
-async function upsert(product: SeedProduct): Promise<void> {
+type UploadObjectFn = (typeof import("@/lib/storage"))["uploadObject"];
+
+async function upsert(
+  product: SeedProduct,
+  db: DB,
+  uploadObject: UploadObjectFn,
+): Promise<void> {
   const id = `urdeko_bootstrap_${product.slug}`;
 
   const existing = await db
@@ -355,12 +389,18 @@ async function upsert(product: SeedProduct): Promise<void> {
   console.info(`  ok ${product.slug} (${product.category}, ${product.priceMad} MAD)`);
 }
 
-async function main(): Promise<void> {
+async function run(): Promise<void> {
+  assertSeedEnv();
+  const [{ db }, { uploadObject }] = await Promise.all([
+    import("@/lib/db/client"),
+    import("@/lib/storage"),
+  ]);
+
   console.info(`[seed] Bootstrap catalogue (${products.length} produits)`);
   let ok = 0;
   for (const product of products) {
     try {
-      await upsert(product);
+      await upsert(product, db, uploadObject);
       ok += 1;
       await delay(150);
     } catch (error) {
@@ -368,10 +408,11 @@ async function main(): Promise<void> {
     }
   }
   console.info(`[seed] Terminé : ${ok}/${products.length} produits en place.`);
-  process.exit(0);
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+run()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
