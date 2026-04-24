@@ -16,8 +16,6 @@ FROM base AS deps
 WORKDIR /app
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json ./
 COPY apps/web/package.json apps/web/
-COPY apps/scraper/package.json apps/scraper/
-COPY apps/studio/package.json apps/studio/
 COPY packages/design-system/package.json packages/design-system/
 COPY packages/eslint-config/package.json packages/eslint-config/
 COPY packages/tsconfig/package.json packages/tsconfig/
@@ -33,13 +31,6 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV SKIP_ENV_VALIDATION=1
 ENV NODE_ENV=production
-
-# Next.js inline les NEXT_PUBLIC_* au moment du `next build` : les passer en
-# --build-arg (CI / registry) ou en ENV avant cette ligne.
-ARG NEXT_PUBLIC_SANITY_PROJECT_ID
-ARG NEXT_PUBLIC_SANITY_DATASET=production
-ARG NEXT_PUBLIC_SENTRY_DSN
-ENV NEXT_PUBLIC_SANITY_PROJECT_ID=$NEXT_PUBLIC_SANITY_PROJECT_ID NEXT_PUBLIC_SANITY_DATASET=$NEXT_PUBLIC_SANITY_DATASET NEXT_PUBLIC_SENTRY_DSN=$NEXT_PUBLIC_SENTRY_DSN
 
 RUN pnpm exec turbo run build --filter=@urdeko/web
 

@@ -1,37 +1,35 @@
-# Guide admin — UrdeKo
+# Admin opérateur — UrdeKo
 
-## Environnement
+## Comptes / accès
 
-- Web : Vercel (branche `main` → `urdeko.app`, branches → previews)
-- DB : Neon (projet `urdeko-prod`, branche `main` + branches preview)
-- Médias : Cloudflare R2 (bucket `urdeko`, custom domain `media.urdeko.app`)
-- Catalogue : Sanity Cloud (`urdeko` project)
-- Jobs : Inngest Cloud (`urdeko` app)
-- Emails : Resend (`hello@urdeko.app`)
-- Obs : Sentry `urdeko-web` + Vercel Analytics
+- App Vercel : `urdeko-web`
+- DB : Neon `urdeko-prod` (lecture/écriture via psql)
+- Catalogue : table Postgres `products` (admin via `/admin/produits`)
+- Jobs : table Postgres `jobs` (admin via `/admin/jobs`)
+- Stockage : Cloudflare R2 bucket `urdeko-media`
+- Cron : Vercel Crons (cf. `apps/web/vercel.json`)
 
 ## Ajouter un produit manuellement
 
-1. Ouvrir le studio Sanity (`studio.urdeko.app`).
-2. **Content → Produit → Create new**.
-3. Remplir le nom, la marque, la catégorie, le prix MAD, les styles compatibles.
-4. Uploader l'image principale carrée (1000×1000 conseillé).
-5. **Source : saisie manuelle**.
-6. Cliquer **Publish**. Le catalogue web est invalidé via webhook dans les 10 secondes.
+1. Ouvrir `/admin/produits` (réservé aux emails listés dans `ADMIN_EMAILS`).
+2. Cliquer "Importer depuis le web" pour utiliser le scraper universel
+   (URL produit → extraction JSON-LD/OpenGraph/heuristique).
+3. Ou lancer en local `pnpm --filter @urdeko/web db:seed` pour réinjecter
+   les 20 produits curated bootstrap.
 
-## Superviser les rendus
+## Surveillance des jobs
 
-- **Jobs UrdeKo** (table `jobs`) : chaque génération est tracée avec `status`, `progress`, `error`.
-- Onglet Inngest "Runs" pour rejouer un job `render-project` en cas d'échec.
-- Onglet Sentry pour les erreurs non gérées (ex. Gemini timeout).
+- Onglet "Jobs" du dashboard (`/admin/jobs`) liste les runs `queued`,
+  `running`, `succeeded`, `failed` avec retry possible (re-enqueue).
+- Logs détaillés : Vercel → Logs → filter par route `/api/jobs/run`.
 
-## Scraper
+## Scraper hebdo
 
-Cron hebdomadaire Inngest `urdeko-scraper/catalogue-weekly` le dimanche à 03h UTC.
-Logs consultables dans Inngest Cloud → Functions.
+Vercel Cron `0 3 * * 0` (dimanche 03h UTC) appelle `/api/cron/scrape`
+authentifié par `CRON_SECRET`. Logs dans Vercel → Logs.
 
-## Contacts
-
-- Tech / IA : _à compléter_
-- Catalogue : _à compléter_
-- Support : `hello@urdeko.app`
+Lancement manuel :
+```bash
+curl -H "Authorization: Bearer $CRON_SECRET" \
+  https://urdeko.app/api/cron/scrape
+```

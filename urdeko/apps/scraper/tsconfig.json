@@ -1,9 +1,0 @@
-{
-  "extends": "@urdeko/tsconfig/node.json",
-  "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "outDir": "./dist"
-  },
-  "include": ["src"]
-}

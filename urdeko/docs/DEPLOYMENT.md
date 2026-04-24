@@ -1,339 +1,161 @@
-# Déploiement UrdeKo — guide pas-à-pas
+# Déploiement UrdeKo
 
-Ce guide détaille la mise en production complète, depuis la création des
-comptes externes jusqu'à la mise en route de Vercel. Il complète
-[`README.md`](../README.md) (stack locale Docker) et
-[`ADMIN.md`](./ADMIN.md) (opérations courantes).
-
-**Hébergement alternatif (conteneur)** : pour déployer `apps/web` sur Northflank avec le `Dockerfile` du monorepo, voir [`NORTHFLANK.md`](./NORTHFLANK.md).
-
----
-
-## 0. Vue d'ensemble
-
-### Stack locale (Docker Compose)
+UrdeKo se déploie sur **Vercel** avec quatre services managés autour :
 
 ```
-┌─────────────┐   ┌─────────────┐   ┌──────────────┐
-│ pnpm dev    │──▶│ Next.js 15  │──▶│ Postgres 16  │
-│ apps/web    │   │ port 3000   │   │ docker:5432  │
-└─────────────┘   └──────┬──────┘   └──────────────┘
-                         │
-        ┌────────────────┼─────────────────┬──────────────┐
-        ▼                ▼                 ▼              ▼
-  ┌───────────┐   ┌────────────┐   ┌───────────────┐  ┌────────┐
-  │ MinIO S3  │   │ Inngest    │   │ Redis rate    │  │ Sanity │
-  │ :9000/9001│   │ dev :8288  │   │ limit :6379   │  │ Cloud  │
-  └───────────┘   └────────────┘   └───────────────┘  └────────┘
-```
-
-### Stack production
-
-```
-          ┌──────────────────────────────────────────┐
-          │ Vercel — apps/web                        │
-          │  Next.js 15 (edge + node, PWA)           │
-          │  Auth.js v5  ·  Sentry  ·  Analytics     │
-          └─────┬──────────────┬──────────┬──────────┘
-                │              │          │
-        ┌───────▼──┐   ┌───────▼──┐  ┌────▼────────┐
-        │ Neon     │   │ Inngest  │  │ Cloudflare  │
-        │ Postgres │   │ Cloud    │  │ R2 (S3)     │
-        └──────────┘   └────┬─────┘  └─────────────┘
-                            │
-                   ┌────────▼──────────┐     ┌──────────┐
-                   │ Render/Fly        │     │ Resend   │
-                   │ apps/scraper      │     │ emails   │
-                   │ (Inngest HTTP)    │     └──────────┘
-                   └────────┬──────────┘
-                            │
-                   ┌────────▼──────────┐     ┌──────────┐
-                   │ Sanity Cloud      │     │ Google   │
-                   │ catalogue produits│     │ Gemini   │
-                   └───────────────────┘     └──────────┘
-                                             ┌──────────┐
-                                             │ Upstash  │
-                                             │ Redis    │
-                                             └──────────┘
+                ┌──────────────────────────────────┐
+                │  Vercel (Next.js 15 + Cron)      │
+                │  ── apps/web (UI + API + jobs)   │
+                └──────────────┬───────────────────┘
+                               │
+        ┌──────────────┬───────┼───────────────┬─────────────┐
+        ▼              ▼       ▼               ▼             ▼
+   Neon Postgres   Cloudflare R2   Upstash Redis      Resend     Google Gemini
+   (DB principale) (médias S3)     (rate limiting)    (emails)   (IA)
 ```
 
 ---
 
-## 1. Création des comptes et provisionnement
+## 1. Provisionnement
 
-Suivre l'ordre ci-dessous. Chaque section précise **ce que tu copies** pour la
-configuration Vercel finale (section 7).
+### 1.1 Postgres (Neon)
+1. Créer un compte sur <https://neon.tech>.
+2. Nouveau projet `urdeko` (région EU recommandée).
+3. Copier la chaîne pooled (`?sslmode=require`) → `DATABASE_URL`.
 
-### 1.1 Neon (Postgres serverless)
+### 1.2 Cloudflare R2 (médias)
+1. Activer R2 dans le dashboard Cloudflare.
+2. Créer un bucket `urdeko-media`, public-read.
+3. Créer un token API S3-compatible :
+   - `S3_ENDPOINT` : `https://<account>.r2.cloudflarestorage.com`
+   - `S3_REGION` : `auto`
+   - `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY`
+   - `S3_BUCKET` : `urdeko-media`
+   - `S3_PUBLIC_URL` : URL custom domain (ex `https://media.urdeko.app`)
+   - `S3_FORCE_PATH_STYLE` : `false`
 
-1. Créer un compte <https://neon.tech>.
-2. Nouveau projet `urdeko-prod`, région `eu-central-1` (Frankfurt) — plus proche
-   du Maroc.
-3. Dans *Connection details*, sélectionner l'utilisateur **owner** et copier la
-   chaîne `postgresql://...?sslmode=require`.
-4. **Copier** : `DATABASE_URL`.
+### 1.3 Upstash Redis (rate limiting)
+1. Compte sur <https://upstash.com>, base Redis serverless EU.
+2. Copier l'URL `rediss://...` → `REDIS_URL`.
 
-### 1.2 Cloudflare R2 (stockage objets S3-compatible)
+### 1.4 Google Gemini
+1. Créer une clé API sur <https://aistudio.google.com>.
+2. Renseigner `GEMINI_API_KEY`.
+3. Modèles utilisés : `gemini-2.5-pro` (texte) + `gemini-3.1-flash-image-preview`
+   (génération/édition image).
 
-1. Créer un compte <https://dash.cloudflare.com>.
-2. *R2* → *Create bucket* `urdeko` (région *EEUR* recommandée).
-3. *Settings* du bucket → *Public access* : activer **Allow Public Access**
-   puis *Connect a custom domain* `media.urdeko.app` (CNAME Cloudflare).
-4. *Manage R2 API Tokens* → *Create API Token* avec permission *Object Read +
-   Write* sur le bucket.
-5. **Copier** :
-   - `S3_ENDPOINT` → `https://<account_id>.r2.cloudflarestorage.com`
-   - `S3_REGION` → `auto`
-   - `S3_ACCESS_KEY_ID` + `S3_SECRET_ACCESS_KEY`
-   - `S3_BUCKET` → `urdeko`
-   - `S3_PUBLIC_URL` → `https://media.urdeko.app`
-   - `S3_FORCE_PATH_STYLE` → `false`
+### 1.5 Resend (emails magic-link + notifications)
+1. <https://resend.com> → ajouter le domaine `urdeko.app`, vérifier DNS.
+2. Créer une API key → `RESEND_API_KEY`.
+3. `AUTH_EMAIL_FROM=UrdeKo <hello@urdeko.app>`.
 
-### 1.3 Sanity (catalogue produits)
+### 1.6 Auth.js
+- `AUTH_SECRET` : `openssl rand -base64 48`.
+- `AUTH_URL` : URL publique HTTPS (ex `https://urdeko.app`).
+- `ADMIN_EMAILS` : liste séparée par `,` des emails autorisés à `/admin`.
 
-1. Créer un compte <https://sanity.io>.
-2. Nouveau projet `urdeko`, dataset `production`, mode *Public* lecture.
-3. *API* → *Tokens* → créer un token **Editor** (write) puis un token
-   **Viewer** (read).
-4. *API* → *CORS origins* → ajouter `https://urdeko.app`,
-   `https://*.vercel.app`, `http://localhost:3000`.
-5. *API* → *Webhooks* → créer un webhook `On publish` pointant vers
-   `https://urdeko.app/api/sanity/revalidate` (secret = valeur
-   `SANITY_REVALIDATE_SECRET` ≥ 16 caractères).
-6. **Copier** :
-   - `NEXT_PUBLIC_SANITY_PROJECT_ID`
-   - `NEXT_PUBLIC_SANITY_DATASET` → `production`
-   - `SANITY_API_TOKEN` (Editor)
-   - `SANITY_REVALIDATE_SECRET` (celui du webhook)
+### 1.7 Secrets internes
+- `INTERNAL_JOB_SECRET` : `openssl rand -hex 32` — protège `/api/jobs/run`.
+- `CRON_SECRET` : `openssl rand -hex 16` — Vercel l'envoie au cron via
+  `Authorization: Bearer <secret>`. Doit être configuré comme **Environment
+  Variable** sur Vercel (pas seulement comme secret cron).
 
-### 1.4 Inngest (orchestrateur IA)
+---
 
-1. Créer un compte <https://inngest.com>.
-2. Créer une app `urdeko-web` et une app `urdeko-scraper`.
-3. Pour chaque app, *Keys* → récupérer `INNGEST_EVENT_KEY` et
-   `INNGEST_SIGNING_KEY`.
-4. *Apps* → *Deploy* → ajouter l'URL :
-   - `urdeko-web` : `https://urdeko.app/api/inngest`
-   - `urdeko-scraper` : `https://scraper.urdeko.app/api/inngest`
+## 2. Déploiement Vercel
 
-### 1.5 Resend (e-mails transactionnels)
-
-1. Créer un compte <https://resend.com>.
-2. *Domains* → ajouter `urdeko.app`, publier les DNS TXT/CNAME SPF/DKIM.
-3. *API Keys* → créer une clé *Full access*.
-4. **Copier** :
-   - `RESEND_API_KEY`
-   - `AUTH_EMAIL_FROM` → `UrdeKo <bonjour@urdeko.app>`
-
-### 1.6 Google Gemini
-
-1. <https://aistudio.google.com> → *Get API key* → créer la clé dans un projet
-   GCP dédié `urdeko-ai`.
-2. Console GCP → *IAM & Admin* → activer la facturation, quotas suggérés :
-   - `gemini-2.5-pro` — 60 requêtes/min
-   - `gemini-2.5-flash-image` — 30 requêtes/min
-3. **Copier** :
-   - `GEMINI_API_KEY`
-   - `GEMINI_TEXT_MODEL` → `gemini-2.5-pro`
-   - `GEMINI_IMAGE_MODEL` → `gemini-2.5-flash-image`
-
-### 1.7 Upstash Redis (rate limiting)
-
-1. <https://upstash.com> → *Create database* global, région `eu-west-1`.
-2. *Details* → copier la connection string **TLS** (commence par `rediss://`).
-3. **Copier** : `REDIS_URL`.
-
-### 1.8 Sentry
-
-1. <https://sentry.io> → créer un org `urdeko`.
-2. Créer deux projets : `urdeko-web` (Next.js) et `urdeko-scraper` (Node).
-3. *Client Keys (DSN)* → copier les DSN.
-4. *Auth Tokens* → *Personal tokens* → générer un token avec scope
-   `project:releases`.
-5. **Copier** :
-   - `NEXT_PUBLIC_SENTRY_DSN` (projet web)
-   - `SENTRY_AUTH_TOKEN`
-   - `SENTRY_ORG` → `urdeko`
-   - `SENTRY_PROJECT` → `urdeko-web`
-
-### 1.9 Auth.js
-
-1. Générer un secret robuste :
+1. Importer le repo dans Vercel, root directory = `apps/web`.
+   (Le monorepo pnpm est détecté automatiquement, Vercel lance
+   `pnpm install` puis `next build`.)
+2. Coller toutes les variables de [.env.example](../.env.example) dans
+   *Project Settings* → *Environment Variables* (Production + Preview).
+3. Premier déploiement : Vercel build, `next start` automatique.
+4. Migrer le schéma : ouvrir un terminal local avec la `DATABASE_URL`
+   prod et exécuter :
    ```bash
-   openssl rand -hex 32
+   pnpm --filter @urdeko/web db:push
+   pnpm --filter @urdeko/web db:seed   # 20 produits curated initiaux
    ```
-2. **Copier** :
-   - `AUTH_SECRET`
-   - `AUTH_URL` → `https://urdeko.app`
+
+### Vercel Cron
+
+`apps/web/vercel.json` enregistre un cron hebdo :
+```json
+{ "crons": [{ "path": "/api/cron/scrape", "schedule": "0 3 * * 0" }] }
+```
+Vercel ajoute automatiquement le header
+`Authorization: Bearer <CRON_SECRET>` aux requêtes de cron.
+
+### Vercel Functions — `maxDuration`
+
+- `/api/jobs/run` : 300 s (Vercel Pro requis).
+- `/api/cron/scrape` : 300 s (Vercel Pro requis).
+
+Si tu es sur le plan Hobby, fragmenter le scrape en plusieurs crons par
+catégorie pour rester sous 60 s.
 
 ---
 
-## 2. Base de données : schéma + seed
+## 3. Architecture des jobs IA
 
-```bash
-# Une fois DATABASE_URL renseigné
-pnpm --filter @urdeko/web db:generate   # si modifs du schéma
-pnpm --filter @urdeko/web db:push       # pousse vers Neon
+```
+Server Action ── insert ─▶ jobs (status=queued)
+              ── fetch ───▶ /api/jobs/run (fire-and-forget)
+                            │
+                            ├─ analyze_photo (Gemini) → enqueue empty_room
+                            ├─ empty_room (Gemini) ────────────────────┐
+                            └─ render (Gemini + S3) ─▶ notify email    │
+                                                                       │
+User ◀── poll /api/projects/[id]/jobs ─────────────────────────────────┘
 ```
 
-### Peupler le catalogue produits (bootstrap)
+Pas de file externe. La table `jobs` est la source de vérité ; le client
+poll `/api/projects/[id]/jobs` pour suivre la progression.
 
-```bash
-# Remplit Sanity avec 20 produits marocains curated + images libres
-pnpm --filter @urdeko/scraper seed
-```
-
-Relançable à volonté (idempotent, chaque produit a un `_id` stable).
-
-### Scrape Kitea + Mobilia (automatisé)
-
-Une fois `urdeko-scraper` déployé et connecté à Inngest Cloud, le scraper
-hebdomadaire s'exécute chaque lundi 06:00 UTC. Pour lancer manuellement :
-
-```bash
-# En local (ne pousse pas vers Sanity si pas de token écriture)
-pnpm --filter @urdeko/scraper scrape
-```
-
-Ou depuis Inngest Cloud → *Events* → envoyer `urdeko/scrape.manual`.
+En cas d'échec, l'admin peut relancer un job depuis `/admin/jobs` (action
+serveur qui ré-enqueue avec le même `payload`).
 
 ---
 
-## 3. Déploiement de `apps/scraper` (service Inngest)
+## 4. Variables d'environnement (résumé)
 
-Le scraper est un petit service Node qui expose `/api/inngest`. Deux options
-testées :
-
-### 3.1 Render (recommandé, zéro-config)
-
-1. <https://render.com> → *New Web Service* → GitHub repo `urdeko`.
-2. *Root directory* : `apps/scraper`.
-3. *Build command* : `pnpm install --filter @urdeko/scraper && pnpm --filter @urdeko/scraper build`
-4. *Start command* : `pnpm --filter @urdeko/scraper start`
-5. *Environment* :
-   - `INNGEST_EVENT_KEY`, `INNGEST_SIGNING_KEY`
-   - `NEXT_PUBLIC_SANITY_PROJECT_ID`, `SANITY_API_TOKEN`,
-     `NEXT_PUBLIC_SANITY_DATASET`
-   - `PORT` → `3030`
-6. *Custom domain* → `scraper.urdeko.app`.
-7. Retourner sur Inngest Cloud → *Apps* → *Deploy* → vérifier que
-   `https://scraper.urdeko.app/api/inngest` est découvert.
-
-### 3.2 Fly.io (alternative, Dockerfile fourni)
-
-```bash
-fly launch --dockerfile apps/scraper/Dockerfile --copy-config
-fly secrets set INNGEST_EVENT_KEY=... INNGEST_SIGNING_KEY=... \
-                SANITY_API_TOKEN=... NEXT_PUBLIC_SANITY_PROJECT_ID=... \
-                NEXT_PUBLIC_SANITY_DATASET=production
-```
+| Catégorie     | Variables                                         |
+| ------------- | ------------------------------------------------- |
+| Core          | `DATABASE_URL`, `AUTH_SECRET`, `AUTH_URL`         |
+| Email         | `RESEND_API_KEY`, `AUTH_EMAIL_FROM`               |
+| IA            | `GEMINI_API_KEY`, `GEMINI_TEXT_MODEL`, `GEMINI_IMAGE_MODEL`, `AI_*` |
+| Stockage      | `S3_ENDPOINT`, `S3_REGION`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_BUCKET`, `S3_PUBLIC_URL`, `S3_FORCE_PATH_STYLE` |
+| Cache         | `REDIS_URL`                                       |
+| Jobs          | `INTERNAL_JOB_SECRET`                             |
+| Cron          | `CRON_SECRET`                                     |
+| Admin         | `ADMIN_EMAILS`                                    |
+| Légal         | `LEGAL_COMPANY_NAME`, `LEGAL_COMPANY_ADDRESS`, `LEGAL_CONTACT_EMAIL` |
 
 ---
 
-## 4. Déploiement de `apps/studio` (Sanity Studio)
+## 5. Checklist post-déploiement
 
-```bash
-pnpm --filter @urdeko/studio exec sanity deploy
-# Choisir un hostname : urdeko.sanity.studio
-```
-
-Accès : `https://urdeko.sanity.studio`.
-
----
-
-## 5. Vercel (frontend + routes)
-
-1. <https://vercel.com/new> → importer le repo.
-2. *Root directory* : `apps/web`.
-3. *Framework preset* : Next.js.
-4. *Build command* : `cd ../.. && pnpm turbo run build --filter=@urdeko/web`
-5. *Install command* : `pnpm install --frozen-lockfile`
-6. *Output directory* : `.next` (défaut).
-
-### Environment variables (Production + Preview)
-
-Toutes les variables listées dans `.env.example` **sont requises**. Valeurs
-collectées aux sections 1.x.
-
-### Domaine
-
-- Ajouter `urdeko.app` (apex) et `www.urdeko.app` → redirect 301 vers apex.
-- Configurer les DNS (CNAME / ALIAS) côté Cloudflare.
-- Forcer HTTPS + HSTS.
-
-### Webhooks entrants à enregistrer
-
-| Source                | URL                                             |
-| --------------------- | ----------------------------------------------- |
-| Sanity (on publish)   | `https://urdeko.app/api/sanity/revalidate`       |
-| Inngest (par app)     | `https://urdeko.app/api/inngest` (auto découvert)|
+- [ ] Schéma Drizzle poussé (`db:push`).
+- [ ] 20 produits seedés (`db:seed`) — visibles dans `/admin/produits`.
+- [ ] Test e2e : créer un projet → upload photo → vérifier que
+      `/api/projects/[id]/jobs` passe `analyze_photo` puis `empty_room`.
+- [ ] Lancer un render → fichier image apparaît dans R2 +
+      e-mail Resend reçu.
+- [ ] Cron : déclencher manuellement `/api/cron/scrape` avec le
+      `CRON_SECRET` et vérifier l'apparition de nouveaux produits Kitea/Mobilia.
 
 ---
 
-## 6. Post-déploiement
+## 6. Backup & rollback
 
-### 6.1 Checklist go-live
-
-- [ ] `pnpm --filter @urdeko/web db:push` contre Neon `prod`.
-- [ ] `pnpm --filter @urdeko/scraper seed` pour garantir ≥ 20 produits.
-- [ ] Test magic-link depuis un e-mail perso (Resend domain vérifié ?).
-- [ ] Upload photo réel → analyse Gemini < 20 s → rendu < 90 s.
-- [ ] `https://urdeko.app/manifest.webmanifest` répond 200.
-- [ ] Lighthouse mobile ≥ 90 (Performance, Accessibility, Best practices, SEO).
-- [ ] Sentry capte une erreur simulée (bouton test `/api/debug/throw`).
-- [ ] Rate limiting : 15 uploads consécutifs → 429 au-delà du 10ᵉ.
-- [ ] Pages légales accessibles : `/mentions-legales`, `/cgu`,
-      `/confidentialite`.
-
-### 6.2 Audit Lighthouse
-
-```bash
-npx lighthouse https://urdeko.app --preset=mobile --output=html \
-  --output-path=./lighthouse-prod.html
-```
-
-Objectifs :
-
-| Catégorie       | Seuil |
-| --------------- | ----- |
-| Performance     | ≥ 90  |
-| Accessibility   | ≥ 95  |
-| Best practices  | ≥ 95  |
-| SEO             | ≥ 90  |
-| PWA installable | ✓     |
-
-### 6.3 Monitoring quotidien
-
-Voir [`ADMIN.md`](./ADMIN.md) pour :
-- Dashboards (Vercel Analytics, Inngest, Sentry).
-- Process d'ajout produit (Sanity Studio).
-- Rejouer un job échoué.
+- **Postgres** : Neon fait des snapshots quotidiens automatiques + branches.
+- **R2** : versioning à activer côté bucket si requis.
+- **Code** : Vercel garde l'historique des déploiements, rollback en 1 clic.
 
 ---
 
-## 7. Récapitulatif des variables
+## 7. Surveillance
 
-| Catégorie        | Variable                          | Où la trouver                                |
-| ---------------- | --------------------------------- | -------------------------------------------- |
-| Core             | `DATABASE_URL`                    | Neon §1.1                                    |
-|                  | `AUTH_SECRET`                     | `openssl rand -hex 32` §1.9                  |
-|                  | `AUTH_URL`                        | `https://urdeko.app`                         |
-| Email            | `RESEND_API_KEY`, `AUTH_EMAIL_FROM`| Resend §1.5                                 |
-| AI               | `GEMINI_API_KEY`, `GEMINI_TEXT_MODEL`, `GEMINI_IMAGE_MODEL` | Google §1.6       |
-| Stockage         | `S3_ENDPOINT`, `S3_REGION`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_BUCKET`, `S3_PUBLIC_URL`, `S3_FORCE_PATH_STYLE` | R2 §1.2 |
-| CMS              | `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `SANITY_API_TOKEN`, `SANITY_REVALIDATE_SECRET` | Sanity §1.3 |
-| Inngest          | `INNGEST_EVENT_KEY`, `INNGEST_SIGNING_KEY`, `INNGEST_BASE_URL` (prod: vide) | Inngest §1.4 |
-| Redis            | `REDIS_URL`                        | Upstash §1.7                                |
-| Observabilité    | `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` | Sentry §1.8 |
-| Légal            | `LEGAL_COMPANY_NAME`, `LEGAL_COMPANY_ADDRESS`, `LEGAL_CONTACT_EMAIL` | Statuts société |
-
----
-
-## 8. Restauration / DR
-
-- **Base Postgres** : Neon conserve 7 jours de *Point-in-time recovery*. En
-  cas de perte : *Restore branch* depuis le dashboard.
-- **Fichiers R2** : activer *Object lifecycle* → versioning 30 jours.
-- **Sanity** : *History* par document + export dataset quotidien via
-  `sanity dataset export production`.
-- **Inngest** : rejouable depuis le dashboard (jobs idempotents).
+- Vercel Logs (route handlers + crons).
+- Drizzle Studio en local pour lire l'état de `jobs`/`projects`.
+- Vercel Analytics pour le trafic web.

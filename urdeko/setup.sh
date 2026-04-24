@@ -7,13 +7,11 @@
 #   2. Demande (ou complète) les clés API tierces manquantes :
 #        - GEMINI_API_KEY
 #        - RESEND_API_KEY
-#        - NEXT_PUBLIC_SANITY_PROJECT_ID
-#        - SANITY_API_TOKEN
-#   3. Génère automatiquement AUTH_SECRET + SANITY_REVALIDATE_SECRET.
+#   3. Génère automatiquement AUTH_SECRET + INTERNAL_JOB_SECRET + CRON_SECRET.
 #   4. Écrit/complète .env.local et apps/web/.env.local.
 #   5. Démarre la stack Docker sur des ports décalés (pas de conflit) :
-#        Postgres 55432 · MinIO 59000/59001 · Inngest 58288 · Redis 56379
-#      Next.js dev tourne sur :3300, scraper sur :3330.
+#        Postgres 55432 · MinIO 59000/59001 · Redis 56379
+#      Next.js dev tourne sur :3300.
 #   6. Installe les dépendances pnpm.
 #   7. Pousse le schéma Drizzle vers Postgres.
 #   8. Typecheck + build de l'app web.
@@ -110,13 +108,11 @@ step "2. Configuration des ports"
 POSTGRES_HOST_PORT="${POSTGRES_HOST_PORT:-55432}"
 MINIO_HOST_PORT="${MINIO_HOST_PORT:-59000}"
 MINIO_CONSOLE_PORT="${MINIO_CONSOLE_PORT:-59001}"
-INNGEST_HOST_PORT="${INNGEST_HOST_PORT:-58288}"
 REDIS_HOST_PORT="${REDIS_HOST_PORT:-56379}"
 WEB_HOST_PORT="${WEB_HOST_PORT:-3300}"
-SCRAPER_HOST_PORT="${SCRAPER_HOST_PORT:-3330}"
 
 export POSTGRES_HOST_PORT MINIO_HOST_PORT MINIO_CONSOLE_PORT \
-       INNGEST_HOST_PORT REDIS_HOST_PORT WEB_HOST_PORT SCRAPER_HOST_PORT
+       REDIS_HOST_PORT WEB_HOST_PORT
 
 check_port_free() {
   local p="$1" label="$2"
@@ -156,7 +152,6 @@ free_port_listeners() {
 check_port_free "$POSTGRES_HOST_PORT" "Postgres"
 check_port_free "$MINIO_HOST_PORT"    "MinIO S3"
 check_port_free "$MINIO_CONSOLE_PORT" "MinIO Console"
-check_port_free "$INNGEST_HOST_PORT"  "Inngest"
 check_port_free "$REDIS_HOST_PORT"    "Redis"
 check_port_free "$WEB_HOST_PORT"      "Next.js dev"
 
@@ -198,7 +193,7 @@ set_env() {
 prompt_if_empty() {
   local key="$1" label="$2" current
   current=$(get_env "$key" || true)
-  if [ -z "${current:-}" ] || [ "$current" = "change-me-openssl-rand-base64-48-please" ] || [ "$current" = "change-me-openssl-rand-hex-24" ]; then
+  if [ -z "${current:-}" ] || [ "$current" = "change-me-openssl-rand-base64-48-please" ]; then
     printf "  %s%s%s %s(entrée pour passer, tu pourras le configurer plus tard dans .env.local)%s\n  › " \
       "$BOLD" "$label" "$RESET" "$DIM" "$RESET"
     # shellcheck disable=SC2162
@@ -220,35 +215,35 @@ if [ -z "${current_auth_secret:-}" ] || [ "$current_auth_secret" = "change-me-op
   set_env AUTH_SECRET "$(openssl rand -base64 48 | tr -d '\n')"
   ok "AUTH_SECRET généré"
 fi
-current_sanity_secret=$(get_env SANITY_REVALIDATE_SECRET)
-if [ -z "${current_sanity_secret:-}" ] || [ "$current_sanity_secret" = "change-me-openssl-rand-hex-24" ]; then
-  set_env SANITY_REVALIDATE_SECRET "$(openssl rand -hex 24)"
-  ok "SANITY_REVALIDATE_SECRET généré"
+current_internal=$(get_env INTERNAL_JOB_SECRET)
+if [ -z "${current_internal:-}" ] || [ "$current_internal" = "dev_internal_job_secret_change_me_min_32_chars_long" ]; then
+  set_env INTERNAL_JOB_SECRET "$(openssl rand -hex 32)"
+  ok "INTERNAL_JOB_SECRET généré"
+fi
+current_cron=$(get_env CRON_SECRET)
+if [ -z "${current_cron:-}" ] || [ "$current_cron" = "dev_cron_secret_change_me" ]; then
+  set_env CRON_SECRET "$(openssl rand -hex 16)"
+  ok "CRON_SECRET généré"
 fi
 
 # Ports appliqués dans le .env.local (source de vérité pour Next.js + Docker)
 set_env POSTGRES_HOST_PORT "$POSTGRES_HOST_PORT"
 set_env MINIO_HOST_PORT "$MINIO_HOST_PORT"
 set_env MINIO_CONSOLE_PORT "$MINIO_CONSOLE_PORT"
-set_env INNGEST_HOST_PORT "$INNGEST_HOST_PORT"
 set_env REDIS_HOST_PORT "$REDIS_HOST_PORT"
 set_env WEB_HOST_PORT "$WEB_HOST_PORT"
-set_env SCRAPER_HOST_PORT "$SCRAPER_HOST_PORT"
 
 # Endpoints cohérents avec les ports
 set_env DATABASE_URL "postgresql://urdeko:urdeko@localhost:${POSTGRES_HOST_PORT}/urdeko"
 set_env AUTH_URL "http://localhost:${WEB_HOST_PORT}"
 set_env S3_ENDPOINT "http://localhost:${MINIO_HOST_PORT}"
 set_env S3_PUBLIC_URL "http://localhost:${MINIO_HOST_PORT}/urdeko"
-set_env INNGEST_BASE_URL "http://localhost:${INNGEST_HOST_PORT}"
 set_env REDIS_URL "redis://localhost:${REDIS_HOST_PORT}"
 
 echo ""
 log "Renseigne les clés API (laisse vide si tu les configureras plus tard) :"
 prompt_if_empty GEMINI_API_KEY                "GEMINI_API_KEY (https://aistudio.google.com) :"
 prompt_if_empty RESEND_API_KEY                "RESEND_API_KEY (https://resend.com) :"
-prompt_if_empty NEXT_PUBLIC_SANITY_PROJECT_ID "NEXT_PUBLIC_SANITY_PROJECT_ID (sanity.io) :"
-prompt_if_empty SANITY_API_TOKEN              "SANITY_API_TOKEN (token Editor) :"
 
 # Miroir .env.local → apps/web/.env.local (Next.js lit dans chaque app)
 cp "$ENV_FILE" "$WEB_ENV_FILE"
@@ -259,7 +254,6 @@ cat > "$ROOT_DIR/.env" <<EOF
 POSTGRES_HOST_PORT=$POSTGRES_HOST_PORT
 MINIO_HOST_PORT=$MINIO_HOST_PORT
 MINIO_CONSOLE_PORT=$MINIO_CONSOLE_PORT
-INNGEST_HOST_PORT=$INNGEST_HOST_PORT
 REDIS_HOST_PORT=$REDIS_HOST_PORT
 WEB_HOST_PORT=$WEB_HOST_PORT
 EOF
@@ -299,7 +293,6 @@ docker compose up -d minio-init >/dev/null 2>&1 || true
 printf "\n  Services disponibles :\n"
 printf "    %sPostgres%s postgresql://urdeko:urdeko@localhost:%s/urdeko\n" "$DIM" "$RESET" "$POSTGRES_HOST_PORT"
 printf "    %sMinIO   %s http://localhost:%s (console :%s — urdeko / urdeko-dev-secret)\n" "$DIM" "$RESET" "$MINIO_HOST_PORT" "$MINIO_CONSOLE_PORT"
-printf "    %sInngest %s http://localhost:%s\n" "$DIM" "$RESET" "$INNGEST_HOST_PORT"
 printf "    %sRedis   %s redis://localhost:%s\n\n" "$DIM" "$RESET" "$REDIS_HOST_PORT"
 
 # =====================================================================
@@ -362,7 +355,7 @@ if [ "$DO_BUILD" = "1" ]; then
   # passe SKIP_ENV_VALIDATION=1 pour que le build passe. Au runtime, les
   # appels réseau échoueront tant que les clés ne sont pas renseignées.
   missing_keys=()
-  for key in GEMINI_API_KEY RESEND_API_KEY NEXT_PUBLIC_SANITY_PROJECT_ID SANITY_API_TOKEN; do
+  for key in GEMINI_API_KEY RESEND_API_KEY; do
     val=$(get_env "$key")
     if [ -z "${val:-}" ]; then
       missing_keys+=("$key")
@@ -405,7 +398,7 @@ ok "UrdeKo sera servi sur http://localhost:${WEB_HOST_PORT}"
 # Si des clés tiers manquent, on active SKIP_ENV_VALIDATION en dev pour que
 # les pages autres que celles exploitant ces clés soient tout de même servies.
 runtime_missing=()
-for key in GEMINI_API_KEY RESEND_API_KEY NEXT_PUBLIC_SANITY_PROJECT_ID SANITY_API_TOKEN; do
+for key in GEMINI_API_KEY RESEND_API_KEY; do
   val=$(get_env "$key")
   if [ -z "${val:-}" ]; then
     runtime_missing+=("$key")

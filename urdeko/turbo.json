@@ -7,7 +7,6 @@
     "MINIO_CONSOLE_PORT",
     "REDIS_HOST_PORT",
     "WEB_HOST_PORT",
-    "SCRAPER_HOST_PORT",
     "SKIP_ENV_VALIDATION",
     "VERCEL",
     "VERCEL_ENV",
@@ -34,10 +33,9 @@
         "GEMINI_TEXT_MODEL",
         "GEMINI_IMAGE_MODEL",
         "S3_*",
-        "SANITY_*",
-        "INNGEST_*",
+        "INTERNAL_JOB_SECRET",
+        "CRON_SECRET",
         "REDIS_URL",
-        "SENTRY_*",
         "LEGAL_*",
         "ADMIN_EMAILS",
         "AI_IMAGE_MAX_EDGE",
@@ -61,10 +59,7 @@
       "cache": false,
       "persistent": true
     },
-    "scrape": {
-      "cache": false
-    },
-    "seed": {
+    "db:seed": {
       "cache": false
     }
   }

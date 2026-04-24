@@ -52,25 +52,6 @@ services:
       echo 'Bucket urdeko ready (public read).'
       "
 
-  inngest:
-    image: inngest/inngest:latest
-    container_name: urdeko-inngest
-    restart: unless-stopped
-    # `inngest dev` démarre le serveur local sans auth (pas de signing key).
-    command:
-      - inngest
-      - dev
-      - --sdk-url
-      - http://host.docker.internal:${WEB_HOST_PORT:-3300}/api/inngest
-      - --host
-      - 0.0.0.0
-      - --port
-      - "8288"
-    ports:
-      - "${INNGEST_HOST_PORT:-58288}:8288"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
   redis:
     image: redis:7-alpine
     container_name: urdeko-redis
