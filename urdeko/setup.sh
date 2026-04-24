@@ -6,7 +6,7 @@
 #   1. Vérifie les prérequis (Docker, Node 20+, pnpm, openssl).
 #   2. Demande (ou complète) les clés API tierces manquantes :
 #        - GEMINI_API_KEY
-#        - RESEND_API_KEY
+#        - SMTP_USER / SMTP_PASSWORD (Gmail = mot de passe d’application)
 #   3. Génère automatiquement AUTH_SECRET + INTERNAL_JOB_SECRET + CRON_SECRET.
 #   4. Écrit/complète .env.local et apps/web/.env.local.
 #   5. Démarre la stack Docker sur des ports décalés (pas de conflit) :
@@ -240,10 +240,31 @@ set_env S3_ENDPOINT "http://localhost:${MINIO_HOST_PORT}"
 set_env S3_PUBLIC_URL "http://localhost:${MINIO_HOST_PORT}/urdeko"
 set_env REDIS_URL "redis://localhost:${REDIS_HOST_PORT}"
 
+current_smtp_host=$(get_env SMTP_HOST || true)
+if [ -z "${current_smtp_host:-}" ]; then
+  set_env SMTP_HOST "smtp.gmail.com"
+  ok "SMTP_HOST défini (smtp.gmail.com)"
+fi
+current_smtp_port=$(get_env SMTP_PORT || true)
+if [ -z "${current_smtp_port:-}" ]; then
+  set_env SMTP_PORT "587"
+  ok "SMTP_PORT défini (587)"
+fi
+
 echo ""
 log "Renseigne les clés API (laisse vide si tu les configureras plus tard) :"
 prompt_if_empty GEMINI_API_KEY                "GEMINI_API_KEY (https://aistudio.google.com) :"
-prompt_if_empty RESEND_API_KEY                "RESEND_API_KEY (https://resend.com) :"
+prompt_if_empty SMTP_USER                     "SMTP_USER (ex. ton.email@gmail.com) :"
+prompt_if_empty SMTP_PASSWORD                 "SMTP_PASSWORD (Gmail : mot de passe d’application) :"
+
+# Si From vide mais compte SMTP renseigné, aligner avant de demander AUTH_EMAIL_FROM.
+smtp_u=$(get_env SMTP_USER || true)
+smtp_from=$(get_env AUTH_EMAIL_FROM || true)
+if [ -n "${smtp_u:-}" ] && [ -z "${smtp_from:-}" ]; then
+  set_env AUTH_EMAIL_FROM "UrdeKo <${smtp_u}>"
+  ok "AUTH_EMAIL_FROM défini depuis SMTP_USER"
+fi
+prompt_if_empty AUTH_EMAIL_FROM               "AUTH_EMAIL_FROM (ex. UrdeKo <ton.email@gmail.com>) :"
 
 # Miroir .env.local → apps/web/.env.local (Next.js lit dans chaque app)
 cp "$ENV_FILE" "$WEB_ENV_FILE"
@@ -355,7 +376,7 @@ if [ "$DO_BUILD" = "1" ]; then
   # passe SKIP_ENV_VALIDATION=1 pour que le build passe. Au runtime, les
   # appels réseau échoueront tant que les clés ne sont pas renseignées.
   missing_keys=()
-  for key in GEMINI_API_KEY RESEND_API_KEY; do
+  for key in GEMINI_API_KEY SMTP_USER SMTP_PASSWORD; do
     val=$(get_env "$key")
     if [ -z "${val:-}" ]; then
       missing_keys+=("$key")
@@ -398,7 +419,7 @@ ok "UrdeKo sera servi sur http://localhost:${WEB_HOST_PORT}"
 # Si des clés tiers manquent, on active SKIP_ENV_VALIDATION en dev pour que
 # les pages autres que celles exploitant ces clés soient tout de même servies.
 runtime_missing=()
-for key in GEMINI_API_KEY RESEND_API_KEY; do
+for key in GEMINI_API_KEY SMTP_USER SMTP_PASSWORD; do
   val=$(get_env "$key")
   if [ -z "${val:-}" ]; then
     runtime_missing+=("$key")

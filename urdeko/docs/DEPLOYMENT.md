@@ -10,8 +10,8 @@ UrdeKo se déploie sur **Vercel** avec quatre services managés autour :
                                │
         ┌──────────────┬───────┼───────────────┬─────────────┐
         ▼              ▼       ▼               ▼             ▼
-   Neon Postgres   Cloudflare R2   Upstash Redis      Resend     Google Gemini
-   (DB principale) (médias S3)     (rate limiting)    (emails)   (IA)
+   Neon Postgres   Cloudflare R2   Upstash Redis      SMTP (Gmail)  Google Gemini
+   (DB principale) (médias S3)     (rate limiting)    (emails)      (IA)
 ```
 
 ---
@@ -44,10 +44,15 @@ UrdeKo se déploie sur **Vercel** avec quatre services managés autour :
 3. Modèles utilisés : `gemini-2.5-pro` (texte) + `gemini-3.1-flash-image-preview`
    (génération/édition image).
 
-### 1.5 Resend (emails magic-link + notifications)
-1. <https://resend.com> → ajouter le domaine `urdeko.app`, vérifier DNS.
-2. Créer une API key → `RESEND_API_KEY`.
-3. `AUTH_EMAIL_FROM=UrdeKo <hello@urdeko.app>`.
+### 1.5 SMTP (emails magic-link + notifications, ex. Gmail)
+1. Compte Google : activer la validation en 2 étapes puis créer un **mot de passe d’application**  
+   (<https://myaccount.google.com/apppasswords>).
+2. Variables Vercel :
+   - `SMTP_HOST` = `smtp.gmail.com` (défaut dans le schéma si omis)
+   - `SMTP_PORT` = `587` (ou `465` + connexion SSL)
+   - `SMTP_USER` = ton adresse Gmail complète
+   - `SMTP_PASSWORD` = le mot de passe d’application (16 caractères)
+   - `AUTH_EMAIL_FROM` = par ex. `UrdeKo <ton.email@gmail.com>` (souvent la même adresse que `SMTP_USER`)
 
 ### 1.6 Auth.js
 - `AUTH_SECRET` : `openssl rand -base64 48`.
@@ -122,7 +127,7 @@ serveur qui ré-enqueue avec le même `payload`).
 | Catégorie     | Variables                                         |
 | ------------- | ------------------------------------------------- |
 | Core          | `DATABASE_URL`, `AUTH_SECRET`, `AUTH_URL`         |
-| Email         | `RESEND_API_KEY`, `AUTH_EMAIL_FROM`               |
+| Email         | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `AUTH_EMAIL_FROM` |
 | IA            | `GEMINI_API_KEY`, `GEMINI_TEXT_MODEL`, `GEMINI_IMAGE_MODEL`, `AI_*` |
 | Stockage      | `S3_ENDPOINT`, `S3_REGION`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_BUCKET`, `S3_PUBLIC_URL`, `S3_FORCE_PATH_STYLE` |
 | Cache         | `REDIS_URL`                                       |
@@ -140,7 +145,7 @@ serveur qui ré-enqueue avec le même `payload`).
 - [ ] Test e2e : créer un projet → upload photo → vérifier que
       `/api/projects/[id]/jobs` passe `analyze_photo` puis `empty_room`.
 - [ ] Lancer un render → fichier image apparaît dans R2 +
-      e-mail Resend reçu.
+      e-mail (SMTP) reçu.
 - [ ] Cron : déclencher manuellement `/api/cron/scrape` avec le
       `CRON_SECRET` et vérifier l'apparition de nouveaux produits Kitea/Mobilia.
 

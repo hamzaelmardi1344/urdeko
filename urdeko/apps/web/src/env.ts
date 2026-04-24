@@ -15,9 +15,12 @@ const envSchema = z.object({
   AUTH_SECRET: z.string().min(32),
   AUTH_URL: z.string().url(),
 
-  // Transactional emails (Resend)
-  RESEND_API_KEY: z.string().min(1),
+  // Emails transactionnels + magic link (SMTP, ex. Gmail)
   AUTH_EMAIL_FROM: z.string().min(1),
+  SMTP_HOST: z.string().default("smtp.gmail.com"),
+  SMTP_PORT: z.coerce.number().int().min(1).max(65535).default(587),
+  SMTP_USER: z.string().email(),
+  SMTP_PASSWORD: z.string().min(8),
 
   // Google Gemini
   GEMINI_API_KEY: z.string().min(1),

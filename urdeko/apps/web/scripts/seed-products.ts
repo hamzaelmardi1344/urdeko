@@ -29,7 +29,7 @@ function assertSeedEnv(): void {
     throw new Error(
       `[seed] Variables manquantes : ${missing.join(", ")}.\n` +
         `Renseigne-les dans apps/web/.env.local (ou exporte-les), puis relance.\n` +
-        `Le seed n'a besoin que de Postgres + S3, pas de Redis/Gemini/Resend.`,
+        `Le seed n'a besoin que de Postgres + S3, pas de Redis/Gemini/SMTP.`,
     );
   }
 }

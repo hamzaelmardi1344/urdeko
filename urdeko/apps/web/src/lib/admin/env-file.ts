@@ -19,7 +19,7 @@ export type EnvLine =
 export const SECRET_KEYS = new Set<string>([
   "AUTH_SECRET",
   "GOOGLE_CLIENT_SECRET",
-  "RESEND_API_KEY",
+  "SMTP_PASSWORD",
   "GEMINI_API_KEY",
   "INTERNAL_JOB_SECRET",
   "CRON_SECRET",

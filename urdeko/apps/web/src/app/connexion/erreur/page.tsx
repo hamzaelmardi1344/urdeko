@@ -8,11 +8,11 @@ type ErrorBlock = { title: string; lines: string[] };
 
 const COPY = {
   Configuration: {
-    title: "Problème de configuration (email)",
+    title: "Problème de configuration (email / SMTP)",
     lines: [
-      "Le plus souvent : l’adresse d’expédition AUTH_EMAIL_FROM utilise un domaine non vérifié chez Resend (erreur 403 « domain is not verified »).",
-      "Corrige sur https://resend.com/domains en ajoutant et vérifiant ton domaine, ou mets temporairement AUTH_EMAIL_FROM = « UrdeKo <onboarding@resend.dev> » sur Vercel (uniquement vers l’email du compte Resend).",
-      "Vérifie aussi que AUTH_URL sur Vercel est exactement l’URL où tu ouvres le site (ex. https://urdeko.vercel.app si tu n’as pas encore de domaine custom).",
+      "Vérifie SMTP_USER / SMTP_PASSWORD (Gmail : mot de passe d’application, pas le mot de passe du compte — https://myaccount.google.com/apppasswords).",
+      "AUTH_EMAIL_FROM doit correspondre à SMTP_USER (ex. « UrdeKo <toi@gmail.com> » avec SMTP_USER=toi@gmail.com). Port 587 (STARTTLS) ou 465 (SSL).",
+      "AUTH_URL sur Vercel doit être l’URL exacte du site (ex. https://urdeko.vercel.app).",
     ],
   },
   AccessDenied: {

@@ -12,7 +12,7 @@ Monorepo pnpm + Turborepo.
 - **Jobs asynchrones** : table `jobs` Postgres + endpoint interne `/api/jobs/run` avec `maxDuration:300` (Vercel Pro)
 - **Catalogue** : table `products` Postgres + scraper hebdo via Vercel Cron
 - **Stockage médias** : S3-compatible — Cloudflare R2 en prod, MinIO en dev
-- **Emails** : Resend + React Email
+- **Emails** : SMTP (ex. Gmail) + React Email
 - **Cache / rate limiting** : Redis (Upstash en prod)
 
 ## Arborescence
@@ -31,7 +31,7 @@ packages/
 ```bash
 pnpm install
 cp .env.local.example .env.local           # pointe sur la stack Docker
-# Édite .env.local pour ajouter GEMINI_API_KEY et RESEND_API_KEY.
+# Édite .env.local pour ajouter GEMINI_API_KEY, SMTP_USER et SMTP_PASSWORD.
 make up                                     # lance Postgres + MinIO + Redis
 pnpm --filter @urdeko/web db:push           # applique le schéma
 pnpm --filter @urdeko/web db:seed           # bootstrap des 20 produits curated

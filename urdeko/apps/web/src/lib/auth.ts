@@ -1,6 +1,8 @@
 import NextAuth, { type DefaultSession } from "next-auth";
-import Resend from "next-auth/providers/resend";
+import Nodemailer from "next-auth/providers/nodemailer";
+import { createTransport } from "nodemailer";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { smtpServerOptions } from "./email/smtp";
 import { db } from "./db/client";
 import { accounts, sessions, users, verificationTokens } from "./db/schema";
 import { env } from "@/env";
@@ -61,40 +63,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: "/connexion/erreur",
   },
   providers: [
-    Resend({
-      apiKey: env.RESEND_API_KEY,
+    Nodemailer({
+      server: smtpServerOptions(),
       from: env.AUTH_EMAIL_FROM,
       async sendVerificationRequest({ identifier: to, url, provider }) {
         const { host } = new URL(url);
-        const res = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${provider.apiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            from: provider.from,
-            to,
-            subject: `Connexion à ${host}`,
-            html: magicLinkEmailHtml(url, host),
-            text: magicLinkEmailText(url, host),
-          }),
+        const transport = createTransport(provider.server);
+        const result = await transport.sendMail({
+          to,
+          from: provider.from,
+          subject: `Connexion à ${host}`,
+          text: magicLinkEmailText(url, host),
+          html: magicLinkEmailHtml(url, host),
         });
-        if (!res.ok) {
-          const body = (await res.json().catch(() => ({}))) as {
-            message?: string;
-            name?: string;
-          };
-          const detail = body.message ?? JSON.stringify(body);
-          let hint = "";
-          if (res.status === 403 && /not verified|domain/i.test(detail)) {
-            hint =
-              " Vérifie le domaine sur https://resend.com/domains ou mets AUTH_EMAIL_FROM sur « UrdeKo <onboarding@resend.dev> » (emails limités au compte Resend).";
-          }
-          if (res.status === 403 && /invalid.*api/i.test(detail)) {
-            hint = " Vérifie RESEND_API_KEY sur Vercel.";
-          }
-          throw new Error(`Resend ${res.status}: ${detail}.${hint}`);
+        const failed = [...(result.rejected ?? []), ...(result.pending ?? [])].filter(Boolean);
+        if (failed.length) {
+          throw new Error(`Email non délivré pour : ${failed.join(", ")}`);
         }
       },
     }),

@@ -66,7 +66,7 @@ export default function ConfidentialitePage() {
           <li>Neon (base de données Postgres) — EU.</li>
           <li>Cloudflare R2 (stockage objets) — EU/EEMEA.</li>
           <li>Google Gemini (inférence IA) — sans stockage long terme des photos.</li>
-          <li>Resend (envoi transactionnel) — EU.</li>
+          <li>SMTP (envoi transactionnel et liens de connexion), ex. Gmail.</li>
         </ul>
 
         <h2 className="text-xl font-semibold text-on-surface mt-8">Tes droits</h2>

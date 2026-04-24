@@ -11,7 +11,7 @@ export default function SignInPage() {
   async function action(formData: FormData) {
     "use server";
     const email = String(formData.get("email") ?? "");
-    await signIn("resend", { email, redirectTo: "/projets" });
+    await signIn("nodemailer", { email, redirectTo: "/projets" });
   }
 
   return (
