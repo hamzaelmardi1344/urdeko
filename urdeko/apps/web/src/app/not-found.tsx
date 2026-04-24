@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { Icon } from "@urdeko/design-system";
 
+// Force static generation pour éviter le bug Next 15.5.x où App Router
+// not-found.tsx n'est pas classé "static" et déclenche le fallback Pages
+// Router /_error qui crashe avec "<Html> should not be imported outside
+// of pages/_document". Voir: github.com/vercel/next.js/issues/83784
+export const dynamic = "force-static";
+
 export default function NotFound() {
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center gap-6 px-6 text-center">
