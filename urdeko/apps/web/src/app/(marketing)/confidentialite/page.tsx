@@ -67,8 +67,6 @@ export default function ConfidentialitePage() {
           <li>Cloudflare R2 (stockage objets) — EU/EEMEA.</li>
           <li>Google Gemini (inférence IA) — sans stockage long terme des photos.</li>
           <li>Resend (envoi transactionnel) — EU.</li>
-          <li>Sanity (catalogue produits) — EU.</li>
-          <li>Sentry (monitoring erreurs, anonymisé).</li>
         </ul>
 
         <h2 className="text-xl font-semibold text-on-surface mt-8">Tes droits</h2>

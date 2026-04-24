@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { requireAdmin, AdminForbiddenError } from "@/lib/admin/auth";
 import { extractedProductSchema } from "@/lib/scraper/types";
@@ -39,12 +38,5 @@ export async function POST(req: Request) {
   }
 
   const result = await upsertProducts(parsed.data.products);
-
-  // Invalide les caches Next.js pour que la page produits voie les nouveaux items.
-  revalidateTag("products");
-  for (const p of parsed.data.products) {
-    if (p.category) revalidateTag(`products:${p.category}`);
-  }
-
   return NextResponse.json(result);
 }

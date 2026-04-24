@@ -1,5 +1,4 @@
 import withPWA from "next-pwa";
-import { withSentryConfig } from "@sentry/nextjs";
 
 // next-pwa@5.6 + Next 15 (App Router only) injecte du code dans le pages router
 // (chunk `_document` / `_error`) → casse le prerender de /404.
@@ -24,7 +23,6 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
-      { protocol: "https", hostname: "cdn.sanity.io" },
       { protocol: "https", hostname: "media.urdeko.app" },
       { protocol: "https", hostname: "*.r2.cloudflarestorage.com" },
       { protocol: "https", hostname: "images.pexels.com" },
@@ -46,31 +44,4 @@ const nextConfig = {
   },
 };
 
-const withPwa = pwa(nextConfig);
-
-// Sentry est opt-in via ENABLE_SENTRY=1 + DSN. Le wrapper SDK v8 a besoin de
-// `app/global-error.tsx` côté App Router pour ne pas faire échouer le prerender
-// de /404 (sinon Next bascule sur le `_error` Pages Router et crashe avec
-// `<Html> should not be imported outside of pages/_document`).
-const sentryEnabled =
-  process.env.ENABLE_SENTRY === "1" &&
-  Boolean(
-    process.env.NEXT_PUBLIC_SENTRY_DSN &&
-      !process.env.NEXT_PUBLIC_SENTRY_DSN.startsWith("https://dummy"),
-  );
-
-export default sentryEnabled
-  ? withSentryConfig(withPwa, {
-      silent: true,
-      org: process.env.SENTRY_ORG,
-      project: process.env.SENTRY_PROJECT,
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      widenClientFileUpload: true,
-      hideSourceMaps: true,
-      disableLogger: true,
-      sourcemaps: { deleteSourcemapsAfterUpload: true },
-      autoInstrumentServerFunctions: false,
-      autoInstrumentMiddleware: false,
-      excludeServerRoutes: ["/_error", "/404", "/500"],
-    })
-  : withPwa;
+export default pwa(nextConfig);

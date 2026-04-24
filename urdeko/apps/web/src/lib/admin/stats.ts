@@ -3,13 +3,13 @@ import { db } from "@/lib/db/client";
 import {
   contacts,
   jobs,
+  products,
   projectPhotos,
   projectRenders,
   projectSelections,
   projects,
   users,
 } from "@/lib/db/schema";
-import { sanity } from "@/lib/sanity/client";
 
 export type DashboardStats = {
   projects: { total: number; last7d: number };
@@ -83,9 +83,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       .where(eq(jobs.status, "failed"))
       .orderBy(desc(jobs.createdAt))
       .limit(5),
-    sanity
-      .fetch<number>(`count(*[_type == "product"])`)
-      .catch(() => 0),
+    db.select({ n: count() }).from(products),
   ]);
 
   const n = (row: { n: number } | undefined) => row?.n ?? 0;
@@ -97,7 +95,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     photos: { total: n(photosTotal), emptied: n(photosEmptied) },
     renders: { total: n(rendersTotal) },
     contacts: { total: n(contactsTotal) },
-    products: { total: productsTotal ?? 0 },
+    products: { total: productsTotal[0]?.n ?? 0 },
     recentErrors,
     jobKinds: jobKinds.map((j) => ({
       kind: j.kind,

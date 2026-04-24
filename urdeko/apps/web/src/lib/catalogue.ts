@@ -1,4 +1,6 @@
-import { sanity, urlForImage } from "./sanity/client";
+import { eq } from "drizzle-orm";
+import { db } from "./db/client";
+import { products as productsTable } from "./db/schema";
 import type { ElementCategoryId, StyleId } from "./domain";
 
 export type Product = {
@@ -22,54 +24,18 @@ export type ProductFilter = {
   flexibility?: number; // 0..100
 };
 
-type RawProduct = Omit<Product, "imageUrl"> & { mainImage?: unknown };
-
-const LIST_QUERY = /* groq */ `
-  *[_type == "product" && category == $category] | order(priceMad asc) {
-    "id": _id,
-    name,
-    brand,
-    category,
-    priceMad,
-    mainImage,
-    "styles": coalesce(style, []),
-    "tags": coalesce(tags, []),
-    source,
-    sourceUrl,
-    description
-  }
-`;
-
-const ONE_QUERY = /* groq */ `
-  *[_type == "product" && _id == $id][0]{
-    "id": _id,
-    name,
-    brand,
-    category,
-    priceMad,
-    mainImage,
-    "styles": coalesce(style, []),
-    "tags": coalesce(tags, []),
-    source,
-    sourceUrl,
-    description
-  }
-`;
-
 export async function listProducts(filter: ProductFilter): Promise<Product[]> {
-  const raw = await sanity.fetch<RawProduct[]>(
-    LIST_QUERY,
-    { category: filter.category },
-    { next: { tags: ["products", `products:${filter.category}`], revalidate: 3600 } },
-  );
+  const rows = await db
+    .select()
+    .from(productsTable)
+    .where(eq(productsTable.category, filter.category))
+    .orderBy(productsTable.priceMad);
 
-  const products = raw
-    .map(normalize)
-    .filter((p): p is Product => p !== null);
+  const items = rows.map(rowToProduct);
 
   const { style, budgetMad, flexibility = 20 } = filter;
 
-  return products
+  return items
     .filter((product) =>
       style ? product.styles.includes(style) || product.styles.length === 0 : true,
     )
@@ -82,15 +48,28 @@ export async function listProducts(filter: ProductFilter): Promise<Product[]> {
 }
 
 export async function getProduct(id: string): Promise<Product | null> {
-  const raw = await sanity.fetch<RawProduct | null>(ONE_QUERY, { id });
-  return raw ? normalize(raw) : null;
+  const [row] = await db
+    .select()
+    .from(productsTable)
+    .where(eq(productsTable.id, id))
+    .limit(1);
+  return row ? rowToProduct(row) : null;
 }
 
-function normalize(raw: RawProduct): Product | null {
-  const imageUrl = urlForImage(raw.mainImage);
-  if (!imageUrl) return null;
-  const { mainImage: _mainImage, ...rest } = raw;
-  return { ...rest, imageUrl };
+function rowToProduct(row: typeof productsTable.$inferSelect): Product {
+  return {
+    id: row.id,
+    name: row.name,
+    brand: row.brand,
+    category: (row.category ?? "decoration") as ElementCategoryId,
+    priceMad: row.priceMad,
+    imageUrl: row.imageUrl,
+    styles: (row.styles ?? []) as StyleId[],
+    tags: row.tags ?? [],
+    source: row.source,
+    sourceUrl: row.sourceUrl ?? undefined,
+    description: row.description ?? undefined,
+  };
 }
 
 function scoreProduct(

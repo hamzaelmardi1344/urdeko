@@ -1,25 +1,15 @@
-import { createClient, type SanityClient } from "@sanity/client";
-import { env } from "@/env";
+import { sql } from "drizzle-orm";
+import { db } from "../db/client";
+import { products as productsTable } from "../db/schema";
+import { uploadObject } from "../storage";
 import type { ExtractedProduct } from "./types";
 
 // =====================================================================
-// Upsert des produits extraits vers Sanity. Utilise un client dédié
-// côté serveur avec le token d'écriture (SANITY_API_TOKEN).
+// Upsert des produits extraits vers Postgres + S3.
+// L'image est téléchargée depuis la source puis re-uploadée sur notre
+// bucket pour ne pas dépendre des CDN tiers (et garder le contrôle des
+// quotas/transformations).
 // =====================================================================
-
-let _client: SanityClient | null = null;
-function client(): SanityClient {
-  if (!_client) {
-    _client = createClient({
-      projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-      dataset: env.NEXT_PUBLIC_SANITY_DATASET,
-      apiVersion: "2024-10-15",
-      token: env.SANITY_API_TOKEN,
-      useCdn: false,
-    });
-  }
-  return _client;
-}
 
 export type UpsertResult = {
   imported: number;
@@ -34,35 +24,54 @@ export async function upsertProducts(
 
   for (const product of products) {
     try {
-      // Un produit sans catégorie est autorisé mais on le tag "non-classé"
       if (!product.imageUrl || !product.name || !product.priceMad) {
         result.skipped += 1;
         continue;
       }
 
+      const id = product.externalId.replace(/[^a-zA-Z0-9_-]/g, "_");
+
       const imageBuffer = await fetchImage(product.imageUrl);
-      const asset = await client().assets.upload("image", imageBuffer, {
-        filename: `${product.externalId}.jpg`,
+      const uploaded = await uploadObject({
+        buffer: imageBuffer,
+        contentType: "image/jpeg",
+        keyPrefix: "catalogue",
+        extension: ".jpg",
       });
 
-      const _id = product.externalId.replace(/[^a-zA-Z0-9_-]/g, "_");
-      await client().createOrReplace({
-        _id,
-        _type: "product",
-        name: product.name,
-        brand: product.brand,
-        category: product.category ?? undefined,
-        priceMad: product.priceMad,
-        mainImage: {
-          _type: "image",
-          asset: { _type: "reference", _ref: asset._id },
-        },
-        source: "scraped",
-        sourceUrl: product.sourceUrl,
-        description: product.description,
-        style: product.styles,
-        tags: product.tags,
-      });
+      await db
+        .insert(productsTable)
+        .values({
+          id,
+          name: product.name,
+          brand: product.brand,
+          category: product.category as never,
+          priceMad: product.priceMad,
+          imageUrl: uploaded.url,
+          imageKey: uploaded.key,
+          styles: product.styles,
+          tags: product.tags,
+          source: "scraped",
+          sourceUrl: product.sourceUrl,
+          description: product.description,
+        })
+        .onConflictDoUpdate({
+          target: productsTable.id,
+          set: {
+            name: product.name,
+            brand: product.brand,
+            category: product.category as never,
+            priceMad: product.priceMad,
+            imageUrl: uploaded.url,
+            imageKey: uploaded.key,
+            styles: product.styles,
+            tags: product.tags,
+            source: "scraped",
+            sourceUrl: product.sourceUrl,
+            description: product.description,
+            updatedAt: sql`now()`,
+          },
+        });
       result.imported += 1;
     } catch (err) {
       result.errors.push({

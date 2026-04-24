@@ -1,20 +1,6 @@
-import { createClient, type SanityClient } from "@sanity/client";
-import { env } from "@/env";
-
-// Client Sanity avec token d'écriture — réservé au backoffice serveur.
-let _client: SanityClient | null = null;
-function admin(): SanityClient {
-  if (!_client) {
-    _client = createClient({
-      projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-      dataset: env.NEXT_PUBLIC_SANITY_DATASET,
-      apiVersion: "2024-10-15",
-      token: env.SANITY_API_TOKEN,
-      useCdn: false,
-    });
-  }
-  return _client;
-}
+import { and, count, desc, eq, ilike, inArray } from "drizzle-orm";
+import { db } from "../db/client";
+import { products as productsTable } from "../db/schema";
 
 export type AdminProduct = {
   id: string;
@@ -41,55 +27,70 @@ export async function listAdminProducts({
   page?: number;
   pageSize?: number;
 } = {}): Promise<{ items: AdminProduct[]; total: number }> {
-  const conds: string[] = [];
-  if (category) conds.push(`category == $category`);
-  if (search) conds.push(`name match $search`);
-  const where = conds.length ? `&& ${conds.join(" && ")}` : "";
+  const filters = [] as Array<ReturnType<typeof eq>>;
+  if (category) {
+    filters.push(eq(productsTable.category, category as never));
+  }
+  if (search) {
+    filters.push(ilike(productsTable.name, `%${search}%`) as never);
+  }
+  const whereClause = filters.length === 1 ? filters[0] : filters.length > 1 ? and(...filters) : undefined;
 
-  const listQuery = /* groq */ `*[_type == "product" ${where}] | order(_updatedAt desc) [$offset...$end] {
-    "id": _id,
-    name,
-    brand,
-    category,
-    priceMad,
-    "imageUrl": mainImage.asset->url,
-    source,
-    sourceUrl,
-    "styles": coalesce(style, []),
-    "tags": coalesce(tags, []),
-    "updatedAt": _updatedAt
-  }`;
-  const countQuery = `count(*[_type == "product" ${where}])`;
-  const params = {
-    category: category ?? undefined,
-    search: search ? `${search}*` : undefined,
-    offset: page * pageSize,
-    end: page * pageSize + pageSize,
-  };
+  const itemsQuery = db
+    .select()
+    .from(productsTable)
+    .orderBy(desc(productsTable.updatedAt))
+    .limit(pageSize)
+    .offset(page * pageSize);
 
-  const [items, total] = await Promise.all([
-    admin().fetch<AdminProduct[]>(listQuery, params),
-    admin().fetch<number>(countQuery, params),
+  const totalQuery = db
+    .select({ value: count() })
+    .from(productsTable);
+
+  const [rows, totalRows] = await Promise.all([
+    whereClause ? itemsQuery.where(whereClause) : itemsQuery,
+    whereClause ? totalQuery.where(whereClause) : totalQuery,
   ]);
-  return { items, total: total ?? 0 };
+
+  const items: AdminProduct[] = rows.map((r) => ({
+    id: r.id,
+    name: r.name,
+    brand: r.brand,
+    category: r.category,
+    priceMad: r.priceMad,
+    imageUrl: r.imageUrl,
+    source: r.source,
+    sourceUrl: r.sourceUrl,
+    styles: r.styles ?? [],
+    tags: r.tags ?? [],
+    updatedAt: r.updatedAt.toISOString(),
+  }));
+
+  return { items, total: totalRows[0]?.value ?? 0 };
 }
 
 export async function deleteProducts(ids: string[]): Promise<{ deleted: number }> {
   if (ids.length === 0) return { deleted: 0 };
-  const tx = admin().transaction();
-  for (const id of ids) tx.delete(id);
-  await tx.commit({ visibility: "async" });
-  return { deleted: ids.length };
+  const deleted = await db
+    .delete(productsTable)
+    .where(inArray(productsTable.id, ids))
+    .returning({ id: productsTable.id });
+  return { deleted: deleted.length };
 }
 
 export async function getCategoryCounts(): Promise<Record<string, number>> {
-  const rows = await admin().fetch<Array<{ category: string | null }>>(
-    `*[_type == "product"]{ category }`,
-  );
+  const rows = await db
+    .select({
+      category: productsTable.category,
+      value: count(),
+    })
+    .from(productsTable)
+    .groupBy(productsTable.category);
+
   const counts: Record<string, number> = {};
-  for (const r of rows) {
-    const k = r.category ?? "__unclassified";
-    counts[k] = (counts[k] ?? 0) + 1;
+  for (const row of rows) {
+    const k = row.category ?? "__unclassified";
+    counts[k] = row.value;
   }
   return counts;
 }

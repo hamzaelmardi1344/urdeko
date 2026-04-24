@@ -185,7 +185,7 @@ export function ScraperWorkbench() {
             <div>
               <p className="font-bold text-emerald-700">
                 {summary.imported} produit{summary.imported > 1 ? "s" : ""} importé
-                {summary.imported > 1 ? "s" : ""} dans Sanity.
+                {summary.imported > 1 ? "s" : ""} dans le catalogue.
               </p>
               <p className="mt-0.5 text-on-surface-variant">
                 {summary.skipped} ignoré · {summary.errors.length} erreur

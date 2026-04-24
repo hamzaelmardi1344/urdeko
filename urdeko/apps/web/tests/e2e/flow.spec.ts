@@ -28,7 +28,7 @@ test("flow création projet → choix espace → guide photo", async ({ page }) 
   );
 });
 
-// Ce test exerce le vrai flux upload → dispatch Inngest → analyse Gemini.
+// Ce test exerce le vrai flux upload → enqueueJob → analyse Gemini.
 // Il est marqué skip par défaut pour ne pas consommer de quota IA à chaque
 // CI run ; active-le via `RUN_AI_E2E=1 pnpm test` localement.
 const shouldRunAi = process.env.RUN_AI_E2E === "1";

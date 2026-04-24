@@ -1,5 +1,6 @@
 import {
   boolean,
+  index,
   integer,
   jsonb,
   pgEnum,
@@ -56,6 +57,8 @@ export const jobStatusEnum = pgEnum("job_status", [
   "succeeded",
   "failed",
 ]);
+
+export const productSourceEnum = pgEnum("product_source", ["manual", "scraped"]);
 
 // ===== Auth tables (Auth.js / Drizzle adapter) ======================
 
@@ -163,10 +166,33 @@ export const projectSelections = pgTable("project_selections", {
     .notNull()
     .references(() => projects.id, { onDelete: "cascade" }),
   category: elementCategoryEnum("category").notNull(),
-  productId: text("product_id").notNull(), // ref Sanity document _id
+  productId: text("product_id").notNull(), // ref products.id (slug)
   priceMad: integer("price_mad").notNull(),
   chosenAt: timestamp("chosen_at").defaultNow().notNull(),
 });
+
+export const products = pgTable(
+  "products",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    brand: text("brand").notNull(),
+    category: elementCategoryEnum("category"),
+    priceMad: integer("price_mad").notNull(),
+    imageUrl: text("image_url").notNull(),
+    imageKey: text("image_key").notNull(),
+    styles: text("styles").array().notNull().default(sql`'{}'::text[]`),
+    tags: text("tags").array().notNull().default(sql`'{}'::text[]`),
+    source: productSourceEnum("source").notNull().default("manual"),
+    sourceUrl: text("source_url"),
+    description: text("description"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (t) => ({
+    catIdx: index("products_category_idx").on(t.category),
+  }),
+);
 
 export const projectRenders = pgTable("project_renders", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -246,3 +272,5 @@ export type Contact = typeof contacts.$inferSelect;
 export type Job = typeof jobs.$inferSelect;
 export type AppSetting = typeof appSettings.$inferSelect;
 export type NewAppSetting = typeof appSettings.$inferInsert;
+export type Product = typeof products.$inferSelect;
+export type NewProduct = typeof products.$inferInsert;

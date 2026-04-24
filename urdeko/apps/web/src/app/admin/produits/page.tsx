@@ -31,7 +31,7 @@ export default async function AdminProductsPage({
     <AdminShell
       userEmail={email}
       title="Catalogue produits"
-      subtitle={`${total.toLocaleString("fr-MA")} produits dans Sanity`}
+      subtitle={`${total.toLocaleString("fr-MA")} produits dans le catalogue`}
       action={
         <Link
           href="/admin/produits/scraper"

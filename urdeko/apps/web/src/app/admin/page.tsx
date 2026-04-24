@@ -37,7 +37,7 @@ export default async function AdminDashboard() {
     {
       label: "Produits catalogue",
       value: stats.products.total,
-      sub: stats.products.total === 0 ? "⚠️ Catalogue vide — lance un import" : "Sanity",
+      sub: stats.products.total === 0 ? "⚠️ Catalogue vide — lance un import" : "Postgres",
       icon: "inventory_2",
       tint: stats.products.total === 0 ? "warning" : "success",
     },
@@ -141,7 +141,7 @@ export default async function AdminDashboard() {
               <EmptyState
                 icon="bolt"
                 title="Aucun job encore"
-                description="Les jobs Inngest apparaîtront ici dès le premier run."
+                description="Les jobs IA apparaîtront ici dès le premier run."
               />
             ) : (
               <ul className="space-y-3">

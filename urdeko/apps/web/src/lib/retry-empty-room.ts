@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/client";
 import { projectPhotos } from "@/lib/db/schema";
-import { dispatch } from "@/lib/inngest/dispatch";
+import { enqueueJob } from "@/lib/jobs/dispatch";
 import { getGuestId } from "@/lib/guest";
 import { assertProjectAccess, ForbiddenError } from "@/lib/projects";
 import { rateLimit, RATE_LIMITS } from "@/lib/rate-limit";
@@ -20,8 +20,8 @@ export type RetryEmptyRoomResult =
   | { ok: false; error: string; status: 400 | 403 | 429 };
 
 /**
- * Relance le job Inngest « pièce vide » sur la photo déjà uploadée.
- * Utilisé par la Server Action et par l’API POST (évite les IDs d’action
+ * Relance le job « pièce vide » sur la photo déjà uploadée.
+ * Utilisé par la Server Action et par l'API POST (évite les IDs d'action
  * périmés après un restart Next.js).
  */
 export async function retryEmptyRoomForProject(projectId: string): Promise<RetryEmptyRoomResult> {
@@ -59,9 +59,10 @@ export async function retryEmptyRoomForProject(projectId: string): Promise<Retry
     .set({ emptiedUrl: null })
     .where(eq(projectPhotos.id, photo.id));
 
-  await dispatch({
-    name: "urdeko/room.empty.requested",
-    data: { projectId, photoId: photo.id, originalUrl: photo.originalUrl },
+  await enqueueJob({
+    projectId,
+    kind: "empty_room",
+    payload: { projectId, photoId: photo.id, originalUrl: photo.originalUrl },
   });
 
   revalidatePath(`/projets/${projectId}`, "layout");

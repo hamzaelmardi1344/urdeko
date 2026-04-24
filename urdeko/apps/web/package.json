@@ -11,7 +11,8 @@
     "test": "playwright test",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "db:seed": "tsx scripts/seed-products.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.2",
@@ -19,16 +20,12 @@
     "@aws-sdk/s3-request-presigner": "^3.675.0",
     "@google/genai": "^1.50.1",
     "@react-email/components": "^0.0.27",
-    "@sanity/client": "^6.22.2",
-    "@sanity/image-url": "^1.0.2",
-    "@sentry/nextjs": "^8.43.0",
     "@urdeko/design-system": "workspace:*",
     "@vercel/analytics": "^1.4.0",
     "cheerio": "^1.0.0",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.36.2",
     "framer-motion": "^11.11.17",
-    "inngest": "^3.22.12",
     "ioredis": "^5.4.1",
     "next": "^15.0.3",
     "next-auth": "5.0.0-beta.31",
@@ -56,6 +53,7 @@
     "eslint": "^9.14.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.14",
+    "tsx": "^4.19.2",
     "typescript": "^5.6.3"
   }
 }

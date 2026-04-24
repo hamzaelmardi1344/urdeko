@@ -61,8 +61,7 @@ export async function rateLimit(
     };
   } catch (error) {
     console.error("[redis] rateLimit failed:", (error as Error).message);
-    // Fail-open : on ne bloque pas l'utilisateur si Redis est injoignable,
-    // mais on log l'incident pour Sentry.
+    // Fail-open : on ne bloque pas l'utilisateur si Redis est injoignable.
     return {
       allowed: true,
       remaining: config.limit,

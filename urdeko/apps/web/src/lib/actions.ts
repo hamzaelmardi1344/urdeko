@@ -19,7 +19,7 @@ import {
   updateProject,
 } from "./projects";
 import { uploadObject } from "./storage";
-import { dispatch } from "./inngest/dispatch";
+import { enqueueJob } from "./jobs/dispatch";
 import { rateLimit, RATE_LIMITS } from "./rate-limit";
 import { auth } from "./auth";
 import { getGuestId } from "./guest";
@@ -114,9 +114,10 @@ export async function uploadProjectPhotoAction(projectId: string, formData: Form
     .returning();
   if (!photo) throw new Error("Impossible d'enregistrer la photo");
 
-  await dispatch({
-    name: "urdeko/photo.uploaded",
-    data: { projectId, photoId: photo.id, originalUrl: uploaded.url },
+  await enqueueJob({
+    projectId,
+    kind: "analyze_photo",
+    payload: { projectId, photoId: photo.id, originalUrl: uploaded.url },
   });
 
   revalidatePath(`/projets/${projectId}`, "layout");
@@ -240,5 +241,5 @@ export async function requestRenderAction(projectId: string) {
     );
   }
   await updateProject(projectId, { status: "rendering" });
-  await dispatch({ name: "urdeko/project.render.requested", data: { projectId } });
+  await enqueueJob({ projectId, kind: "render", payload: { projectId } });
 }

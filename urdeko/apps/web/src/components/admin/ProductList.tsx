@@ -172,7 +172,7 @@ export function ProductList({
           <Icon name="inventory_2" size={32} className="text-on-surface-variant" />
           <p className="mt-3 font-bold">Aucun produit</p>
           <p className="mt-1 text-sm text-on-surface-variant">
-            Importe depuis le web ou crée un produit dans Sanity Studio.
+            Importe depuis le web ou seed le catalogue (`pnpm db:seed`).
           </p>
         </div>
       ) : (

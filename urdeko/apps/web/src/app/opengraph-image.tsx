@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
-// On reste sur le runtime Node : Sentry/ioredis/etc. importent des modules
-// `node:*` depuis instrumentation.ts, incompatibles avec edge.
+// On reste sur le runtime Node : ioredis et drivers Postgres importent des
+// modules `node:*` incompatibles avec edge.
 export const runtime = "nodejs";
 export const alt = "UrdeKo — Design d'intérieur IA";
 export const size = { width: 1200, height: 630 };

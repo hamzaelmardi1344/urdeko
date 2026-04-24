@@ -4,7 +4,7 @@ import { z } from "zod";
 // Validation stricte des variables d'environnement.
 // Aucun service externe n'est optionnel : l'app refuse de booter si une
 // variable requise est absente. En dev local, docker-compose fournit
-// Postgres + MinIO (S3) + Inngest dev server + Redis.
+// Postgres + MinIO (S3) + Redis.
 // =====================================================================
 
 const envSchema = z.object({
@@ -50,23 +50,14 @@ const envSchema = z.object({
     .default("false")
     .transform((v) => v === "true"),
 
-  // Sanity CMS
-  NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().min(1),
-  NEXT_PUBLIC_SANITY_DATASET: z.string().default("production"),
-  SANITY_API_TOKEN: z.string().min(1),
-  SANITY_REVALIDATE_SECRET: z.string().min(16),
+  // Jobs internes (file fire-and-forget vers /api/jobs/run sur Vercel)
+  INTERNAL_JOB_SECRET: z.string().min(32),
 
-  // Inngest
-  INNGEST_EVENT_KEY: z.string().min(1),
-  INNGEST_SIGNING_KEY: z.string().min(1),
-  INNGEST_BASE_URL: z.string().url().optional(),
+  // Vercel Cron (scrape hebdo)
+  CRON_SECRET: z.string().min(16),
 
   // Redis (rate limiting + future queue/cache)
   REDIS_URL: z.string().min(1),
-
-  // Observabilité
-  NEXT_PUBLIC_SENTRY_DSN: z.string().min(1),
-  SENTRY_AUTH_TOKEN: z.string().optional().default(""),
 
   // Infos légales (paramétrées une fois, affichées dans les pages CGU/etc.)
   LEGAL_COMPANY_NAME: z.string().default("UrdeKo"),

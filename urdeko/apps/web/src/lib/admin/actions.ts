@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { jobs, projectPhotos, projects } from "@/lib/db/schema";
-import { dispatch } from "@/lib/inngest/dispatch";
+import { enqueueJob } from "@/lib/jobs/dispatch";
 import { requireAdmin } from "./auth";
 
 // =====================================================================
@@ -30,9 +30,10 @@ export async function adminRetryJobAction(formData: FormData) {
   switch (job.kind) {
     case "analyze_photo": {
       if (!photo) throw new Error("Aucune photo à retraiter");
-      await dispatch({
-        name: "urdeko/photo.analyze.requested",
-        data: {
+      await enqueueJob({
+        projectId: job.projectId,
+        kind: "analyze_photo",
+        payload: {
           projectId: job.projectId,
           photoId: photo.id,
           originalUrl: photo.originalUrl,
@@ -46,9 +47,10 @@ export async function adminRetryJobAction(formData: FormData) {
         .update(projectPhotos)
         .set({ emptiedUrl: null })
         .where(eq(projectPhotos.id, photo.id));
-      await dispatch({
-        name: "urdeko/room.empty.requested",
-        data: {
+      await enqueueJob({
+        projectId: job.projectId,
+        kind: "empty_room",
+        payload: {
           projectId: job.projectId,
           photoId: photo.id,
           originalUrl: photo.originalUrl,
@@ -57,9 +59,10 @@ export async function adminRetryJobAction(formData: FormData) {
       break;
     }
     case "render": {
-      await dispatch({
-        name: "urdeko/project.render.requested",
-        data: { projectId: job.projectId },
+      await enqueueJob({
+        projectId: job.projectId,
+        kind: "render",
+        payload: { projectId: job.projectId },
       });
       break;
     }

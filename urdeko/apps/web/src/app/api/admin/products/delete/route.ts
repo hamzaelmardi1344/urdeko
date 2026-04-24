@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { requireAdmin, AdminForbiddenError } from "@/lib/admin/auth";
 import { deleteProducts } from "@/lib/admin/products";
@@ -26,6 +25,5 @@ export async function POST(req: Request) {
   }
 
   const result = await deleteProducts(parsed.data.ids);
-  revalidateTag("products");
   return NextResponse.json(result);
 }
