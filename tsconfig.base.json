@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@bep/shared-types": ["packages/shared-types/src/index.ts"],
+      "@bep/trpc-router": ["packages/trpc-router/src/index.ts"],
+      "@bep/ui-kit": ["packages/ui-kit/src/index.ts"]
+    }
+  }
+}
