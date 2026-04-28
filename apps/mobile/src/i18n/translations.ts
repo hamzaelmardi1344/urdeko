@@ -1,0 +1,218 @@
+export const translations = {
+  fr: {
+    common: {
+      loading: "Chargement...",
+      retry: "Réessayer",
+      save: "Enregistrer",
+      cancel: "Annuler",
+      empty: "Rien à afficher pour le moment",
+      error: "Une erreur est survenue",
+      mad: "MAD",
+      search: "Rechercher"
+    },
+    onboarding: {
+      slide1: "Transforme ton Instagram en boutique",
+      slide2: "Gère COD, stock et clientes depuis ton téléphone",
+      slide3: "Écris tes fiches en darija et français avec l'IA",
+      start: "Démarrer",
+      signInTitle: "Connexion Jibi",
+      signInBody: "Connecte-toi avec Clerk pour retrouver ta boutique.",
+      shopTitle: "Crée ta boutique",
+      shopName: "Nom de boutique",
+      slug: "Slug",
+      city: "Ville",
+      whatsapp: "WhatsApp",
+      instagram: "Instagram"
+    },
+    tabs: {
+      home: "Accueil",
+      orders: "Commandes",
+      catalog: "Catalogue",
+      customers: "Clientes",
+      shop: "Boutique"
+    },
+    home: {
+      pending: "En attente",
+      todayRevenue: "CA aujourd'hui",
+      monthRevenue: "CA ce mois",
+      shortcuts: "Raccourcis",
+      addProduct: "Ajouter produit",
+      importIg: "Importer Instagram",
+      previewShop: "Prévisualiser boutique"
+    },
+    orders: {
+      title: "Commandes",
+      confirm: "Confirmer",
+      prepare: "Marquer prête",
+      handover: "Attribuer livreur",
+      delivered: "Livrée",
+      note: "Ajouter note",
+      timeline: "Timeline"
+    },
+    catalog: {
+      title: "Catalogue",
+      price: "Prix",
+      stock: "Stock",
+      generate: "Générer IA",
+      photos: "Photos",
+      variants: "Variantes"
+    },
+    customers: {
+      title: "Clientes",
+      totalOrders: "Commandes",
+      spent: "Total dépensé"
+    },
+    shop: {
+      title: "Boutique",
+      billing: "Plan et billing",
+      delivery: "Livreurs",
+      whatsapp: "Templates WhatsApp",
+      team: "Équipe",
+      notifications: "Notifications"
+    }
+  },
+  ar: {
+    common: {
+      loading: "جاري التحميل...",
+      retry: "إعادة المحاولة",
+      save: "حفظ",
+      cancel: "إلغاء",
+      empty: "لا يوجد شيء حاليا",
+      error: "حدث خطأ",
+      mad: "درهم",
+      search: "بحث"
+    },
+    onboarding: {
+      slide1: "حوّلي إنستغرام ديالك لمتجر",
+      slide2: "دبري الطلبات والدفع عند التسليم من الهاتف",
+      slide3: "كتبي الوصف بالعربية والدارجة بالذكاء الاصطناعي",
+      start: "ابدئي",
+      signInTitle: "تسجيل الدخول",
+      signInBody: "استعملي Clerk للدخول إلى متجرك.",
+      shopTitle: "أنشئي متجرك",
+      shopName: "اسم المتجر",
+      slug: "الرابط",
+      city: "المدينة",
+      whatsapp: "واتساب",
+      instagram: "إنستغرام"
+    },
+    tabs: {
+      home: "الرئيسية",
+      orders: "الطلبات",
+      catalog: "الكتالوغ",
+      customers: "الزبونات",
+      shop: "المتجر"
+    },
+    home: {
+      pending: "في الانتظار",
+      todayRevenue: "مبيعات اليوم",
+      monthRevenue: "مبيعات الشهر",
+      shortcuts: "اختصارات",
+      addProduct: "إضافة منتج",
+      importIg: "استيراد إنستغرام",
+      previewShop: "معاينة المتجر"
+    },
+    orders: {
+      title: "الطلبات",
+      confirm: "تأكيد",
+      prepare: "جاهزة",
+      handover: "تعيين الموصّل",
+      delivered: "تم التسليم",
+      note: "إضافة ملاحظة",
+      timeline: "المسار"
+    },
+    catalog: {
+      title: "الكتالوغ",
+      price: "الثمن",
+      stock: "المخزون",
+      generate: "توليد بالذكاء الاصطناعي",
+      photos: "الصور",
+      variants: "الخيارات"
+    },
+    customers: {
+      title: "الزبونات",
+      totalOrders: "الطلبات",
+      spent: "المجموع"
+    },
+    shop: {
+      title: "المتجر",
+      billing: "الخطة والدفع",
+      delivery: "شركات التوصيل",
+      whatsapp: "قوالب واتساب",
+      team: "الفريق",
+      notifications: "الإشعارات"
+    }
+  },
+  darija: {
+    common: {
+      loading: "كيتشارجا...",
+      retry: "عاودي",
+      save: "سجلي",
+      cancel: "حبسي",
+      empty: "ما كاين والو دابا",
+      error: "وقع مشكل",
+      mad: "درهم",
+      search: "قلبي"
+    },
+    onboarding: {
+      slide1: "ردي إنستغرام ديالك بوتيك",
+      slide2: "دبري الكوموندات و COD غير من التيليفون",
+      slide3: "خلي Jibi يكتب ليك الوصف بالدارجة والفرونسي",
+      start: "بداي",
+      signInTitle: "دخلي ل Jibi",
+      signInBody: "توصلي ب Clerk باش ترجعي للبوتيك ديالك.",
+      shopTitle: "وجدي البوتيك",
+      shopName: "سمية البوتيك",
+      slug: "الرابط",
+      city: "المدينة",
+      whatsapp: "واتساب",
+      instagram: "إنستغرام"
+    },
+    tabs: {
+      home: "الدار",
+      orders: "الكوموندات",
+      catalog: "السلعة",
+      customers: "الكليانات",
+      shop: "البوتيك"
+    },
+    home: {
+      pending: "كيتسناو",
+      todayRevenue: "رباح اليوم",
+      monthRevenue: "رباح الشهر",
+      shortcuts: "ديريها دغيا",
+      addProduct: "زيدي سلعة",
+      importIg: "جيبي من إنستغرام",
+      previewShop: "شوفي البوتيك"
+    },
+    orders: {
+      title: "الكوموندات",
+      confirm: "كونفيرمي",
+      prepare: "واجدة",
+      handover: "عطيها للليفورور",
+      delivered: "توصلات",
+      note: "زيدي نوت",
+      timeline: "التتبع"
+    },
+    catalog: {
+      title: "السلعة",
+      price: "الثمن",
+      stock: "الستوك",
+      generate: "كتبي بال AI",
+      photos: "الصور",
+      variants: "المقاسات"
+    },
+    customers: {
+      title: "الكليانات",
+      totalOrders: "كوموندات",
+      spent: "شحال خلصات"
+    },
+    shop: {
+      title: "البوتيك",
+      billing: "البلاصة والخلصان",
+      delivery: "الليفورورات",
+      whatsapp: "ميساجات واتساب",
+      team: "التيم",
+      notifications: "النوتيفيكاسيون"
+    }
+  }
+} as const;

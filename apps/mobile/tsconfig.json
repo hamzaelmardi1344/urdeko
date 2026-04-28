@@ -1,0 +1,15 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@bep/shared-types": ["../../packages/shared-types/src/index.ts"],
+      "@bep/trpc-router": ["../../packages/trpc-router/src/index.ts"],
+      "@bep/ui-kit": ["../../packages/ui-kit/src/index.ts"]
+    }
+  },
+  "include": ["app/**/*.tsx", "src/**/*.ts", "src/**/*.tsx", "nativewind-env.d.ts"]
+}
