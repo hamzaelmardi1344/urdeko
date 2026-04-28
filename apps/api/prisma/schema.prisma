@@ -1,0 +1,288 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  phoneE164 String?  @unique
+  fullName  String
+  locale    String   @default("fr")
+  createdAt DateTime @default(now())
+  shop      Shop?
+}
+
+model Shop {
+  id                String               @id @default(cuid())
+  ownerId           String               @unique
+  owner             User                 @relation(fields: [ownerId], references: [id])
+  slug              String               @unique
+  name              String
+  bio               String?
+  logoUrl           String?
+  coverUrl          String?
+  whatsappNumber    String
+  instagramHandle   String?
+  city              String
+  plan              Plan                 @default(FREE)
+  planSince         DateTime             @default(now())
+  monthlyOrderQuota Int                  @default(20)
+  status            ShopStatus           @default(ACTIVE)
+  products          Product[]
+  orders            Order[]
+  customers         Customer[]
+  deliveryConfigs   ShopDeliveryConfig[]
+  subscription      Subscription?
+  analyticsSnapshots AnalyticsSnapshot[]
+  whatsappTemplates WhatsappTemplate[]
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  @@index([slug])
+  @@index([ownerId])
+}
+
+enum Plan {
+  FREE
+  PRO
+  BUSINESS
+}
+
+enum ShopStatus {
+  ACTIVE
+  SUSPENDED
+  ARCHIVED
+}
+
+model Product {
+  id                    String            @id @default(cuid())
+  shopId                String
+  shop                  Shop              @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  title                 String
+  titleAr               String?
+  description           String
+  descriptionAr         String?
+  descriptionDarija     String?
+  priceMAD              Int
+  comparePriceMAD       Int?
+  stock                 Int               @default(0)
+  unlimited             Boolean           @default(false)
+  status                ProductStatus     @default(DRAFT)
+  images                ProductImage[]
+  variants              ProductVariant[]
+  sourceInstagramPostId String?
+  aiGenerated           Boolean           @default(false)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  @@index([shopId, status])
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  OUT_OF_STOCK
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  position  Int     @default(0)
+}
+
+model ProductVariant {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String
+  sku       String?
+  priceMAD  Int?
+  stock     Int     @default(0)
+}
+
+model Customer {
+  id            String   @id @default(cuid())
+  shopId        String
+  shop          Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  fullName      String
+  phoneE164     String
+  city          String
+  addressLine   String
+  notes         String?
+  totalOrders   Int      @default(0)
+  totalSpentMAD Int      @default(0)
+  createdAt     DateTime @default(now())
+  orders        Order[]
+
+  @@unique([shopId, phoneE164])
+  @@index([shopId])
+}
+
+model Order {
+  id            String        @id @default(cuid())
+  shopId        String
+  shop          Shop          @relation(fields: [shopId], references: [id])
+  customerId    String
+  customer      Customer      @relation(fields: [customerId], references: [id])
+  reference     String        @unique
+  status        OrderStatus   @default(PENDING)
+  paymentMethod PaymentMethod @default(COD)
+  subtotalMAD   Int
+  deliveryMAD   Int           @default(0)
+  discountMAD   Int           @default(0)
+  totalMAD      Int
+  items         OrderItem[]
+  delivery      Delivery?
+  events        OrderEvent[]
+  abandonedAt   DateTime?
+  recoveredAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([shopId, status])
+  @@index([shopId, createdAt])
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  HANDED_OVER
+  IN_TRANSIT
+  DELIVERED
+  RETURNED
+  CANCELLED
+  ABANDONED
+}
+
+enum PaymentMethod {
+  COD
+  CARD
+  WALLET
+}
+
+model OrderItem {
+  id               String @id @default(cuid())
+  orderId          String
+  order            Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId        String
+  variantId        String?
+  titleSnapshot    String
+  imageUrlSnapshot String?
+  unitPriceMAD     Int
+  quantity         Int
+  totalMAD         Int
+}
+
+model OrderEvent {
+  id        String         @id @default(cuid())
+  orderId   String
+  order     Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  type      OrderEventType
+  meta      Json?
+  createdAt DateTime       @default(now())
+
+  @@index([orderId, createdAt])
+}
+
+enum OrderEventType {
+  CREATED
+  CONFIRMED
+  PREPARED
+  HANDED_OVER
+  IN_TRANSIT
+  DELIVERED
+  RETURNED
+  CANCELLED
+  REMINDER_SENT
+  NOTE_ADDED
+}
+
+model Delivery {
+  id               String           @id @default(cuid())
+  orderId          String           @unique
+  order            Order            @relation(fields: [orderId], references: [id])
+  provider         DeliveryProvider
+  externalId       String?
+  trackingUrl      String?
+  pickupAt         DateTime?
+  deliveredAt      DateTime?
+  cashCollectedMAD Int?
+  cashRemittedAt   DateTime?
+  status           String
+  rawPayload       Json?
+}
+
+enum DeliveryProvider {
+  AMANA
+  SPEEDAF
+  SENDIT
+  MANUAL
+}
+
+model ShopDeliveryConfig {
+  id                String           @id @default(cuid())
+  shopId            String
+  shop              Shop             @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  provider          DeliveryProvider
+  enabled           Boolean          @default(true)
+  apiKeyEnc         String
+  defaultPickupCity String?
+
+  @@unique([shopId, provider])
+}
+
+model WhatsappTemplate {
+  id       String               @id @default(cuid())
+  shopId   String?
+  shop     Shop?                @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  type     WhatsappTemplateType
+  language String               @default("fr")
+  body     String
+  active   Boolean              @default(true)
+
+  @@index([shopId, type])
+}
+
+enum WhatsappTemplateType {
+  ORDER_CONFIRMATION
+  ORDER_SHIPPED
+  ORDER_DELIVERED
+  CART_ABANDONED
+  REVIEW_REQUEST
+}
+
+model Subscription {
+  id          String   @id @default(cuid())
+  shopId      String   @unique
+  shop        Shop     @relation(fields: [shopId], references: [id])
+  paddleSubId String   @unique
+  plan        Plan
+  status      String
+  renewsAt    DateTime?
+  cancelledAt DateTime?
+  createdAt   DateTime @default(now())
+}
+
+model AnalyticsSnapshot {
+  id           String   @id @default(cuid())
+  shopId       String
+  shop         Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  date         DateTime
+  orders       Int
+  revenue      Int
+  newCustomers Int
+  topProductId String?
+
+  @@unique([shopId, date])
+}
