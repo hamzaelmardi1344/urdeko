@@ -9,6 +9,7 @@ import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
     bufferLogs: true,
+    rawBody: true,
   });
   const env = app.get(EnvService);
 

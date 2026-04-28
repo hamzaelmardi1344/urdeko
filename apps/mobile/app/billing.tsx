@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CreditCard } from "lucide-react-native";
+import { CheckCircle2, CreditCard } from "lucide-react-native";
 import { Text, View } from "react-native";
 import { WebView } from "react-native-webview";
 import { Button } from "@/components/button";
@@ -40,6 +40,16 @@ export default function BillingScreen() {
             }
           }}
         />
+        <View className="gap-3 p-4">
+          <Button
+            label={t("shop.paymentDone")}
+            icon={CheckCircle2}
+            onPress={() => {
+              shop.refetch();
+              setCheckoutUrl(null);
+            }}
+          />
+        </View>
       </Screen>
     );
   }

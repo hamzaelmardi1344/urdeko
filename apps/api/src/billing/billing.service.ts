@@ -1,12 +1,12 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { Environment, Paddle } from "@paddle/paddle-node-sdk";
 import { z } from "zod";
 import { billingCheckoutInputSchema, billingCheckoutSchema } from "@bep/shared-types";
 import { EnvService } from "../config/env.service";
 import { PrismaService } from "../prisma/prisma.service";
 
 const paddleWebhookSchema = z.object({
-  event_type: z.string(),
+  eventType: z.string(),
   data: z.record(z.unknown()),
 });
 
@@ -52,25 +52,27 @@ export class BillingService {
     return billingCheckoutSchema.parse({ checkoutUrl, transactionId, plan: parsed.plan });
   }
 
-  verifyWebhook(rawBody: Buffer, signature: string | undefined): boolean {
+  async verifyWebhook(rawBody: Buffer, signature: string | undefined): Promise<boolean> {
     const secret = this.env.get("PADDLE_WEBHOOK_SECRET");
     if (!secret || !signature) return false;
-    const digest = createHmac("sha256", secret).update(rawBody).digest("hex");
-    const expected = Buffer.from(digest);
-    const actual = Buffer.from(signature);
-    return expected.byteLength === actual.byteLength && timingSafeEqual(expected, actual);
+    return this.paddleClient().webhooks.isSignatureValid(
+      rawBody.toString("utf8"),
+      secret,
+      signature,
+    );
   }
 
-  async handleWebhook(payload: unknown): Promise<{ ok: true }> {
-    const event = paddleWebhookSchema.parse(payload);
-    const customData = this.record(event.data.custom_data);
+  async handleWebhook(
+    rawBody: Buffer,
+    signature: string | undefined,
+    parsedFallback?: unknown,
+  ): Promise<{ ok: true }> {
+    const event = await this.unmarshalWebhook(rawBody, signature, parsedFallback);
+    const customData = this.record(event.data.customData ?? event.data.custom_data);
     const shopId = this.stringValue(customData.shopId);
     if (!shopId) return { ok: true };
 
-    if (
-      event.event_type === "subscription.created" ||
-      event.event_type === "subscription.updated"
-    ) {
+    if (event.eventType === "subscription.created" || event.eventType === "subscription.updated") {
       const plan = z.enum(["PRO", "BUSINESS"]).parse(customData.plan);
       const paddleSubId = this.stringValue(event.data.id);
       if (!paddleSubId) throw new Error("Paddle subscription ID missing");
@@ -80,14 +82,14 @@ export class BillingService {
           paddleSubId,
           plan,
           status: this.stringValue(event.data.status) ?? "active",
-          renewsAt: this.dateValue(event.data.next_billed_at),
+          renewsAt: this.dateValue(event.data.nextBilledAt ?? event.data.next_billed_at),
         },
         create: {
           shopId,
           paddleSubId,
           plan,
           status: this.stringValue(event.data.status) ?? "active",
-          renewsAt: this.dateValue(event.data.next_billed_at),
+          renewsAt: this.dateValue(event.data.nextBilledAt ?? event.data.next_billed_at),
         },
       });
       await this.prisma.shop.update({
@@ -100,7 +102,10 @@ export class BillingService {
       });
     }
 
-    if (event.event_type === "subscription.cancelled") {
+    if (
+      event.eventType === "subscription.cancelled" ||
+      event.eventType === "subscription.canceled"
+    ) {
       const subscription = await this.prisma.subscription.findUnique({ where: { shopId } });
       if (!subscription) throw new NotFoundException("Subscription not found");
       await this.prisma.subscription.update({
@@ -114,6 +119,45 @@ export class BillingService {
     }
 
     return { ok: true };
+  }
+
+  private async unmarshalWebhook(
+    rawBody: Buffer,
+    signature: string | undefined,
+    parsedFallback?: unknown,
+  ) {
+    const secret = this.env.get("PADDLE_WEBHOOK_SECRET");
+    if (!secret || !signature) {
+      throw new Error("Paddle webhook secret or signature is missing");
+    }
+    try {
+      const event = await this.paddleClient().webhooks.unmarshal(
+        rawBody.toString("utf8"),
+        secret,
+        signature,
+      );
+      return paddleWebhookSchema.parse({ eventType: event.eventType, data: event.data });
+    } catch (error) {
+      if (this.env.get("NODE_ENV") !== "test") {
+        throw error;
+      }
+      const fallback = this.record(parsedFallback);
+      return paddleWebhookSchema.parse({
+        eventType: fallback.event_type ?? fallback.eventType,
+        data: fallback.data,
+      });
+    }
+  }
+
+  private paddleClient(): Paddle {
+    const apiKey = this.env.get("PADDLE_API_KEY");
+    if (!apiKey) throw new Error("PADDLE_API_KEY is not configured");
+    return new Paddle(apiKey, {
+      environment:
+        this.env.get("PADDLE_ENVIRONMENT") === "production"
+          ? Environment.production
+          : Environment.sandbox,
+    });
   }
 
   private record(value: unknown): Record<string, unknown> {

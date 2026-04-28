@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { cuidSchema, isoDateStringSchema, madCentsSchema, nonEmptyStringSchema } from "./common";
+import {
+  cuidSchema,
+  e164PhoneSchema,
+  isoDateStringSchema,
+  madCentsSchema,
+  nonEmptyStringSchema,
+} from "./common";
 import { integrationProviderSchema, planSchema, whatsappTemplateTypeSchema } from "./enums";
 
 export const whatsappTemplateSchema = z.object({
@@ -47,15 +53,65 @@ export const connectInstagramInputSchema = z.union([
   z.object({
     code: nonEmptyStringSchema,
     redirectUri: z.string().url(),
+    state: nonEmptyStringSchema,
   }),
   z.object({
     accessToken: nonEmptyStringSchema,
   }),
 ]);
 
+export const instagramImportInputSchema = z.object({
+  accessToken: nonEmptyStringSchema.optional(),
+  limit: z.number().int().min(1).max(50).default(50),
+});
+
 export const instagramImportResultSchema = z.object({
   imported: z.number().int().nonnegative(),
+  skipped: z.number().int().nonnegative(),
   products: z.array(z.unknown()),
+});
+
+export const integrationDiagnosticProviderSchema = z.enum([
+  "R2",
+  "INSTAGRAM",
+  "WHATSAPP",
+  "PADDLE",
+  "CLAUDE",
+]);
+
+export const integrationModeSchema = z.enum(["missing", "preview", "sandbox", "production"]);
+
+export const integrationProviderStatusSchema = z.object({
+  provider: integrationDiagnosticProviderSchema,
+  configured: z.boolean(),
+  connected: z.boolean(),
+  mode: integrationModeSchema,
+  missingEnv: z.array(nonEmptyStringSchema),
+  action: nonEmptyStringSchema,
+  lastCheckedAt: isoDateStringSchema,
+});
+
+export const integrationStatusResponseSchema = z.object({
+  providers: z.array(integrationProviderStatusSchema),
+});
+
+export const integrationVerifyResultSchema = z.object({
+  provider: integrationDiagnosticProviderSchema,
+  ok: z.boolean(),
+  message: nonEmptyStringSchema,
+  details: z.record(z.union([z.string(), z.number(), z.boolean(), z.null()])).optional(),
+  checkedAt: isoDateStringSchema,
+});
+
+export const whatsappTestTemplateInputSchema = z.object({
+  toE164: e164PhoneSchema,
+  type: whatsappTemplateTypeSchema,
+  language: z.enum(["fr", "ar", "darija"]).default("fr"),
+});
+
+export const whatsappTestTemplateResultSchema = z.object({
+  messageId: nonEmptyStringSchema,
+  templateName: nonEmptyStringSchema,
 });
 
 export const aiProductCopyInputSchema = z.object({
@@ -128,7 +184,13 @@ export type InstagramMedia = z.infer<typeof instagramMediaSchema>;
 export type ShopIntegration = z.infer<typeof shopIntegrationSchema>;
 export type InstagramOAuthUrl = z.infer<typeof instagramOAuthUrlSchema>;
 export type ConnectInstagramInput = z.infer<typeof connectInstagramInputSchema>;
+export type InstagramImportInput = z.infer<typeof instagramImportInputSchema>;
 export type InstagramImportResult = z.infer<typeof instagramImportResultSchema>;
+export type IntegrationProviderStatus = z.infer<typeof integrationProviderStatusSchema>;
+export type IntegrationStatusResponse = z.infer<typeof integrationStatusResponseSchema>;
+export type IntegrationVerifyResult = z.infer<typeof integrationVerifyResultSchema>;
+export type WhatsappTestTemplateInput = z.infer<typeof whatsappTestTemplateInputSchema>;
+export type WhatsappTestTemplateResult = z.infer<typeof whatsappTestTemplateResultSchema>;
 export type AiProductCopyInput = z.infer<typeof aiProductCopyInputSchema>;
 export type AiProductCopy = z.infer<typeof aiProductCopySchema>;
 export type Subscription = z.infer<typeof subscriptionSchema>;

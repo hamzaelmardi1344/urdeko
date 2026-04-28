@@ -7,6 +7,8 @@ import {
   createOrderInputSchema,
   customerSchema,
   deliverySchema,
+  integrationStatusResponseSchema,
+  integrationVerifyResultSchema,
   instagramImportResultSchema,
   instagramOAuthUrlSchema,
   orderSchema,
@@ -14,6 +16,7 @@ import {
   productSchema,
   shopSchema,
   shopIntegrationSchema,
+  whatsappTestTemplateResultSchema,
   type CreateOrderInput,
   type Order,
   type Product,
@@ -351,6 +354,36 @@ export function useUploadProductImage() {
   });
 }
 
+export function useIntegrationStatus() {
+  const token = useSessionToken();
+  return useQuery({
+    queryKey: ["integrations", "status"],
+    queryFn: async () =>
+      apiRequest({
+        path: "/integrations/status",
+        token: await token(),
+        schema: integrationStatusResponseSchema,
+        cacheKey: "integrations:status",
+      }),
+  });
+}
+
+export function useVerifyR2() {
+  const token = useSessionToken();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () =>
+      apiRequest({
+        path: "/integrations/r2/verify",
+        method: "POST",
+        token: await token(),
+        body: {},
+        schema: integrationVerifyResultSchema,
+      }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["integrations", "status"] }),
+  });
+}
+
 export function useGenerateProductCopy() {
   const token = useSessionToken();
   return useMutation({
@@ -391,7 +424,10 @@ export function useInstagramConnect() {
         body: input,
         schema: shopIntegrationSchema,
       }),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["products"] }),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["integrations", "status"] });
+    },
   });
 }
 
@@ -408,6 +444,20 @@ export function useInstagramImport() {
         schema: instagramImportResultSchema,
       }),
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["products"] }),
+  });
+}
+
+export function useTestWhatsappTemplate() {
+  const token = useSessionToken();
+  return useMutation({
+    mutationFn: async (input: unknown) =>
+      apiRequest({
+        path: "/notifications/whatsapp/test-template",
+        method: "POST",
+        token: await token(),
+        body: input,
+        schema: whatsappTestTemplateResultSchema,
+      }),
   });
 }
 

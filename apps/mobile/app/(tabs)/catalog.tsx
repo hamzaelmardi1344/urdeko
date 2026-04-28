@@ -57,7 +57,7 @@ export default function CatalogScreen() {
       if (state !== oauth.data.state) throw new Error(t("catalog.instagramStateMismatch"));
       const code = callback.searchParams.get("code");
       if (!code) throw new Error(t("catalog.instagramMissingCode"));
-      await instagramConnect.mutateAsync({ code, redirectUri });
+      await instagramConnect.mutateAsync({ code, redirectUri, state: oauth.data.state });
       const imported = await instagramImport.mutateAsync();
       setError(t("catalog.instagramImported", { count: imported.imported }));
     } catch (caught) {

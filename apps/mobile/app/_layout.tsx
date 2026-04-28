@@ -73,6 +73,7 @@ function RootLayout() {
               options={{ presentation: "modal", title: "Produit" }}
             />
             <Stack.Screen name="delivery-integration" options={{ title: "Livraison" }} />
+            <Stack.Screen name="integrations" options={{ title: "Intégrations" }} />
             <Stack.Screen name="whatsapp-templates" options={{ title: "WhatsApp" }} />
             <Stack.Screen name="billing" options={{ title: "Plan Pro" }} />
             <Stack.Screen name="notifications" options={{ title: "Notifications" }} />

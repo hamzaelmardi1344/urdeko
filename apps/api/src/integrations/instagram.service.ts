@@ -1,6 +1,11 @@
-import { randomBytes } from "node:crypto";
-import { Injectable } from "@nestjs/common";
-import { instagramImportResultSchema, instagramMediaSchema } from "@bep/shared-types";
+import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  instagramImportResultSchema,
+  instagramMediaSchema,
+  type ConnectInstagramInput,
+  type InstagramImportInput,
+} from "@bep/shared-types";
 import { Prisma } from "../../prisma/generated/client";
 import { EncryptionService } from "../common/crypto/encryption.service";
 import { EnvService } from "../config/env.service";
@@ -19,7 +24,7 @@ export class InstagramService {
     if (!appId) throw new Error("INSTAGRAM_APP_ID is not configured");
     const resolvedRedirectUri = redirectUri ?? this.env.get("INSTAGRAM_REDIRECT_URI");
     if (!resolvedRedirectUri) throw new Error("INSTAGRAM_REDIRECT_URI is not configured");
-    const state = `${shopId}.${randomBytes(16).toString("hex")}`;
+    const state = this.signOAuthState(shopId);
     const url = new URL("https://www.instagram.com/oauth/authorize");
     url.searchParams.set("client_id", appId);
     url.searchParams.set("redirect_uri", resolvedRedirectUri);
@@ -29,12 +34,11 @@ export class InstagramService {
     return { url: url.toString(), state, redirectUri: resolvedRedirectUri };
   }
 
-  async connect(
-    shopId: string,
-    input: { code: string; redirectUri: string } | { accessToken: string },
-  ) {
+  async connect(shopId: string, input: ConnectInstagramInput) {
     const tokenResult =
-      "accessToken" in input ? { accessToken: input.accessToken } : await this.exchangeCode(input);
+      "accessToken" in input
+        ? { accessToken: input.accessToken }
+        : await this.exchangeCode(this.validatedCodeInput(shopId, input));
     const expiresInSeconds =
       "expiresInSeconds" in tokenResult ? tokenResult.expiresInSeconds : undefined;
     const profile = await this.fetchProfile(tokenResult.accessToken);
@@ -58,23 +62,24 @@ export class InstagramService {
     return integration;
   }
 
-  async importRecentMedia(shopId: string, accessToken?: string) {
-    const resolvedAccessToken = accessToken ?? (await this.storedAccessToken(shopId));
-    const response = await fetch(
-      `https://graph.facebook.com/${this.env.get(
-        "WHATSAPP_GRAPH_VERSION",
-      )}/me/media?fields=id,media_type,caption,media_url,permalink,timestamp&limit=50&access_token=${encodeURIComponent(
-        resolvedAccessToken,
-      )}`,
+  async importRecentMedia(shopId: string, input: InstagramImportInput) {
+    const resolvedAccessToken = input.accessToken ?? (await this.storedAccessToken(shopId));
+    const url = new URL(
+      `https://graph.facebook.com/${this.env.get("META_GRAPH_VERSION")}/me/media`,
     );
+    url.searchParams.set("fields", "id,media_type,caption,media_url,permalink,timestamp");
+    url.searchParams.set("limit", String(input.limit));
+    url.searchParams.set("access_token", resolvedAccessToken);
+    const response = await fetch(url.toString());
     const payload: unknown = await response.json();
     if (!response.ok) throw new Error(`Instagram import failed with ${response.status}`);
     const data = this.record(payload).data;
     if (!Array.isArray(data)) throw new Error("Instagram media payload is invalid");
     const created = [];
+    let skipped = 0;
     for (const item of data) {
       const record = this.record(item);
-      const mediaType = record.media_type === "CAROUSEL_ALBUM" ? "CAROUSEL_ALBUM" : "IMAGE";
+      const mediaType = record.media_type;
       if (mediaType !== "IMAGE" && mediaType !== "CAROUSEL_ALBUM") continue;
       const media = instagramMediaSchema.parse({
         id: record.id,
@@ -84,6 +89,14 @@ export class InstagramService {
         permalink: record.permalink,
         timestamp: record.timestamp,
       });
+      const existing = await this.prisma.product.findFirst({
+        where: { shopId, sourceInstagramPostId: media.id },
+        select: { id: true },
+      });
+      if (existing) {
+        skipped += 1;
+        continue;
+      }
       const title = media.caption.split("\n")[0]?.slice(0, 120) || "Produit Instagram";
       created.push(
         await this.prisma.product.create({
@@ -100,7 +113,11 @@ export class InstagramService {
         }),
       );
     }
-    return instagramImportResultSchema.parse({ imported: created.length, products: created });
+    return instagramImportResultSchema.parse({
+      imported: created.length,
+      skipped,
+      products: created,
+    });
   }
 
   private async exchangeCode(input: { code: string; redirectUri: string }) {
@@ -137,7 +154,7 @@ export class InstagramService {
   private async fetchProfile(accessToken: string): Promise<{ id: string }> {
     const response = await fetch(
       `https://graph.facebook.com/${this.env.get(
-        "WHATSAPP_GRAPH_VERSION",
+        "META_GRAPH_VERSION",
       )}/me?fields=id,username&access_token=${encodeURIComponent(accessToken)}`,
     );
     const payload: unknown = await response.json();
@@ -154,6 +171,56 @@ export class InstagramService {
     });
     if (!integration) throw new Error("Instagram is not connected for this shop");
     return this.encryption.decrypt(integration.accessTokenEnc);
+  }
+
+  private validatedCodeInput(
+    shopId: string,
+    input: Extract<ConnectInstagramInput, { code: string }>,
+  ): { code: string; redirectUri: string } {
+    this.validateOAuthState(shopId, input.state);
+    return { code: input.code, redirectUri: input.redirectUri };
+  }
+
+  private signOAuthState(shopId: string): string {
+    const payload = Buffer.from(
+      JSON.stringify({
+        shopId,
+        nonce: randomBytes(16).toString("hex"),
+        exp: Date.now() + 10 * 60 * 1000,
+      }),
+      "utf8",
+    ).toString("base64url");
+    const signature = createHmac("sha256", this.stateSecret()).update(payload).digest("base64url");
+    return `${payload}.${signature}`;
+  }
+
+  private validateOAuthState(shopId: string, state: string): void {
+    const [payload, signature] = state.split(".");
+    if (!payload || !signature) {
+      throw new BadRequestException("Instagram OAuth state is invalid");
+    }
+    const expectedSignature = createHmac("sha256", this.stateSecret())
+      .update(payload)
+      .digest("base64url");
+    const expected = Buffer.from(expectedSignature);
+    const actual = Buffer.from(signature);
+    if (expected.byteLength !== actual.byteLength || !timingSafeEqual(expected, actual)) {
+      throw new BadRequestException("Instagram OAuth state signature is invalid");
+    }
+    let record: Record<string, unknown>;
+    try {
+      const decoded: unknown = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
+      record = this.record(decoded);
+    } catch {
+      throw new BadRequestException("Instagram OAuth state payload is invalid");
+    }
+    if (record.shopId !== shopId || typeof record.exp !== "number" || record.exp < Date.now()) {
+      throw new BadRequestException("Instagram OAuth state has expired");
+    }
+  }
+
+  private stateSecret(): Buffer {
+    return Buffer.from(this.env.get("MASTER_ENCRYPTION_KEY_BASE64"), "base64");
   }
 
   private record(value: unknown): Record<string, unknown> {

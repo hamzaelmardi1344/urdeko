@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { Bell, CreditCard, MessageCircle, Store, Truck } from "lucide-react-native";
+import { Bell, CreditCard, MessageCircle, Plug, Store, Truck } from "lucide-react-native";
 import { Text, View } from "react-native";
 import { Button } from "@/components/button";
 import { Screen } from "@/components/screen";
@@ -30,6 +30,12 @@ export default function ShopScreen() {
         icon={Store}
         variant="secondary"
         onPress={() => router.push("/store-preview")}
+      />
+      <Button
+        label={t("shop.integrations")}
+        icon={Plug}
+        variant="secondary"
+        onPress={() => router.push("/integrations")}
       />
       <Button
         label={t("shop.delivery")}

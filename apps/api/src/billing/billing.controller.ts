@@ -1,5 +1,4 @@
-import { Body, Controller, ForbiddenException, Headers, Post, Req } from "@nestjs/common";
-import type { FastifyRequest } from "fastify";
+import { Body, Controller, ForbiddenException, Headers, Post, RawBody, Req } from "@nestjs/common";
 import { Public } from "../common/decorators/public.decorator";
 import type { AuthenticatedRequest } from "../common/request-context";
 import { BillingService } from "./billing.service";
@@ -21,13 +20,10 @@ export class BillingController {
   @Post("webhook")
   webhook(
     @Headers("paddle-signature") signature: string | undefined,
-    @Req() request: FastifyRequest,
+    @RawBody() rawBody: Buffer | undefined,
     @Body() body: unknown,
   ) {
-    const rawBody = Buffer.from(JSON.stringify(body));
-    if (!this.billingService.verifyWebhook(rawBody, signature)) {
-      throw new Error("Invalid Paddle webhook signature");
-    }
-    return this.billingService.handleWebhook(body);
+    if (!rawBody) throw new Error("Raw Paddle webhook body is required");
+    return this.billingService.handleWebhook(rawBody, signature, body);
   }
 }

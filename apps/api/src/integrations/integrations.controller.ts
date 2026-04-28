@@ -1,16 +1,25 @@
 import { Body, Controller, ForbiddenException, Get, Post, Query, Req } from "@nestjs/common";
-import { z } from "zod";
-import { connectInstagramInputSchema } from "@bep/shared-types";
+import { connectInstagramInputSchema, instagramImportInputSchema } from "@bep/shared-types";
 import type { AuthenticatedRequest } from "../common/request-context";
+import { IntegrationsService } from "./integrations.service";
 import { InstagramService } from "./instagram.service";
-
-const instagramImportInputSchema = z.object({
-  accessToken: z.string().min(1).optional(),
-});
 
 @Controller("integrations")
 export class IntegrationsController {
-  constructor(private readonly instagramService: InstagramService) {}
+  constructor(
+    private readonly integrationsService: IntegrationsService,
+    private readonly instagramService: InstagramService,
+  ) {}
+
+  @Get("status")
+  status(@Req() request: AuthenticatedRequest) {
+    return this.integrationsService.status(this.shopId(request));
+  }
+
+  @Post("r2/verify")
+  verifyR2() {
+    return this.integrationsService.verifyR2();
+  }
 
   @Get("instagram/oauth-url")
   instagramOAuthUrl(
@@ -31,7 +40,7 @@ export class IntegrationsController {
   @Post("instagram/import")
   importInstagram(@Req() request: AuthenticatedRequest, @Body() body: unknown) {
     const parsed = instagramImportInputSchema.parse(body);
-    return this.instagramService.importRecentMedia(this.shopId(request), parsed.accessToken);
+    return this.instagramService.importRecentMedia(this.shopId(request), parsed);
   }
 
   private shopId(request: AuthenticatedRequest): string {
