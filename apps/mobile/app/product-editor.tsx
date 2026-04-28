@@ -4,6 +4,7 @@ import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Archive, Camera, Plus, Save, WandSparkles } from "lucide-react-native";
+import { usePostHog } from "posthog-react-native";
 import { Controller, useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 import { z } from "zod";
@@ -17,6 +18,7 @@ import { Button } from "@/components/button";
 import { Screen } from "@/components/screen";
 import { StateView } from "@/components/state-view";
 import { TextField } from "@/components/text-field";
+import { mobilePreviewConfig } from "@/config/preview";
 import {
   useCreateProduct,
   useDeleteProduct,
@@ -37,6 +39,7 @@ export default function ProductEditorScreen() {
   const deleteProduct = useDeleteProduct();
   const uploadProductImage = useUploadProductImage();
   const generateCopy = useGenerateProductCopy();
+  const posthog = usePostHog();
   const [variantName, setVariantName] = useState("");
   const [variantStock, setVariantStock] = useState("0");
   const [error, setError] = useState<string | null>(null);
@@ -57,6 +60,14 @@ export default function ProductEditorScreen() {
   const status = watch("status");
   const title = watch("title");
   const priceMAD = watch("priceMAD");
+
+  function trackPreview(event: string, properties?: Record<string, string | number | boolean>) {
+    posthog?.capture(event, {
+      appEnv: mobilePreviewConfig.appEnv,
+      previewBuild: mobilePreviewConfig.previewBuild,
+      ...properties,
+    });
+  }
 
   useEffect(() => {
     if (existingProduct) {
@@ -99,8 +110,14 @@ export default function ProductEditorScreen() {
         shouldDirty: true,
         shouldValidate: true,
       });
+      trackPreview("jibi_preview_product_photo_uploaded", {
+        ok: true,
+        byteSize,
+        contentType,
+      });
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : t("common.error"));
+      trackPreview("jibi_preview_product_photo_uploaded", { ok: false });
     }
   }
 
@@ -118,8 +135,10 @@ export default function ProductEditorScreen() {
       setValue("description", result.description_fr, { shouldDirty: true, shouldValidate: true });
       setValue("descriptionDarija", result.description_darija, { shouldDirty: true });
       setValue("aiGenerated", true, { shouldDirty: true });
+      trackPreview("jibi_preview_product_copy_generated", { ok: true });
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : t("common.error"));
+      trackPreview("jibi_preview_product_copy_generated", { ok: false });
     }
   }
 

@@ -1,6 +1,0 @@
-appId: ma.jibi.mobile
----
-- launchApp
-- assertVisible: "Jibi"
-- tapOn: "Démarrer"
-- assertVisible: "Connexion Jibi"

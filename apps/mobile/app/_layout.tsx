@@ -9,10 +9,12 @@ import * as Notifications from "expo-notifications";
 import { PostHogProvider } from "posthog-react-native";
 import { useEffect, useMemo } from "react";
 import { trpc } from "@/api/trpc";
+import { mobilePreviewConfig } from "@/config/preview";
 
 Sentry.init({
   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
   enabled: Boolean(process.env.EXPO_PUBLIC_SENTRY_DSN),
+  environment: mobilePreviewConfig.appEnv,
 });
 
 function RootLayout() {
@@ -23,9 +25,6 @@ function RootLayout() {
       vibrationPattern: [0, 250, 250, 250],
       lightColor: "#E8417F",
     }).catch((error: unknown) => Sentry.captureException(error));
-    Notifications.requestPermissionsAsync().catch((error: unknown) =>
-      Sentry.captureException(error),
-    );
   }, []);
 
   const queryClient = useMemo(
@@ -45,7 +44,7 @@ function RootLayout() {
       trpc.createClient({
         links: [
           httpBatchLink({
-            url: `${process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:4000"}/trpc`,
+            url: `${mobilePreviewConfig.apiUrl}/trpc`,
           }),
         ],
       }),

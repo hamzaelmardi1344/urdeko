@@ -50,9 +50,18 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm preview:check
+        env:
+          APP_ENV: preview
+          EXPO_PUBLIC_API_URL: https://api.preview.example
+          EXPO_PUBLIC_WEB_URL: https://preview.example
+          PUBLIC_API_URL: https://api.preview.example
+          PUBLIC_WEB_URL: https://preview.example
       - run: pnpm --filter @bep/api prisma:validate
       - run: pnpm --filter @bep/api prisma:generate
+      - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm --filter @bep/mobile exec expo config --type public
+      - run: pnpm --filter @bep/mobile build
       - run: pnpm --filter @bep/web build

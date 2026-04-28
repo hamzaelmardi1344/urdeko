@@ -8,12 +8,14 @@ Jibi GTM v1 ships Android first through Play closed testing before public produc
 - Set API secrets for Clerk, R2, Instagram, WhatsApp, Paddle, Sentry, PostHog, Postgres, Redis, and encryption.
 - Point `EXPO_PUBLIC_API_URL` to an HTTPS preview API URL before testing Meta, WhatsApp, Paddle, or Claude from the Android build.
 - Keep sandbox/test credentials in EAS/server environment variables only. Do not commit secrets.
-- Run `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm --filter @bep/mobile build`, and `pnpm --filter @bep/web build`.
-- Build preview with `eas build --platform android --profile preview`.
+- Run `pnpm preview:check`, `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm --filter @bep/mobile build`, and `pnpm --filter @bep/web build`.
+- Build preview with `pnpm preview:android` or `eas build --platform android --profile preview`.
+- Follow the detailed internal APK runbook in `docs/android-preview-runbook.md`.
 
 ## Integration Diagnostics
 
 - Open Boutique -> Intégrations and confirm each card shows configured or the exact missing environment variable names.
+- Confirm the Preview Android card shows app env, API URL, version, package, Clerk, Sentry, PostHog, notification permission, and `/health/preview`.
 - Run the R2 test and confirm it reports upload, object lookup, and public URL health.
 - Send a WhatsApp template test to a verified test recipient and save the returned message ID in QA notes.
 - Open Paddle checkout from Plan Pro, complete sandbox payment, tap “J’ai terminé le paiement”, then confirm the plan refreshes after the webhook.
@@ -32,6 +34,11 @@ Jibi GTM v1 ships Android first through Play closed testing before public produc
 - COD cash moves from pending to collected to remitted.
 - Pro checkout opens Paddle and plan refreshes after webhook.
 - Sentry receives a test exception and PostHog receives core events.
+
+## Maestro Tiers
+
+- `pnpm test:e2e:mobile` runs the unauthenticated install smoke flow.
+- `pnpm test:e2e:mobile:authenticated` runs the diagnostics flow on a device that is already signed in with a test seller account.
 
 ## Store Readiness
 

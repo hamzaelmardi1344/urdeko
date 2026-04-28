@@ -95,6 +95,15 @@ export const integrationStatusResponseSchema = z.object({
   providers: z.array(integrationProviderStatusSchema),
 });
 
+export const previewHealthSchema = z.object({
+  ok: z.boolean(),
+  environment: z.enum(["development", "test", "production"]),
+  apiUrl: z.string().url(),
+  dbReachable: z.boolean(),
+  redisReachable: z.boolean(),
+  checkedAt: isoDateStringSchema,
+});
+
 export const integrationVerifyResultSchema = z.object({
   provider: integrationDiagnosticProviderSchema,
   ok: z.boolean(),
@@ -188,6 +197,7 @@ export type InstagramImportInput = z.infer<typeof instagramImportInputSchema>;
 export type InstagramImportResult = z.infer<typeof instagramImportResultSchema>;
 export type IntegrationProviderStatus = z.infer<typeof integrationProviderStatusSchema>;
 export type IntegrationStatusResponse = z.infer<typeof integrationStatusResponseSchema>;
+export type PreviewHealth = z.infer<typeof previewHealthSchema>;
 export type IntegrationVerifyResult = z.infer<typeof integrationVerifyResultSchema>;
 export type WhatsappTestTemplateInput = z.infer<typeof whatsappTestTemplateInputSchema>;
 export type WhatsappTestTemplateResult = z.infer<typeof whatsappTestTemplateResultSchema>;

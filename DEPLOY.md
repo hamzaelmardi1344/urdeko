@@ -34,10 +34,12 @@ Use separate `local`, `preview`, and `production` environments. Each environment
 
 1. Configure EAS secrets from `.env.example`.
 2. Start with Expo Go for development when possible.
-3. Use `eas build --platform android --profile preview` for the Android closed testing build.
-4. Use EAS production builds for public release because Sentry, FCM, and native storage require production signing.
-5. Follow `docs/android-closed-testing.md` before promoting any build.
+3. Run `pnpm preview:check` before creating any internal APK.
+4. Use `pnpm preview:android` for the Android preview build, or run `eas build --platform android --profile preview` directly after the same checks.
+5. Open Boutique -> Intégrations in the installed build to verify `/health/preview`, credentials, notifications, Sentry, and PostHog.
+6. Use EAS production builds for public release because Sentry, FCM, and native storage require production signing.
+7. Follow `docs/android-preview-runbook.md` and `docs/android-closed-testing.md` before promoting any build.
 
 ## CI/CD
 
-GitHub Actions runs install, Prisma validation/generation, typecheck, tests, Expo config validation, and Next build on every push and pull request.
+GitHub Actions runs install, preview env validation, Prisma validation/generation, lint, typecheck, tests, Expo config validation, mobile export, and Next build on every push and pull request.

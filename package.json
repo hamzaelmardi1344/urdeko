@@ -15,7 +15,10 @@
     "test": "turbo run test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test:e2e:mobile": "maestro test maestro",
+    "preview:check": "node scripts/preview-check.mjs",
+    "preview:android": "node scripts/preview-android.mjs",
+    "test:e2e:mobile": "maestro test maestro/preview-smoke-unauthenticated.yaml",
+    "test:e2e:mobile:authenticated": "maestro test maestro/preview-authenticated-diagnostics.yaml",
     "prisma:validate": "pnpm --filter @bep/api prisma:validate"
   },
   "devDependencies": {

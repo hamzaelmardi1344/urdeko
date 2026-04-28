@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { CheckCircle2, CreditCard } from "lucide-react-native";
+import { usePostHog } from "posthog-react-native";
 import { Text, View } from "react-native";
 import { WebView } from "react-native-webview";
 import { Button } from "@/components/button";
 import { Screen } from "@/components/screen";
 import { StateView } from "@/components/state-view";
 import { TextField } from "@/components/text-field";
+import { mobilePreviewConfig } from "@/config/preview";
 import { useBillingCheckout, useShop } from "@/hooks/use-api-data";
 import { t } from "@/i18n/i18n";
 
 export default function BillingScreen() {
   const shop = useShop();
   const checkout = useBillingCheckout();
+  const posthog = usePostHog();
   const [plan, setPlan] = useState<"PRO" | "BUSINESS">("PRO");
   const [email, setEmail] = useState("");
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
@@ -19,11 +22,26 @@ export default function BillingScreen() {
 
   async function startCheckout() {
     setError(null);
+    posthog?.capture("jibi_preview_paddle_checkout_started", {
+      appEnv: mobilePreviewConfig.appEnv,
+      previewBuild: mobilePreviewConfig.previewBuild,
+      plan,
+    });
     try {
       const response = await checkout.mutateAsync({ plan, customerEmail: email });
       setCheckoutUrl(response.checkoutUrl);
+      posthog?.capture("jibi_preview_paddle_checkout_opened", {
+        appEnv: mobilePreviewConfig.appEnv,
+        previewBuild: mobilePreviewConfig.previewBuild,
+        plan: response.plan,
+      });
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : t("common.error"));
+      posthog?.capture("jibi_preview_paddle_checkout_failed", {
+        appEnv: mobilePreviewConfig.appEnv,
+        previewBuild: mobilePreviewConfig.previewBuild,
+        plan,
+      });
     }
   }
 
@@ -46,6 +64,10 @@ export default function BillingScreen() {
             icon={CheckCircle2}
             onPress={() => {
               shop.refetch();
+              posthog?.capture("jibi_preview_paddle_payment_done_refetch", {
+                appEnv: mobilePreviewConfig.appEnv,
+                previewBuild: mobilePreviewConfig.previewBuild,
+              });
               setCheckoutUrl(null);
             }}
           />

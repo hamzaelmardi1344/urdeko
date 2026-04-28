@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { mobilePreviewConfig } from "@/config/preview";
 import { getJson, setJson } from "@/storage/mmkv";
 
-const apiUrl = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:4000";
+const apiUrl = mobilePreviewConfig.apiUrl;
 
 type ApiOptions<T extends z.ZodTypeAny> = {
   path: string;

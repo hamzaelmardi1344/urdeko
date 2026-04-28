@@ -4,11 +4,13 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { ImagePlus, Instagram, Search, WandSparkles } from "lucide-react-native";
+import { usePostHog } from "posthog-react-native";
 import { Text, View } from "react-native";
 import { Button } from "@/components/button";
 import { Screen } from "@/components/screen";
 import { StateView } from "@/components/state-view";
 import { TextField } from "@/components/text-field";
+import { mobilePreviewConfig } from "@/config/preview";
 import {
   useInstagramConnect,
   useInstagramImport,
@@ -31,6 +33,7 @@ export default function CatalogScreen() {
   const instagramOAuthUrl = useInstagramOAuthUrl(redirectUri);
   const instagramConnect = useInstagramConnect();
   const instagramImport = useInstagramImport();
+  const posthog = usePostHog();
   const filteredProducts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     return (
@@ -47,6 +50,10 @@ export default function CatalogScreen() {
 
   async function importInstagram() {
     setError(null);
+    posthog?.capture("jibi_preview_instagram_import_started", {
+      appEnv: mobilePreviewConfig.appEnv,
+      previewBuild: mobilePreviewConfig.previewBuild,
+    });
     try {
       const oauth = await instagramOAuthUrl.refetch();
       if (!oauth.data) throw new Error(t("common.error"));
@@ -60,8 +67,18 @@ export default function CatalogScreen() {
       await instagramConnect.mutateAsync({ code, redirectUri, state: oauth.data.state });
       const imported = await instagramImport.mutateAsync();
       setError(t("catalog.instagramImported", { count: imported.imported }));
+      posthog?.capture("jibi_preview_instagram_import_finished", {
+        appEnv: mobilePreviewConfig.appEnv,
+        previewBuild: mobilePreviewConfig.previewBuild,
+        imported: imported.imported,
+        skipped: imported.skipped,
+      });
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : t("common.error"));
+      posthog?.capture("jibi_preview_instagram_import_failed", {
+        appEnv: mobilePreviewConfig.appEnv,
+        previewBuild: mobilePreviewConfig.previewBuild,
+      });
     }
   }
 

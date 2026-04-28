@@ -12,6 +12,7 @@ import {
   instagramImportResultSchema,
   instagramOAuthUrlSchema,
   orderSchema,
+  previewHealthSchema,
   productImageUploadSchema,
   productSchema,
   shopSchema,
@@ -151,6 +152,18 @@ export function useOrders() {
         token: await token(),
         schema: ordersSchema,
         cacheKey: "orders",
+      }),
+  });
+}
+
+export function usePreviewHealth() {
+  return useQuery({
+    queryKey: ["health", "preview"],
+    queryFn: async () =>
+      apiRequest({
+        path: "/health/preview",
+        schema: previewHealthSchema,
+        cacheKey: "health:preview",
       }),
   });
 }

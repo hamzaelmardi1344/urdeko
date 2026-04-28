@@ -18,6 +18,7 @@ import { OrdersModule } from "./orders/orders.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { ProductsModule } from "./products/products.module";
 import { IntegrationsModule } from "./integrations/integrations.module";
+import { HealthModule } from "./health/health.module";
 import { ShopGuard } from "./common/guards/shop.guard";
 import { AuthGuard } from "./common/guards/auth.guard";
 import { ShopsModule } from "./shops/shops.module";
@@ -62,6 +63,7 @@ import { UploadsModule } from "./uploads/uploads.module";
     AnalyticsModule,
     StorefrontModule,
     UploadsModule,
+    HealthModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

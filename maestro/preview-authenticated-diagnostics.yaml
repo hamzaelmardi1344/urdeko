@@ -1,0 +1,9 @@
+appId: ma.jibi.mobile
+---
+- launchApp
+- tapOn: "Boutique"
+- assertVisible: "Boutique"
+- tapOn: "Intégrations"
+- assertVisible: "Preview Android"
+- assertVisible: "API"
+- assertVisible: "Tester Sentry"

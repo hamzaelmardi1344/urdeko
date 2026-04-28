@@ -3,6 +3,7 @@ import {
   connectInstagramInputSchema,
   integrationStatusResponseSchema,
   instagramImportResultSchema,
+  previewHealthSchema,
   whatsappTestTemplateInputSchema,
 } from "./integrations";
 
@@ -58,6 +59,23 @@ describe("integration contracts", () => {
       toE164: "+212612345678",
       type: "ORDER_CONFIRMATION",
       language: "fr",
+    });
+  });
+
+  it("validates public preview health diagnostics", () => {
+    expect(
+      previewHealthSchema.parse({
+        ok: true,
+        environment: "production",
+        apiUrl: "https://api.preview.jibi.ma",
+        dbReachable: true,
+        redisReachable: true,
+        checkedAt: new Date().toISOString(),
+      }),
+    ).toMatchObject({
+      ok: true,
+      dbReachable: true,
+      redisReachable: true,
     });
   });
 });

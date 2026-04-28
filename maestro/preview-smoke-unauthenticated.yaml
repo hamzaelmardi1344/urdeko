@@ -1,0 +1,7 @@
+appId: ma.jibi.mobile
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Transforme ton Instagram en boutique"
+- tapOn: "Démarrer"
+- assertVisible: "Connexion Jibi"
