@@ -7,6 +7,7 @@ import { ShopsService } from "./shops.service";
 export class ShopsController {
   constructor(private readonly shopsService: ShopsService) {}
 
+  @AllowWithoutShop()
   @Get("current")
   current(@Req() request: AuthenticatedRequest) {
     return this.shopsService.getCurrent(request.user.shopId ?? "");

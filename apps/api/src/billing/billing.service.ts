@@ -1,13 +1,9 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { z } from "zod";
+import { billingCheckoutInputSchema, billingCheckoutSchema } from "@bep/shared-types";
 import { EnvService } from "../config/env.service";
 import { PrismaService } from "../prisma/prisma.service";
-
-const checkoutInputSchema = z.object({
-  plan: z.enum(["PRO", "BUSINESS"]),
-  customerEmail: z.string().email(),
-});
 
 const paddleWebhookSchema = z.object({
   event_type: z.string(),
@@ -22,24 +18,38 @@ export class BillingService {
   ) {}
 
   async createCheckout(shopId: string, input: unknown) {
-    const parsed = checkoutInputSchema.parse(input);
+    const parsed = billingCheckoutInputSchema.parse(input);
     const apiKey = this.env.get("PADDLE_API_KEY");
     if (!apiKey) throw new Error("PADDLE_API_KEY is not configured");
     const priceId =
-      parsed.plan === "PRO" ? this.env.get("PADDLE_PRO_PRICE_ID") : this.env.get("PADDLE_BUSINESS_PRICE_ID");
+      parsed.plan === "PRO"
+        ? this.env.get("PADDLE_PRO_PRICE_ID")
+        : this.env.get("PADDLE_BUSINESS_PRICE_ID");
     if (!priceId) throw new Error(`Paddle price ID for ${parsed.plan} is not configured`);
-    const response = await fetch("https://sandbox-api.paddle.com/transactions", {
+    const apiHost =
+      this.env.get("PADDLE_ENVIRONMENT") === "production"
+        ? "https://api.paddle.com"
+        : "https://sandbox-api.paddle.com";
+    const response = await fetch(`${apiHost}/transactions`, {
       method: "POST",
       headers: { authorization: `Bearer ${apiKey}`, "content-type": "application/json" },
       body: JSON.stringify({
         items: [{ price_id: priceId, quantity: 1 }],
         customer: { email: parsed.customerEmail },
         custom_data: { shopId, plan: parsed.plan },
+        collection_mode: "automatic",
       }),
     });
     const payload: unknown = await response.json();
     if (!response.ok) throw new Error(`Paddle checkout failed with ${response.status}`);
-    return payload;
+    const data = this.record(this.record(payload).data);
+    const checkout = this.record(data.checkout);
+    const checkoutUrl = this.stringValue(checkout.url);
+    const transactionId = this.stringValue(data.id);
+    if (!checkoutUrl || !transactionId) {
+      throw new Error("Paddle checkout response is missing checkout URL");
+    }
+    return billingCheckoutSchema.parse({ checkoutUrl, transactionId, plan: parsed.plan });
   }
 
   verifyWebhook(rawBody: Buffer, signature: string | undefined): boolean {
@@ -57,7 +67,10 @@ export class BillingService {
     const shopId = this.stringValue(customData.shopId);
     if (!shopId) return { ok: true };
 
-    if (event.event_type === "subscription.created" || event.event_type === "subscription.updated") {
+    if (
+      event.event_type === "subscription.created" ||
+      event.event_type === "subscription.updated"
+    ) {
       const plan = z.enum(["PRO", "BUSINESS"]).parse(customData.plan);
       const paddleSubId = this.stringValue(event.data.id);
       if (!paddleSubId) throw new Error("Paddle subscription ID missing");

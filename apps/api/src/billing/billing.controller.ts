@@ -1,4 +1,4 @@
-import { Body, Controller, Headers, Post, Req } from "@nestjs/common";
+import { Body, Controller, ForbiddenException, Headers, Post, Req } from "@nestjs/common";
 import type { FastifyRequest } from "fastify";
 import { Public } from "../common/decorators/public.decorator";
 import type { AuthenticatedRequest } from "../common/request-context";
@@ -10,7 +10,11 @@ export class BillingController {
 
   @Post("checkout")
   checkout(@Req() request: AuthenticatedRequest, @Body() body: unknown) {
-    return this.billingService.createCheckout(request.user.shopId ?? "", body);
+    const shopId = request.user.shopId;
+    if (!shopId) {
+      throw new ForbiddenException("Authenticated shop context is required");
+    }
+    return this.billingService.createCheckout(shopId, body);
   }
 
   @Public()

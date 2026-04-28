@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { cuidSchema, isoDateStringSchema, madCentsSchema, nonEmptyStringSchema } from "./common";
-import { planSchema, whatsappTemplateTypeSchema } from "./enums";
+import { integrationProviderSchema, planSchema, whatsappTemplateTypeSchema } from "./enums";
 
 export const whatsappTemplateSchema = z.object({
   id: cuidSchema,
@@ -24,6 +24,38 @@ export const instagramMediaSchema = z.object({
   mediaUrl: z.string().url(),
   permalink: z.string().url(),
   timestamp: isoDateStringSchema,
+});
+
+export const shopIntegrationSchema = z.object({
+  id: cuidSchema,
+  shopId: cuidSchema,
+  provider: integrationProviderSchema,
+  externalAccountId: z.string().nullable(),
+  scopes: z.array(z.string()),
+  expiresAt: isoDateStringSchema.nullable(),
+  connectedAt: isoDateStringSchema,
+  updatedAt: isoDateStringSchema,
+});
+
+export const instagramOAuthUrlSchema = z.object({
+  url: z.string().url(),
+  state: nonEmptyStringSchema,
+  redirectUri: z.string().url(),
+});
+
+export const connectInstagramInputSchema = z.union([
+  z.object({
+    code: nonEmptyStringSchema,
+    redirectUri: z.string().url(),
+  }),
+  z.object({
+    accessToken: nonEmptyStringSchema,
+  }),
+]);
+
+export const instagramImportResultSchema = z.object({
+  imported: z.number().int().nonnegative(),
+  products: z.array(z.unknown()),
 });
 
 export const aiProductCopyInputSchema = z.object({
@@ -52,6 +84,34 @@ export const subscriptionSchema = z.object({
   createdAt: isoDateStringSchema,
 });
 
+export const billingCheckoutInputSchema = z.object({
+  plan: z.enum(["PRO", "BUSINESS"]),
+  customerEmail: z.string().email(),
+});
+
+export const billingCheckoutSchema = z.object({
+  checkoutUrl: z.string().url(),
+  transactionId: nonEmptyStringSchema,
+  plan: z.enum(["PRO", "BUSINESS"]),
+});
+
+export const productImageUploadInputSchema = z.object({
+  fileName: nonEmptyStringSchema.max(160),
+  contentType: z.enum(["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"]),
+  byteSize: z
+    .number()
+    .int()
+    .min(1)
+    .max(10 * 1024 * 1024),
+});
+
+export const productImageUploadSchema = z.object({
+  uploadUrl: z.string().url(),
+  publicUrl: z.string().url(),
+  headers: z.record(z.string()),
+  expiresAt: isoDateStringSchema,
+});
+
 export const analyticsSnapshotSchema = z.object({
   id: cuidSchema,
   shopId: cuidSchema,
@@ -65,7 +125,15 @@ export const analyticsSnapshotSchema = z.object({
 export type WhatsappTemplate = z.infer<typeof whatsappTemplateSchema>;
 export type UpdateWhatsappTemplateInput = z.infer<typeof updateWhatsappTemplateInputSchema>;
 export type InstagramMedia = z.infer<typeof instagramMediaSchema>;
+export type ShopIntegration = z.infer<typeof shopIntegrationSchema>;
+export type InstagramOAuthUrl = z.infer<typeof instagramOAuthUrlSchema>;
+export type ConnectInstagramInput = z.infer<typeof connectInstagramInputSchema>;
+export type InstagramImportResult = z.infer<typeof instagramImportResultSchema>;
 export type AiProductCopyInput = z.infer<typeof aiProductCopyInputSchema>;
 export type AiProductCopy = z.infer<typeof aiProductCopySchema>;
 export type Subscription = z.infer<typeof subscriptionSchema>;
+export type BillingCheckoutInput = z.infer<typeof billingCheckoutInputSchema>;
+export type BillingCheckout = z.infer<typeof billingCheckoutSchema>;
+export type ProductImageUploadInput = z.infer<typeof productImageUploadInputSchema>;
+export type ProductImageUpload = z.infer<typeof productImageUploadSchema>;
 export type AnalyticsSnapshot = z.infer<typeof analyticsSnapshotSchema>;

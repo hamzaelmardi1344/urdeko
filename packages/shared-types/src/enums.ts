@@ -37,6 +37,7 @@ export const orderEventTypeSchema = z.enum([
   "NOTE_ADDED",
 ]);
 export const deliveryProviderSchema = z.enum(["AMANA", "SPEEDAF", "SENDIT", "MANUAL"]);
+export const integrationProviderSchema = z.enum(["INSTAGRAM", "WHATSAPP"]);
 export const whatsappTemplateTypeSchema = z.enum([
   "ORDER_CONFIRMATION",
   "ORDER_SHIPPED",
@@ -56,5 +57,6 @@ export type CodPaymentStatus = z.infer<typeof codPaymentStatusSchema>;
 export type ReminderStatus = z.infer<typeof reminderStatusSchema>;
 export type OrderEventType = z.infer<typeof orderEventTypeSchema>;
 export type DeliveryProvider = z.infer<typeof deliveryProviderSchema>;
+export type IntegrationProvider = z.infer<typeof integrationProviderSchema>;
 export type WhatsappTemplateType = z.infer<typeof whatsappTemplateTypeSchema>;
 export type Locale = z.infer<typeof localeSchema>;

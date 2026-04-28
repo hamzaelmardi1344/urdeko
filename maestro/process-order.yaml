@@ -4,3 +4,5 @@ appId: ma.jibi.mobile
 - assertVisible: "Jibi"
 - tapOn: "Démarrer"
 - assertVisible: "Connexion Jibi"
+- assertVisible: "WhatsApp"
+- assertVisible: "OTP"

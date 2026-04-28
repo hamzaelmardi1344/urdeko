@@ -1,5 +1,5 @@
-import { Link } from "expo-router";
-import { Check, Truck } from "lucide-react-native";
+import { Link, router } from "expo-router";
+import { Check, Plus, Truck } from "lucide-react-native";
 import { Pressable, Text, View } from "react-native";
 import { Button } from "@/components/button";
 import { Screen } from "@/components/screen";
@@ -14,10 +14,15 @@ export default function OrdersScreen() {
   const delivered = useOrderAction("mark-delivered");
   if (orders.isLoading) return <StateView state="loading" />;
   if (orders.isError) return <StateView state="error" onRetry={() => orders.refetch()} />;
-  if (!orders.data?.length) return <StateView state="empty" />;
   return (
     <Screen>
-      {orders.data.map((order) => (
+      <Button
+        label={t("orders.newOrder")}
+        icon={Plus}
+        onPress={() => router.push("/order-editor")}
+      />
+      {!orders.data?.length ? <StateView state="empty" /> : null}
+      {orders.data?.map((order) => (
         <Link key={order.id} href={`/orders/${order.id}`} asChild>
           <Pressable className="gap-3 rounded-2xl bg-white p-4">
             <View className="flex-row items-center justify-between gap-3">

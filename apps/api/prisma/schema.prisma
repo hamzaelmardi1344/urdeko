@@ -39,6 +39,7 @@ model Shop {
   orders             Order[]
   customers          Customer[]
   deliveryConfigs    ShopDeliveryConfig[]
+  integrations       ShopIntegration[]
   subscription       Subscription?
   analyticsSnapshots AnalyticsSnapshot[]
   whatsappTemplates  WhatsappTemplate[]
@@ -261,6 +262,28 @@ enum DeliveryProvider {
   SPEEDAF
   SENDIT
   MANUAL
+}
+
+model ShopIntegration {
+  id                String              @id @default(cuid())
+  shopId            String
+  shop              Shop                @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  provider          IntegrationProvider
+  externalAccountId String?
+  accessTokenEnc    String
+  refreshTokenEnc   String?
+  scopes            Json?
+  expiresAt         DateTime?
+  connectedAt       DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  @@unique([shopId, provider])
+  @@index([shopId])
+}
+
+enum IntegrationProvider {
+  INSTAGRAM
+  WHATSAPP
 }
 
 model ShopDeliveryConfig {

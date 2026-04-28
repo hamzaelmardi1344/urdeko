@@ -11,6 +11,7 @@ build
 coverage
 apps/api/prisma/generated
 apps/mobile/.expo
+apps/mobile/google-services.json
 apps/web/.next
 *.log
 *.tsbuildinfo

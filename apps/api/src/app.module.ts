@@ -22,6 +22,7 @@ import { ShopGuard } from "./common/guards/shop.guard";
 import { AuthGuard } from "./common/guards/auth.guard";
 import { ShopsModule } from "./shops/shops.module";
 import { StorefrontModule } from "./storefront/storefront.module";
+import { UploadsModule } from "./uploads/uploads.module";
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { StorefrontModule } from "./storefront/storefront.module";
     BillingModule,
     AnalyticsModule,
     StorefrontModule,
+    UploadsModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
