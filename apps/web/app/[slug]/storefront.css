@@ -42,7 +42,8 @@ button {
 
 .cart,
 .product,
-.checkout {
+.checkout,
+.empty-products {
   border: 1px solid rgba(14, 17, 22, 0.08);
   border-radius: 24px;
   background: var(--surface);
@@ -71,6 +72,11 @@ button {
 
 .product {
   overflow: hidden;
+}
+
+.empty-products {
+  grid-column: 1 / -1;
+  padding: 24px;
 }
 
 .product img,
@@ -102,6 +108,12 @@ button {
 .checkout {
   margin: 28px auto 56px;
   padding: 24px;
+}
+
+.checkout-copy {
+  max-width: 680px;
+  color: var(--muted);
+  line-height: 1.5;
 }
 
 .form-grid {

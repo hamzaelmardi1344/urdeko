@@ -1,5 +1,12 @@
 import { z } from "zod";
-import { citySchema, e164PhoneSchema, madCentsSchema, nonEmptyStringSchema, slugSchema } from "./common";
+import {
+  citySchema,
+  e164PhoneSchema,
+  madCentsSchema,
+  nonEmptyStringSchema,
+  slugSchema,
+} from "./common";
+import { orderSourceSchema } from "./enums";
 import { orderItemInputSchema } from "./order";
 import { productSchema } from "./product";
 import { shopSchema } from "./shop";
@@ -47,6 +54,7 @@ export const storefrontCheckoutInputSchema = z.object({
   }),
   items: z.array(orderItemInputSchema).min(1).max(100),
   deliveryMAD: madCentsSchema.default(0),
+  source: orderSourceSchema.default("PUBLIC_LINK"),
 });
 
 export type PublicShop = z.infer<typeof publicShopSchema>;

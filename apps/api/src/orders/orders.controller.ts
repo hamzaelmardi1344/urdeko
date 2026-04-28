@@ -43,6 +43,11 @@ export class OrdersController {
     return this.ordersService.markDelivered(request.user.shopId ?? "", body);
   }
 
+  @Post("mark-cash-remitted")
+  markCashRemitted(@Req() request: AuthenticatedRequest, @Body() body: unknown) {
+    return this.ordersService.markCashRemitted(request.user.shopId ?? "", body);
+  }
+
   @Post("cancel")
   cancel(@Req() request: AuthenticatedRequest, @Body() body: unknown) {
     return this.ordersService.cancel(request.user.shopId ?? "", body);

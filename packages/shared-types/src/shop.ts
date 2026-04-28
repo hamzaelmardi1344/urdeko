@@ -46,6 +46,17 @@ export const updateShopInputSchema = createShopInputSchema.partial().extend({
   id: cuidSchema,
 });
 
+export function canCreateOrderForPlan(input: {
+  plan: z.infer<typeof planSchema>;
+  monthlyOrderQuota: number;
+  ordersThisMonth: number;
+}): boolean {
+  if (input.plan !== "FREE") {
+    return true;
+  }
+  return input.ordersThisMonth < input.monthlyOrderQuota;
+}
+
 export type User = z.infer<typeof userSchema>;
 export type Shop = z.infer<typeof shopSchema>;
 export type CreateShopInput = z.infer<typeof createShopInputSchema>;

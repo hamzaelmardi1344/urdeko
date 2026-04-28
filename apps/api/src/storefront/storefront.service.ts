@@ -1,5 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { calculateOrderTotals, storefrontCheckoutInputSchema } from "@bep/shared-types";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  calculateOrderTotals,
+  canCreateOrderForPlan,
+  storefrontCheckoutInputSchema,
+} from "@bep/shared-types";
 import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
@@ -25,6 +29,7 @@ export class StorefrontService {
     const parsed = storefrontCheckoutInputSchema.parse(input);
     const shop = await this.prisma.shop.findUnique({ where: { slug: parsed.shopSlug } });
     if (!shop) throw new NotFoundException("Shop not found");
+    await this.assertMonthlyQuota(shop.id);
     const customer = await this.prisma.customer.upsert({
       where: { shopId_phoneE164: { shopId: shop.id, phoneE164: parsed.customer.phoneE164 } },
       update: {
@@ -74,6 +79,8 @@ export class StorefrontService {
         customerId: customer.id,
         reference: this.createReference(),
         paymentMethod: "COD",
+        source: parsed.source,
+        codPaymentStatus: "PENDING",
         subtotalMAD: totals.subtotalMAD,
         deliveryMAD: parsed.deliveryMAD,
         discountMAD: 0,
@@ -96,5 +103,22 @@ export class StorefrontService {
   private createReference(): string {
     const random = Math.random().toString(36).slice(2, 8).toUpperCase().padEnd(6, "0");
     return `BEP-${new Date().getFullYear()}-${random}`;
+  }
+
+  private async assertMonthlyQuota(shopId: string) {
+    const shop = await this.prisma.shop.findUnique({
+      where: { id: shopId },
+      select: { plan: true, monthlyOrderQuota: true },
+    });
+    if (!shop) {
+      throw new NotFoundException("Shop not found");
+    }
+    const now = new Date();
+    const ordersThisMonth = await this.prisma.order.count({
+      where: { shopId, createdAt: { gte: new Date(now.getFullYear(), now.getMonth(), 1) } },
+    });
+    if (!canCreateOrderForPlan({ ...shop, ordersThisMonth })) {
+      throw new ForbiddenException("Free plan monthly order quota reached");
+    }
   }
 }

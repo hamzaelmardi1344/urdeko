@@ -19,6 +19,9 @@ export const deliverySchema = z.object({
   deliveredAt: isoDateStringSchema.nullable(),
   cashCollectedMAD: madCentsSchema.nullable(),
   cashRemittedAt: isoDateStringSchema.nullable(),
+  courierName: z.string().nullable(),
+  courierPhoneE164: e164PhoneSchema.nullable(),
+  courierNotes: z.string().nullable(),
   status: nonEmptyStringSchema,
   rawPayload: z.record(z.unknown()).nullable(),
 });

@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import {
   assignDeliveryInputSchema,
+  canTransitionOrder,
   createShipmentInputSchema,
   deliveryProviderSchema,
   type DeliveryProvider,
@@ -44,9 +45,70 @@ export class DeliveryService {
     const parsed = assignDeliveryInputSchema.parse(input);
     const order = await this.prisma.order.findFirst({
       where: { id: parsed.orderId, shopId },
-      include: { customer: true, shop: true },
+      include: { customer: true, shop: true, delivery: true },
     });
     if (!order) throw new NotFoundException("Order not found");
+    if (parsed.provider === "MANUAL") {
+      if (!parsed.courierName) {
+        throw new BadRequestException("Manual delivery requires a courier name");
+      }
+      if (order.status !== "HANDED_OVER" && !canTransitionOrder(order.status, "HANDED_OVER")) {
+        throw new BadRequestException(`Cannot hand over order from ${order.status}`);
+      }
+      const pickupAt = parsed.pickupAt ? new Date(parsed.pickupAt) : new Date();
+      return this.prisma.$transaction(async (tx) => {
+        const delivery = await tx.delivery.upsert({
+          where: { orderId: order.id },
+          update: {
+            provider: "MANUAL",
+            externalId: `MANUAL-${order.reference}`,
+            trackingUrl: null,
+            pickupAt,
+            status: "manual_handed_over",
+            courierName: parsed.courierName,
+            courierPhoneE164: parsed.courierPhoneE164,
+            courierNotes: parsed.courierNotes,
+            rawPayload: this.toJson({
+              mode: "manual",
+              courierName: parsed.courierName,
+              courierPhoneE164: parsed.courierPhoneE164 ?? null,
+            }),
+          },
+          create: {
+            orderId: order.id,
+            provider: "MANUAL",
+            externalId: `MANUAL-${order.reference}`,
+            pickupAt,
+            status: "manual_handed_over",
+            courierName: parsed.courierName,
+            courierPhoneE164: parsed.courierPhoneE164,
+            courierNotes: parsed.courierNotes,
+            rawPayload: this.toJson({
+              mode: "manual",
+              courierName: parsed.courierName,
+              courierPhoneE164: parsed.courierPhoneE164 ?? null,
+            }),
+          },
+        });
+        await tx.order.update({
+          where: { id: order.id },
+          data: {
+            status: "HANDED_OVER",
+            events: {
+              create: {
+                type: "HANDED_OVER",
+                meta: {
+                  provider: "MANUAL",
+                  courierName: parsed.courierName,
+                  courierPhoneE164: parsed.courierPhoneE164 ?? null,
+                },
+              },
+            },
+          },
+        });
+        return delivery;
+      });
+    }
     const config = await this.prisma.shopDeliveryConfig.findUnique({
       where: { shopId_provider: { shopId, provider: parsed.provider } },
     });

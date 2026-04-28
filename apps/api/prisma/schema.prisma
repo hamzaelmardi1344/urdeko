@@ -20,30 +20,30 @@ model User {
 }
 
 model Shop {
-  id                String               @id @default(cuid())
-  ownerId           String               @unique
-  owner             User                 @relation(fields: [ownerId], references: [id])
-  slug              String               @unique
-  name              String
-  bio               String?
-  logoUrl           String?
-  coverUrl          String?
-  whatsappNumber    String
-  instagramHandle   String?
-  city              String
-  plan              Plan                 @default(FREE)
-  planSince         DateTime             @default(now())
-  monthlyOrderQuota Int                  @default(20)
-  status            ShopStatus           @default(ACTIVE)
-  products          Product[]
-  orders            Order[]
-  customers         Customer[]
-  deliveryConfigs   ShopDeliveryConfig[]
-  subscription      Subscription?
+  id                 String               @id @default(cuid())
+  ownerId            String               @unique
+  owner              User                 @relation(fields: [ownerId], references: [id])
+  slug               String               @unique
+  name               String
+  bio                String?
+  logoUrl            String?
+  coverUrl           String?
+  whatsappNumber     String
+  instagramHandle    String?
+  city               String
+  plan               Plan                 @default(FREE)
+  planSince          DateTime             @default(now())
+  monthlyOrderQuota  Int                  @default(20)
+  status             ShopStatus           @default(ACTIVE)
+  products           Product[]
+  orders             Order[]
+  customers          Customer[]
+  deliveryConfigs    ShopDeliveryConfig[]
+  subscription       Subscription?
   analyticsSnapshots AnalyticsSnapshot[]
-  whatsappTemplates WhatsappTemplate[]
-  createdAt         DateTime             @default(now())
-  updatedAt         DateTime             @updatedAt
+  whatsappTemplates  WhatsappTemplate[]
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
 
   @@index([slug])
   @@index([ownerId])
@@ -62,9 +62,9 @@ enum ShopStatus {
 }
 
 model Product {
-  id                    String            @id @default(cuid())
+  id                    String           @id @default(cuid())
   shopId                String
-  shop                  Shop              @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  shop                  Shop             @relation(fields: [shopId], references: [id], onDelete: Cascade)
   title                 String
   titleAr               String?
   description           String
@@ -72,15 +72,15 @@ model Product {
   descriptionDarija     String?
   priceMAD              Int
   comparePriceMAD       Int?
-  stock                 Int               @default(0)
-  unlimited             Boolean           @default(false)
-  status                ProductStatus     @default(DRAFT)
+  stock                 Int              @default(0)
+  unlimited             Boolean          @default(false)
+  status                ProductStatus    @default(DRAFT)
   images                ProductImage[]
   variants              ProductVariant[]
   sourceInstagramPostId String?
-  aiGenerated           Boolean           @default(false)
-  createdAt             DateTime          @default(now())
-  updatedAt             DateTime          @updatedAt
+  aiGenerated           Boolean          @default(false)
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
 
   @@index([shopId, status])
 }
@@ -129,28 +129,35 @@ model Customer {
 }
 
 model Order {
-  id            String        @id @default(cuid())
-  shopId        String
-  shop          Shop          @relation(fields: [shopId], references: [id])
-  customerId    String
-  customer      Customer      @relation(fields: [customerId], references: [id])
-  reference     String        @unique
-  status        OrderStatus   @default(PENDING)
-  paymentMethod PaymentMethod @default(COD)
-  subtotalMAD   Int
-  deliveryMAD   Int           @default(0)
-  discountMAD   Int           @default(0)
-  totalMAD      Int
-  items         OrderItem[]
-  delivery      Delivery?
-  events        OrderEvent[]
-  abandonedAt   DateTime?
-  recoveredAt   DateTime?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id               String           @id @default(cuid())
+  shopId           String
+  shop             Shop             @relation(fields: [shopId], references: [id])
+  customerId       String
+  customer         Customer         @relation(fields: [customerId], references: [id])
+  reference        String           @unique
+  status           OrderStatus      @default(PENDING)
+  paymentMethod    PaymentMethod    @default(COD)
+  source           OrderSource      @default(PUBLIC_LINK)
+  codPaymentStatus CodPaymentStatus @default(PENDING)
+  reminderStatus   ReminderStatus   @default(NONE)
+  reminderCount    Int              @default(0)
+  lastReminderAt   DateTime?
+  subtotalMAD      Int
+  deliveryMAD      Int              @default(0)
+  discountMAD      Int              @default(0)
+  totalMAD         Int
+  items            OrderItem[]
+  delivery         Delivery?
+  events           OrderEvent[]
+  abandonedAt      DateTime?
+  recoveredAt      DateTime?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 
   @@index([shopId, status])
   @@index([shopId, createdAt])
+  @@index([shopId, source])
+  @@index([shopId, codPaymentStatus])
 }
 
 enum OrderStatus {
@@ -171,10 +178,33 @@ enum PaymentMethod {
   WALLET
 }
 
+enum OrderSource {
+  PUBLIC_LINK
+  INSTAGRAM_DM
+  WHATSAPP
+  MANUAL
+}
+
+enum CodPaymentStatus {
+  PENDING
+  COLLECTED
+  REMITTED
+  RETURNED
+  NOT_APPLICABLE
+}
+
+enum ReminderStatus {
+  NONE
+  SCHEDULED
+  SENT
+  FAILED
+  DISABLED
+}
+
 model OrderItem {
-  id               String @id @default(cuid())
+  id               String  @id @default(cuid())
   orderId          String
-  order            Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order            Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId        String
   variantId        String?
   titleSnapshot    String
@@ -219,6 +249,9 @@ model Delivery {
   deliveredAt      DateTime?
   cashCollectedMAD Int?
   cashRemittedAt   DateTime?
+  courierName      String?
+  courierPhoneE164 String?
+  courierNotes     String?
   status           String
   rawPayload       Json?
 }
@@ -263,15 +296,15 @@ enum WhatsappTemplateType {
 }
 
 model Subscription {
-  id          String   @id @default(cuid())
-  shopId      String   @unique
-  shop        Shop     @relation(fields: [shopId], references: [id])
-  paddleSubId String   @unique
+  id          String    @id @default(cuid())
+  shopId      String    @unique
+  shop        Shop      @relation(fields: [shopId], references: [id])
+  paddleSubId String    @unique
   plan        Plan
   status      String
   renewsAt    DateTime?
   cancelledAt DateTime?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
 }
 
 model AnalyticsSnapshot {

@@ -15,6 +15,15 @@ export const orderStatusSchema = z.enum([
   "ABANDONED",
 ]);
 export const paymentMethodSchema = z.enum(["COD", "CARD", "WALLET"]);
+export const orderSourceSchema = z.enum(["PUBLIC_LINK", "INSTAGRAM_DM", "WHATSAPP", "MANUAL"]);
+export const codPaymentStatusSchema = z.enum([
+  "PENDING",
+  "COLLECTED",
+  "REMITTED",
+  "RETURNED",
+  "NOT_APPLICABLE",
+]);
+export const reminderStatusSchema = z.enum(["NONE", "SCHEDULED", "SENT", "FAILED", "DISABLED"]);
 export const orderEventTypeSchema = z.enum([
   "CREATED",
   "CONFIRMED",
@@ -42,6 +51,9 @@ export type ShopStatus = z.infer<typeof shopStatusSchema>;
 export type ProductStatus = z.infer<typeof productStatusSchema>;
 export type OrderStatus = z.infer<typeof orderStatusSchema>;
 export type PaymentMethod = z.infer<typeof paymentMethodSchema>;
+export type OrderSource = z.infer<typeof orderSourceSchema>;
+export type CodPaymentStatus = z.infer<typeof codPaymentStatusSchema>;
+export type ReminderStatus = z.infer<typeof reminderStatusSchema>;
 export type OrderEventType = z.infer<typeof orderEventTypeSchema>;
 export type DeliveryProvider = z.infer<typeof deliveryProviderSchema>;
 export type WhatsappTemplateType = z.infer<typeof whatsappTemplateTypeSchema>;

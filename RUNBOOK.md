@@ -9,9 +9,17 @@
 
 ## Delivery Provider Failures
 
+- For paid v1, keep `MANUAL` delivery operational first. It requires only courier name, optional phone, handoff notes, and order status updates.
 - If provider API credentials fail, disable that provider for the shop and leave manual delivery enabled.
 - If a webhook payload cannot be parsed, store the raw payload in logs with PII redaction and alert the integration owner.
 - If cash collection status disagrees with the order, keep the order status unchanged and surface the delivery status as an operational warning.
+
+## COD Cash Reconciliation
+
+- `PENDING` means cash is still expected from the customer or courier.
+- `COLLECTED` means the order was delivered and COD cash was collected.
+- `REMITTED` means the seller has received or reconciled the collected cash.
+- Delivery status and cash status are intentionally separate; do not mark cash remitted just because an order is delivered.
 
 ## Data Privacy
 

@@ -2,7 +2,11 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import { storefrontCheckoutInputSchema, type PublicProduct, type PublicShop } from "@bep/shared-types";
+import {
+  storefrontCheckoutInputSchema,
+  type PublicProduct,
+  type PublicShop,
+} from "@bep/shared-types";
 import { formatMAD } from "@/lib/money";
 
 type CartItem = {
@@ -49,28 +53,36 @@ export function StorefrontClient({ shop, products }: StorefrontClientProps) {
 
   async function submitOrder() {
     setStatus(null);
-    const parsed = storefrontCheckoutInputSchema.parse({
-      shopSlug: shop.slug,
-      customer,
-      deliveryMAD: 0,
-      items: cart.map((item) => ({ productId: item.productId, quantity: item.quantity })),
-    });
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"}/storefront/checkout`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(parsed),
-    });
-    const payload: unknown = await response.json();
-    if (!response.ok) {
-      setStatus("La commande n'a pas pu être envoyée.");
-      return;
+    try {
+      const parsed = storefrontCheckoutInputSchema.parse({
+        shopSlug: shop.slug,
+        customer,
+        deliveryMAD: 0,
+        source: "PUBLIC_LINK",
+        items: cart.map((item) => ({ productId: item.productId, quantity: item.quantity })),
+      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"}/storefront/checkout`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(parsed),
+        },
+      );
+      const payload: unknown = await response.json();
+      if (!response.ok) {
+        setStatus("La commande n'a pas pu être envoyée. Vérifie le téléphone et réessaie.");
+        return;
+      }
+      const reference =
+        typeof payload === "object" && payload !== null && "reference" in payload
+          ? String(payload.reference)
+          : "";
+      setStatus(`Commande reçue ${reference}. La vendeuse confirme sur WhatsApp.`);
+      setCart([]);
+    } catch {
+      setStatus("Complète le nom, le téléphone marocain en +212, la ville et l'adresse.");
     }
-    const reference =
-      typeof payload === "object" && payload !== null && "reference" in payload
-        ? String(payload.reference)
-        : "";
-    setStatus(`Commande confirmée ${reference}`);
-    setCart([]);
   }
 
   return (
@@ -79,13 +91,15 @@ export function StorefrontClient({ shop, products }: StorefrontClientProps) {
         <div>
           <p className="eyebrow">{shop.city}</p>
           <h1>{shop.name}</h1>
-          <p className="bio">{shop.bio ?? "Boutique marocaine mobile-first, paiement à la livraison."}</p>
+          <p className="bio">
+            {shop.bio ?? "Boutique marocaine mobile-first, paiement à la livraison."}
+          </p>
           <a className="whatsapp" href={`https://wa.me/${shop.whatsappNumber.replace("+", "")}`}>
             WhatsApp
           </a>
         </div>
         <div className="cart">
-          <h2>Panier</h2>
+          <h2>Commande COD</h2>
           {cart.length === 0 ? <p>Aucun produit sélectionné.</p> : null}
           {cart.map((item) => (
             <div key={item.productId} className="cart-row">
@@ -98,6 +112,14 @@ export function StorefrontClient({ shop, products }: StorefrontClientProps) {
       </section>
 
       <section className="container grid">
+        {products.length === 0 ? (
+          <div className="empty-products">
+            <h2>Catalogue bientôt disponible</h2>
+            <p>
+              Contacte la boutique sur WhatsApp pour commander les produits publiés sur Instagram.
+            </p>
+          </div>
+        ) : null}
         {products.map((product) => (
           <article key={product.id} className="product">
             {product.images[0] ? (
@@ -113,6 +135,7 @@ export function StorefrontClient({ shop, products }: StorefrontClientProps) {
             )}
             <h2>{product.title}</h2>
             <p>{product.description}</p>
+            {product.descriptionDarija ? <p>{product.descriptionDarija}</p> : null}
             <div className="product-footer">
               <strong>{formatMAD(product.priceMAD)}</strong>
               <button type="button" onClick={() => addProduct(product)}>
@@ -125,6 +148,10 @@ export function StorefrontClient({ shop, products }: StorefrontClientProps) {
 
       <section className="container checkout">
         <h2>Commande COD</h2>
+        <p className="checkout-copy">
+          La boutique reçoit ta commande dans Jibi et te confirme les détails sur WhatsApp avant
+          livraison.
+        </p>
         <div className="form-grid">
           <input
             aria-label="Nom complet"
@@ -149,6 +176,12 @@ export function StorefrontClient({ shop, products }: StorefrontClientProps) {
             placeholder="Adresse"
             value={customer.addressLine}
             onChange={(event) => setCustomer({ ...customer, addressLine: event.target.value })}
+          />
+          <textarea
+            aria-label="Notes"
+            placeholder="Notes: couleur, taille, disponibilité..."
+            value={customer.notes}
+            onChange={(event) => setCustomer({ ...customer, notes: event.target.value })}
           />
         </div>
         <button type="button" className="submit" disabled={cart.length === 0} onClick={submitOrder}>

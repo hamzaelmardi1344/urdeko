@@ -1,6 +1,21 @@
 import { z } from "zod";
-import { cuidSchema, isoDateStringSchema, madCentsSchema, nonEmptyStringSchema } from "./common";
-import { orderEventTypeSchema, orderStatusSchema, paymentMethodSchema } from "./enums";
+import {
+  cuidSchema,
+  e164PhoneSchema,
+  isoDateStringSchema,
+  madCentsSchema,
+  nonEmptyStringSchema,
+} from "./common";
+import { customerSchema } from "./customer";
+import { deliverySchema } from "./delivery";
+import {
+  codPaymentStatusSchema,
+  orderEventTypeSchema,
+  orderSourceSchema,
+  orderStatusSchema,
+  paymentMethodSchema,
+  reminderStatusSchema,
+} from "./enums";
 
 export const orderItemInputSchema = z.object({
   productId: cuidSchema,
@@ -35,12 +50,19 @@ export const orderSchema = z.object({
   reference: z.string().regex(/^BEP-\d{4}-[A-Z0-9]{6}$/),
   status: orderStatusSchema,
   paymentMethod: paymentMethodSchema,
+  source: orderSourceSchema,
+  codPaymentStatus: codPaymentStatusSchema,
+  reminderStatus: reminderStatusSchema,
+  reminderCount: z.number().int().nonnegative(),
+  lastReminderAt: isoDateStringSchema.nullable(),
   subtotalMAD: madCentsSchema,
   deliveryMAD: madCentsSchema,
   discountMAD: madCentsSchema,
   totalMAD: madCentsSchema,
   items: z.array(orderItemSchema),
   events: z.array(orderEventSchema),
+  customer: customerSchema.optional(),
+  delivery: deliverySchema.nullable().optional(),
   abandonedAt: isoDateStringSchema.nullable(),
   recoveredAt: isoDateStringSchema.nullable(),
   createdAt: isoDateStringSchema,
@@ -50,6 +72,7 @@ export const orderSchema = z.object({
 export const createOrderInputSchema = z.object({
   customerId: cuidSchema,
   paymentMethod: paymentMethodSchema.default("COD"),
+  source: orderSourceSchema.default("WHATSAPP"),
   deliveryMAD: madCentsSchema.default(0),
   discountMAD: madCentsSchema.default(0),
   items: z.array(orderItemInputSchema).min(1).max(100),
@@ -64,6 +87,9 @@ export const assignDeliveryInputSchema = z.object({
   orderId: cuidSchema,
   provider: z.enum(["AMANA", "SPEEDAF", "SENDIT", "MANUAL"]),
   pickupAt: isoDateStringSchema.optional(),
+  courierName: z.string().trim().min(2).max(120).optional(),
+  courierPhoneE164: e164PhoneSchema.optional(),
+  courierNotes: z.string().trim().max(1000).optional(),
 });
 
 type SharedOrderStatus = z.infer<typeof orderStatusSchema>;
@@ -72,7 +98,7 @@ export const allowedOrderTransitions: Record<SharedOrderStatus, readonly SharedO
   PENDING: ["CONFIRMED", "CANCELLED", "ABANDONED"],
   CONFIRMED: ["PREPARING", "CANCELLED"],
   PREPARING: ["HANDED_OVER", "CANCELLED"],
-  HANDED_OVER: ["IN_TRANSIT", "RETURNED"],
+  HANDED_OVER: ["IN_TRANSIT", "DELIVERED", "RETURNED"],
   IN_TRANSIT: ["DELIVERED", "RETURNED"],
   DELIVERED: [],
   RETURNED: [],
@@ -92,10 +118,7 @@ export function calculateOrderTotals(input: {
   deliveryMAD: number;
   discountMAD: number;
 }): { subtotalMAD: number; totalMAD: number } {
-  const subtotalMAD = input.items.reduce(
-    (sum, item) => sum + item.unitPriceMAD * item.quantity,
-    0,
-  );
+  const subtotalMAD = input.items.reduce((sum, item) => sum + item.unitPriceMAD * item.quantity, 0);
   const totalMAD = Math.max(0, subtotalMAD + input.deliveryMAD - input.discountMAD);
   return { subtotalMAD, totalMAD };
 }

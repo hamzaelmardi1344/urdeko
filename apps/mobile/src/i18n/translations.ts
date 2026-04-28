@@ -8,7 +8,7 @@ export const translations = {
       empty: "Rien à afficher pour le moment",
       error: "Une erreur est survenue",
       mad: "MAD",
-      search: "Rechercher"
+      search: "Rechercher",
     },
     onboarding: {
       slide1: "Transforme ton Instagram en boutique",
@@ -22,23 +22,28 @@ export const translations = {
       slug: "Slug",
       city: "Ville",
       whatsapp: "WhatsApp",
-      instagram: "Instagram"
+      instagram: "Instagram",
     },
     tabs: {
       home: "Accueil",
       orders: "Commandes",
       catalog: "Catalogue",
       customers: "Clientes",
-      shop: "Boutique"
+      shop: "Boutique",
     },
     home: {
       pending: "En attente",
       todayRevenue: "CA aujourd'hui",
       monthRevenue: "CA ce mois",
+      codPending: "COD à encaisser",
+      codCollected: "Cash collecté",
+      quota: "Quota Free",
+      topCustomers: "Meilleures clientes",
+      topProducts: "Meilleurs produits",
       shortcuts: "Raccourcis",
       addProduct: "Ajouter produit",
       importIg: "Importer Instagram",
-      previewShop: "Prévisualiser boutique"
+      previewShop: "Prévisualiser boutique",
     },
     orders: {
       title: "Commandes",
@@ -46,8 +51,23 @@ export const translations = {
       prepare: "Marquer prête",
       handover: "Attribuer livreur",
       delivered: "Livrée",
+      source: "Source",
+      cash: "Cash COD",
+      cashPending: "À encaisser",
+      cashCollected: "Collecté",
+      cashRemitted: "Remis",
+      cashNotApplicable: "Non COD",
+      assignManual: "Assigner livreur manuel",
+      courierName: "Nom du livreur",
+      courierPhone: "Téléphone livreur",
+      courierNotes: "Notes remise",
+      markCashRemitted: "Cash remis",
+      publicLink: "Lien boutique",
+      whatsapp: "WhatsApp",
+      instagramDm: "DM Instagram",
+      manual: "Saisie manuelle",
       note: "Ajouter note",
-      timeline: "Timeline"
+      timeline: "Timeline",
     },
     catalog: {
       title: "Catalogue",
@@ -55,12 +75,12 @@ export const translations = {
       stock: "Stock",
       generate: "Générer IA",
       photos: "Photos",
-      variants: "Variantes"
+      variants: "Variantes",
     },
     customers: {
       title: "Clientes",
       totalOrders: "Commandes",
-      spent: "Total dépensé"
+      spent: "Total dépensé",
     },
     shop: {
       title: "Boutique",
@@ -68,8 +88,8 @@ export const translations = {
       delivery: "Livreurs",
       whatsapp: "Templates WhatsApp",
       team: "Équipe",
-      notifications: "Notifications"
-    }
+      notifications: "Notifications",
+    },
   },
   ar: {
     common: {
@@ -80,7 +100,7 @@ export const translations = {
       empty: "لا يوجد شيء حاليا",
       error: "حدث خطأ",
       mad: "درهم",
-      search: "بحث"
+      search: "بحث",
     },
     onboarding: {
       slide1: "حوّلي إنستغرام ديالك لمتجر",
@@ -94,23 +114,28 @@ export const translations = {
       slug: "الرابط",
       city: "المدينة",
       whatsapp: "واتساب",
-      instagram: "إنستغرام"
+      instagram: "إنستغرام",
     },
     tabs: {
       home: "الرئيسية",
       orders: "الطلبات",
       catalog: "الكتالوغ",
       customers: "الزبونات",
-      shop: "المتجر"
+      shop: "المتجر",
     },
     home: {
       pending: "في الانتظار",
       todayRevenue: "مبيعات اليوم",
       monthRevenue: "مبيعات الشهر",
+      codPending: "الدفع عند التسليم المنتظر",
+      codCollected: "الكاش المجموع",
+      quota: "حد الخطة المجانية",
+      topCustomers: "أفضل الزبونات",
+      topProducts: "أفضل المنتجات",
       shortcuts: "اختصارات",
       addProduct: "إضافة منتج",
       importIg: "استيراد إنستغرام",
-      previewShop: "معاينة المتجر"
+      previewShop: "معاينة المتجر",
     },
     orders: {
       title: "الطلبات",
@@ -118,8 +143,23 @@ export const translations = {
       prepare: "جاهزة",
       handover: "تعيين الموصّل",
       delivered: "تم التسليم",
+      source: "المصدر",
+      cash: "كاش الدفع عند التسليم",
+      cashPending: "في الانتظار",
+      cashCollected: "تم جمعه",
+      cashRemitted: "تم تسليمه",
+      cashNotApplicable: "ليس COD",
+      assignManual: "تعيين موصل يدوي",
+      courierName: "اسم الموصّل",
+      courierPhone: "هاتف الموصّل",
+      courierNotes: "ملاحظات التسليم",
+      markCashRemitted: "الكاش تسلّم",
+      publicLink: "رابط المتجر",
+      whatsapp: "واتساب",
+      instagramDm: "رسائل إنستغرام",
+      manual: "إدخال يدوي",
       note: "إضافة ملاحظة",
-      timeline: "المسار"
+      timeline: "المسار",
     },
     catalog: {
       title: "الكتالوغ",
@@ -127,12 +167,12 @@ export const translations = {
       stock: "المخزون",
       generate: "توليد بالذكاء الاصطناعي",
       photos: "الصور",
-      variants: "الخيارات"
+      variants: "الخيارات",
     },
     customers: {
       title: "الزبونات",
       totalOrders: "الطلبات",
-      spent: "المجموع"
+      spent: "المجموع",
     },
     shop: {
       title: "المتجر",
@@ -140,8 +180,8 @@ export const translations = {
       delivery: "شركات التوصيل",
       whatsapp: "قوالب واتساب",
       team: "الفريق",
-      notifications: "الإشعارات"
-    }
+      notifications: "الإشعارات",
+    },
   },
   darija: {
     common: {
@@ -152,7 +192,7 @@ export const translations = {
       empty: "ما كاين والو دابا",
       error: "وقع مشكل",
       mad: "درهم",
-      search: "قلبي"
+      search: "قلبي",
     },
     onboarding: {
       slide1: "ردي إنستغرام ديالك بوتيك",
@@ -166,23 +206,28 @@ export const translations = {
       slug: "الرابط",
       city: "المدينة",
       whatsapp: "واتساب",
-      instagram: "إنستغرام"
+      instagram: "إنستغرام",
     },
     tabs: {
       home: "الدار",
       orders: "الكوموندات",
       catalog: "السلعة",
       customers: "الكليانات",
-      shop: "البوتيك"
+      shop: "البوتيك",
     },
     home: {
       pending: "كيتسناو",
       todayRevenue: "رباح اليوم",
       monthRevenue: "رباح الشهر",
+      codPending: "COD باقي يتخلص",
+      codCollected: "الكاش تجمع",
+      quota: "ليميت فري",
+      topCustomers: "أحسن كليانات",
+      topProducts: "أحسن سلعة",
       shortcuts: "ديريها دغيا",
       addProduct: "زيدي سلعة",
       importIg: "جيبي من إنستغرام",
-      previewShop: "شوفي البوتيك"
+      previewShop: "شوفي البوتيك",
     },
     orders: {
       title: "الكوموندات",
@@ -190,8 +235,23 @@ export const translations = {
       prepare: "واجدة",
       handover: "عطيها للليفورور",
       delivered: "توصلات",
+      source: "منين جات",
+      cash: "كاش COD",
+      cashPending: "باقي",
+      cashCollected: "تجمع",
+      cashRemitted: "تسلم",
+      cashNotApplicable: "ماشي COD",
+      assignManual: "عيني ليفورور",
+      courierName: "سمية الليفورور",
+      courierPhone: "تيليفون الليفورور",
+      courierNotes: "نوت التسليم",
+      markCashRemitted: "الكاش تسلم",
+      publicLink: "لينك البوتيك",
+      whatsapp: "واتساب",
+      instagramDm: "DM إنستغرام",
+      manual: "دخلتيها نتي",
       note: "زيدي نوت",
-      timeline: "التتبع"
+      timeline: "التتبع",
     },
     catalog: {
       title: "السلعة",
@@ -199,12 +259,12 @@ export const translations = {
       stock: "الستوك",
       generate: "كتبي بال AI",
       photos: "الصور",
-      variants: "المقاسات"
+      variants: "المقاسات",
     },
     customers: {
       title: "الكليانات",
       totalOrders: "كوموندات",
-      spent: "شحال خلصات"
+      spent: "شحال خلصات",
     },
     shop: {
       title: "البوتيك",
@@ -212,7 +272,7 @@ export const translations = {
       delivery: "الليفورورات",
       whatsapp: "ميساجات واتساب",
       team: "التيم",
-      notifications: "النوتيفيكاسيون"
-    }
-  }
+      notifications: "النوتيفيكاسيون",
+    },
+  },
 } as const;

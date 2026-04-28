@@ -1,6 +1,17 @@
 # Boutique en poche
 
-Jibi is a Morocco-first mobile SaaS for Instagram and WhatsApp micro-sellers who need a real mobile storefront, COD order operations, Moroccan delivery integrations, and AI-assisted product copy in French, Arabic, and Darija.
+Jibi is a Morocco-first mobile SaaS for Instagram and WhatsApp micro-sellers who need a real mobile storefront, COD order operations, manual delivery coordination, and AI-assisted product copy in French, Arabic, and Darija.
+
+## Paid V1 Focus
+
+The current build is deliberately recentered on the first paid version: prove that a Moroccan social seller can replace her paper notebook with Jibi and pay 99 MAD/month for it.
+
+- Wedge: Instagram/WhatsApp catalogue, public shop link, COD orders, manual courier handoff, customer history, cash tracking, and AI copy.
+- Free gate: 20 orders/month.
+- Pro promise: unlimited orders, AI product sheets, and WhatsApp relances.
+- Roadmap, not v1 blockers: Business teams, advanced analytics, real delivery provider APIs, and full automated billing.
+
+See `docs/paid-v1-recenter.md` for the product/tech audit and 15 minute prospect demo.
 
 ## Workspace
 
@@ -35,5 +46,5 @@ Real credentials are required for Instagram Graph API, WhatsApp Business Cloud A
 - Runtime validation uses Zod for external payloads.
 - Mobile state uses Zustand, TanStack Query, and MMKV-backed persistence.
 - Order state transitions are backend-owned.
-- Delivery providers are isolated behind strategy adapters.
+- Manual delivery is the primary v1 flow; provider APIs remain isolated behind strategy adapters.
 - User-facing copy lives in i18n dictionaries.
