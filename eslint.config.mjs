@@ -1,4 +1,5 @@
 import eslintConfigPrettier from "eslint-config-prettier";
+import nextPlugin from "@next/eslint-plugin-next";
 import tseslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 
@@ -9,7 +10,9 @@ export default [
       "**/.next/**",
       "**/node_modules/**",
       "**/coverage/**",
-      "**/.expo/**"
+      "**/.expo/**",
+      "**/prisma/generated/**",
+      "**/next-env.d.ts"
     ]
   },
   {
@@ -28,12 +31,17 @@ export default [
       ...tseslint.configs.recommended.rules,
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/ban-ts-comment": "error",
-      "@typescript-eslint/consistent-type-imports": [
-        "error",
-        {
-          "prefer": "type-imports"
-        }
-      ]
+      "@typescript-eslint/consistent-type-imports": "off"
+    }
+  },
+  {
+    files: ["apps/web/**/*.{ts,tsx}"],
+    plugins: {
+      "@next/next": nextPlugin
+    },
+    rules: {
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs["core-web-vitals"].rules
     }
   },
   eslintConfigPrettier

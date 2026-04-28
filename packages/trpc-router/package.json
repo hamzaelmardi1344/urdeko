@@ -15,6 +15,7 @@
     "@trpc/server": "^11.1.2"
   },
   "devDependencies": {
-    "@bep/shared-types": "workspace:*"
+    "@bep/shared-types": "workspace:*",
+    "vitest": "^3.1.3"
   }
 }

@@ -15,6 +15,7 @@
     "test": "turbo run test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "test:e2e:mobile": "maestro test maestro",
     "prisma:validate": "pnpm --filter @bep/api prisma:validate"
   },
   "devDependencies": {
@@ -23,6 +24,7 @@
     "@typescript-eslint/parser": "^8.32.1",
     "eslint": "^9.27.0",
     "eslint-config-prettier": "^10.1.5",
+    "@next/eslint-plugin-next": "^15.5.15",
     "prettier": "^3.5.3",
     "turbo": "^2.5.3",
     "typescript": "^5.8.3"

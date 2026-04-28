@@ -18,3 +18,9 @@
 - Account deletion anonymizes PII and preserves aggregated accounting records.
 - Phone numbers and addresses are redacted from logs.
 - Delivery API keys are stored encrypted with AES-256-GCM.
+
+## Failed External Credentials
+
+- Instagram, WhatsApp, Claude, Paddle, Amana, Speedaf, and Sendit failures should be treated as credential or provider incidents first.
+- Check the provider dashboard and rotate only the affected credential.
+- Keep feature flags off for the affected integration until a real credential-backed smoke test passes.

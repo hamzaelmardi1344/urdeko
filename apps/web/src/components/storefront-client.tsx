@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import { storefrontCheckoutInputSchema, type PublicProduct, type PublicShop } from "@bep/shared-types";
 import { formatMAD } from "@/lib/money";
 
@@ -100,7 +101,13 @@ export function StorefrontClient({ shop, products }: StorefrontClientProps) {
         {products.map((product) => (
           <article key={product.id} className="product">
             {product.images[0] ? (
-              <img src={product.images[0].url} alt={product.title} />
+              <Image
+                src={product.images[0].url}
+                alt={product.title}
+                width={640}
+                height={480}
+                unoptimized
+              />
             ) : (
               <div className="image-fallback" />
             )}

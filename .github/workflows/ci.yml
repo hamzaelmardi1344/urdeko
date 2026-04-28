@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/boutique_en_poche
+      REDIS_URL: redis://localhost:6379
+      MASTER_ENCRYPTION_KEY_BASE64: BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc=
+      CLERK_SECRET_KEY: ci_clerk_secret
+      CLERK_PUBLISHABLE_KEY: ci_clerk_publishable
+      PUBLIC_WEB_URL: http://localhost:3000
+      PUBLIC_API_URL: http://localhost:4000
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+      EXPO_PUBLIC_API_URL: http://localhost:4000
+      EXPO_PUBLIC_WEB_URL: http://localhost:3000
+      EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY: ci_clerk_publishable
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: boutique_en_poche
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @bep/api prisma:validate
+      - run: pnpm --filter @bep/api prisma:generate
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm --filter @bep/mobile exec expo config --type public
+      - run: pnpm --filter @bep/web build

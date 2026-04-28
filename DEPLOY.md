@@ -23,3 +23,7 @@ Use separate `local`, `preview`, and `production` environments. Each environment
 1. Configure EAS secrets from `.env.example`.
 2. Start with Expo Go for development when possible.
 3. Use EAS builds for production because Sentry, FCM, and native storage require production signing.
+
+## CI/CD
+
+GitHub Actions runs install, Prisma validation/generation, typecheck, tests, Expo config validation, and Next build on every push and pull request.
