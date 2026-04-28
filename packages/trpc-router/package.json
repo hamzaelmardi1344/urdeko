@@ -1,0 +1,20 @@
+{
+  "name": "@bep/trpc-router",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@trpc/server": "^11.1.2"
+  },
+  "devDependencies": {
+    "@bep/shared-types": "workspace:*"
+  }
+}
