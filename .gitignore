@@ -13,3 +13,4 @@ apps/api/prisma/generated
 apps/mobile/.expo
 apps/web/.next
 *.log
+*.tsbuildinfo

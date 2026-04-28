@@ -1,0 +1,148 @@
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 24px;
+  padding: 40px 0 24px;
+}
+
+.eyebrow {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+h1 {
+  max-width: 720px;
+  margin: 0;
+  font-size: clamp(42px, 9vw, 92px);
+  line-height: 0.95;
+  letter-spacing: 0;
+}
+
+.bio {
+  max-width: 560px;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.whatsapp,
+button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 24px;
+  background: var(--primary);
+  color: white;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  font-weight: 800;
+}
+
+.cart,
+.product,
+.checkout {
+  border: 1px solid rgba(14, 17, 22, 0.08);
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: 0 8px 18px rgba(14, 17, 22, 0.08);
+}
+
+.cart {
+  align-self: start;
+  padding: 20px;
+}
+
+.cart-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  color: var(--muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  padding: 20px 0;
+}
+
+.product {
+  overflow: hidden;
+}
+
+.product img,
+.image-fallback {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #f0ede7;
+}
+
+.product h2,
+.product p,
+.product-footer {
+  margin: 14px 16px;
+}
+
+.product p {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.product-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.checkout {
+  margin: 28px auto 56px;
+  padding: 24px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+input,
+textarea {
+  min-height: 52px;
+  width: 100%;
+  border: 1px solid rgba(14, 17, 22, 0.12);
+  border-radius: 18px;
+  background: white;
+  padding: 12px 14px;
+}
+
+textarea {
+  grid-column: 1 / -1;
+  min-height: 96px;
+}
+
+.submit {
+  margin-top: 16px;
+}
+
+.submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.status {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+@media (max-width: 800px) {
+  .hero,
+  .grid,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
