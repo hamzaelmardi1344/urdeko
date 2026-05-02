@@ -12,6 +12,7 @@ import { analyzePhoto, emptyRoom, renderFinal, writeAdvice } from "../ai/gemini"
 import { uploadObject } from "../storage";
 import { getProduct } from "../catalogue";
 import { enqueueJob, type JobKind, type JobPayload } from "./dispatch";
+import { publicJobError } from "./errors";
 
 // =====================================================================
 // Exécution synchrone d'un job (remplace Inngest createFunction).
@@ -83,7 +84,7 @@ export async function runJob(jobId: string): Promise<void> {
         throw new Error(`Unknown job kind: ${claimed.kind}`);
     }
   } catch (error) {
-    await failJob(jobId, (error as Error).message);
+    await failJob(jobId, publicJobError(error));
     throw error;
   }
 }

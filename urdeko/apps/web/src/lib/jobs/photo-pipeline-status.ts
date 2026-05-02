@@ -1,6 +1,7 @@
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { jobs, type Job } from "@/lib/db/schema";
+import { publicJobError } from "./errors";
 
 /** Réponse GET jobs alignée sur JobState + étape pour StepIndicator. */
 export type PhotoEmptyPipelineState = {
@@ -45,7 +46,7 @@ export async function getPhotoEmptyRoomPipelineStatus(
     return {
       status: "failed",
       progress: Math.max(10, E.progress),
-      error: E.error ?? "Une erreur est survenue.",
+      error: publicJobError(E.error, "Une erreur est survenue."),
       stepIndex: stepWhileEmptyRunning(E.progress),
     };
   }
@@ -66,7 +67,7 @@ export async function getPhotoEmptyRoomPipelineStatus(
     return {
       status: "failed",
       progress: Math.max(5, A.progress),
-      error: A.error ?? "Analyse impossible.",
+      error: publicJobError(A.error, "Analyse impossible."),
       stepIndex: 0,
     };
   }
