@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -257,17 +258,34 @@ export function ProductList({
                       {p.source === "scraped" ? "Scrapé" : "Manuel"}
                     </span>
                   </td>
-                  <td className="p-3 text-right">
-                    {p.sourceUrl ? (
+                  <td className="p-3">
+                    <div className="flex justify-end gap-2">
+                      <Link
+                        href={`/admin/produits/${encodeURIComponent(p.id)}/modifier`}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-outline/15 text-on-surface-variant transition-colors hover:bg-surface-container"
+                        title="Modifier"
+                      >
+                        <Icon name="edit" size={15} />
+                      </Link>
+                      <Link
+                        href={`/admin/produits/nouveau?dupliquer=${encodeURIComponent(p.id)}`}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-outline/15 text-on-surface-variant transition-colors hover:bg-surface-container"
+                        title="Dupliquer"
+                      >
+                        <Icon name="content_copy" size={15} />
+                      </Link>
+                      {p.sourceUrl ? (
                       <a
                         href={p.sourceUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-xs font-bold text-primary hover:underline"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-outline/15 text-primary transition-colors hover:bg-primary-container/20"
+                        title="Voir la source"
                       >
-                        <Icon name="open_in_new" size={14} className="inline align-[-3px]" />
+                        <Icon name="open_in_new" size={15} />
                       </a>
-                    ) : null}
+                      ) : null}
+                    </div>
                   </td>
                 </tr>
               ))}

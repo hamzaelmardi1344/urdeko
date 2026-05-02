@@ -19,13 +19,25 @@ test("flow création projet → choix espace → guide photo", async ({ page }) 
   await page.getByRole("button", { name: /Continuer/ }).click();
 
   await expect(page).toHaveURL(/\/projets\/.+\/espace$/);
-  await page.getByText(/Salon/, { exact: false }).first().click();
+  await page.locator('input[name="roomType"][value="salon"]').check({ force: true });
   await page.getByRole("button", { name: /Continuer/ }).click();
 
   await expect(page).toHaveURL(/\/photo\/guide$/);
-  await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "Quelques conseils avant de prendre la photo",
-  );
+  await expect(
+    page.getByRole("heading", { name: /Quelques conseils avant de prendre la photo/i }),
+  ).toBeVisible();
+});
+
+test("préparation photo sans photo → retour guide", async ({ page }) => {
+  await page.goto("/projets/nouveau");
+  await page.getByLabel(/Nom du projet/i).fill("Projet sans photo");
+  await page.getByRole("button", { name: /Continuer/ }).click();
+  await page.locator('input[name="roomType"][value="salon"]').check({ force: true });
+  await page.getByRole("button", { name: /Continuer/ }).click();
+
+  await expect(page).toHaveURL(/\/photo\/guide$/);
+  await page.goto(page.url().replace("/photo/guide", "/photo/preparation"));
+  await expect(page).toHaveURL(/\/photo\/guide$/);
 });
 
 // Ce test exerce le vrai flux upload → enqueueJob → analyse Gemini.
@@ -33,13 +45,16 @@ test("flow création projet → choix espace → guide photo", async ({ page }) 
 // CI run ; active-le via `RUN_AI_E2E=1 pnpm test` localement.
 const shouldRunAi = process.env.RUN_AI_E2E === "1";
 
-test.skip(!shouldRunAi || !fs.existsSync(FIXTURE_PHOTO), "AI e2e désactivé (RUN_AI_E2E != 1 ou fixture manquante)");
-
 test("upload photo → analyse Gemini → étape préparation", async ({ page }) => {
+  test.skip(
+    !shouldRunAi || !fs.existsSync(FIXTURE_PHOTO),
+    "AI e2e désactivé (RUN_AI_E2E != 1 ou fixture manquante)",
+  );
+
   await page.goto("/projets/nouveau");
   await page.getByLabel(/Nom du projet/i).fill("E2E IA");
   await page.getByRole("button", { name: /Continuer/ }).click();
-  await page.getByText(/Salon/).first().click();
+  await page.locator('input[name="roomType"][value="salon"]').check({ force: true });
   await page.getByRole("button", { name: /Continuer/ }).click();
   await page.getByRole("link", { name: /Prendre|Charger|Importer/i }).click();
 

@@ -24,6 +24,7 @@ const NAV: Array<{ group: string; items: NavItem[] }> = [
     group: "Catalogue",
     items: [
       { href: "/admin/produits", label: "Produits", icon: "inventory_2" },
+      { href: "/admin/produits/nouveau", label: "Ajouter manuellement", icon: "add_box" },
       { href: "/admin/produits/scraper", label: "Importer depuis le web", icon: "travel_explore" },
     ],
   },
@@ -120,7 +121,9 @@ function AdminSidebar({ pathname, userEmail }: { pathname: string; userEmail: st
               {group.items.map((item) => {
                 const active =
                   pathname === item.href ||
-                  (item.href !== "/admin" && pathname.startsWith(item.href));
+                  (item.href !== "/admin" &&
+                    item.href !== "/admin/produits" &&
+                    pathname.startsWith(item.href));
                 return (
                   <li key={item.href}>
                     <Link

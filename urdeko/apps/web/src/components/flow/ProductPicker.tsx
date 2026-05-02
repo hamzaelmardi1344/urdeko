@@ -48,7 +48,6 @@ export function ProductPicker({
         projectId,
         category,
         productId: product.id,
-        priceMad: product.priceMad,
       });
       if (isFinal) {
         await completeSelectionsAction(projectId);

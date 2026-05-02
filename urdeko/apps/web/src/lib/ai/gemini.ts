@@ -1,5 +1,6 @@
 import { GoogleGenAI, Modality, type Part } from "@google/genai";
 import sharp from "sharp";
+import { z } from "zod";
 import { env } from "@/env";
 
 // =====================================================================
@@ -61,6 +62,20 @@ export type PhotoAnalysis = {
   advice: string;
 };
 
+const photoAnalysisSchema: z.ZodType<PhotoAnalysis> = z.object({
+  valid: z.boolean(),
+  reasons: z.array(z.string()),
+  detected: z.object({
+    roomType: z
+      .enum(["salon", "chambre", "salle_a_manger", "bureau", "espace_jardin"])
+      .nullable(),
+    lighting: z.enum(["bonne", "sombre", "contrejour", "moyenne"]),
+    framing: z.enum(["correct", "trop_proche", "trop_loin", "coupe"]),
+    clutter: z.enum(["faible", "moyen", "eleve"]),
+  }),
+  advice: z.string(),
+});
+
 export async function analyzePhoto(imageUrl: string): Promise<PhotoAnalysis> {
   const prompt = `Tu es un expert en aménagement d'intérieur. Analyse l'image fournie et réponds UNIQUEMENT par un JSON valide :
 {
@@ -82,8 +97,7 @@ export async function analyzePhoto(imageUrl: string): Promise<PhotoAnalysis> {
     config: { responseMimeType: "application/json" },
   });
 
-  const text = response.text ?? "{}";
-  return JSON.parse(text) as PhotoAnalysis;
+  return parseGeminiJson(response.text, photoAnalysisSchema, "analyse photo");
 }
 
 // ------------------------------------------------------------------
@@ -142,12 +156,16 @@ export async function emptyRoom(
   // Diagnostic complet : on saura toujours pourquoi le modèle a échoué.
   const safetyRatings = candidate?.safetyRatings ?? [];
   const blocked = safetyRatings.some((r) => r.blocked);
-  const outBytes = imagePart?.inlineData?.data
-    ? Buffer.byteLength(imagePart.inlineData.data, "base64")
-    : 0;
+  const outputBuffer = imagePart?.inlineData?.data
+    ? Buffer.from(imagePart.inlineData.data, "base64")
+    : null;
+  const outBytes = outputBuffer?.byteLength ?? 0;
   const sizeRatio = outBytes
     ? Math.abs(outBytes - inputBytes.length) / Math.max(inputBytes.length, 1)
     : 0;
+  const pixelDiff = outputBuffer
+    ? await imageMeanAbsoluteDifference(inputBytes, outputBuffer)
+    : null;
 
   console.log(
     JSON.stringify(
@@ -164,6 +182,7 @@ export async function emptyRoom(
         inputBytes: inputBytes.length,
         outputBytes: outBytes,
         sizeDeltaPct: Number((sizeRatio * 100).toFixed(2)),
+        pixelDiffPct: pixelDiff == null ? null : Number((pixelDiff * 100).toFixed(2)),
         blocked,
         safety: safetyRatings.map((r) => ({
           category: r.category,
@@ -183,11 +202,10 @@ export async function emptyRoom(
     );
   }
 
-  // Si la sortie est ~ identique à l'entrée, Gemini a refusé l'édition.
-  // On lève une erreur explicite pour ne pas afficher un faux résultat.
-  if (sizeRatio < 0.05) {
+  // Si la sortie est visuellement quasi identique, Gemini a refusé l'édition.
+  if (pixelDiff != null && pixelDiff < 0.02) {
     throw new Error(
-      `Gemini a renvoyé une image quasi identique à la photo d'origine (delta=${(sizeRatio * 100).toFixed(1)}%). ` +
+      `Gemini a renvoyé une image quasi identique à la photo d'origine (diff=${(pixelDiff * 100).toFixed(1)}%). ` +
         "Le modèle n'a pas voulu vider la pièce avec ce prompt — clique « Relancer l'IA » pour réessayer.",
     );
   }
@@ -282,6 +300,13 @@ export type ProductScore = {
   badge: "recommande" | "economique" | "hors_budget" | "coherent";
 };
 
+const productScoreSchema: z.ZodType<ProductScore> = z.object({
+  productId: z.string(),
+  score: z.number().min(0).max(10),
+  reason: z.string(),
+  badge: z.enum(["recommande", "economique", "hors_budget", "coherent"]),
+});
+
 export async function scoreProducts(input: {
   style: string;
   palette: string;
@@ -304,12 +329,75 @@ ${JSON.stringify(input.candidates)}`;
     contents: [{ role: "user", parts: [{ text: prompt }] }],
     config: { responseMimeType: "application/json" },
   });
-  const raw = response.text ?? "[]";
-  const parsed = JSON.parse(raw) as ProductScore[];
-  if (!Array.isArray(parsed)) {
-    throw new Error("Gemini n'a pas renvoyé de tableau de scores.");
+  const allowedIds = new Set(input.candidates.map((candidate) => candidate.id));
+  return parseGeminiJson(response.text, z.array(productScoreSchema), "scoring produits")
+    .filter((score) => allowedIds.has(score.productId));
+}
+
+// ------------------------------------------------------------------
+// 5. Préremplissage produit manuel admin
+// ------------------------------------------------------------------
+
+export type ProductMetadataSuggestion = {
+  category: string | null;
+  styles: string[];
+  tags: string[];
+  description: string;
+};
+
+const productMetadataSuggestionSchema: z.ZodType<ProductMetadataSuggestion> = z.object({
+  category: z
+    .enum(["canape", "table_basse", "tapis", "luminaire", "decoration", "meuble_tv"])
+    .nullable(),
+  styles: z.array(
+    z.enum(["moderne", "contemporain", "minimaliste", "japandi", "chaleureux", "elegant"]),
+  ),
+  tags: z.array(z.string()),
+  description: z.string(),
+});
+
+export async function suggestProductMetadata(input: {
+  name: string;
+  brand: string;
+  image?: { buffer: Buffer; mimeType: string };
+}): Promise<ProductMetadataSuggestion> {
+  const prompt = `Tu aides un admin UrdeKo à cataloguer un produit déco/meuble.
+Réponds UNIQUEMENT en JSON valide :
+{
+  "category": "canape" | "table_basse" | "tapis" | "luminaire" | "decoration" | "meuble_tv" | null,
+  "styles": Array<"moderne" | "contemporain" | "minimaliste" | "japandi" | "chaleureux" | "elegant">,
+  "tags": string[], // 4 à 8 tags courts en français, sans doublon
+  "description": string // 1 phrase française, concrète, non commerciale
+}
+
+Produit :
+- Nom : ${input.name}
+- Marque : ${input.brand}
+
+Priorité : si l'image est fournie, utilise-la pour détecter la catégorie, les matières, les couleurs et le style.`;
+
+  const parts: Part[] = [{ text: prompt }];
+  if (input.image) {
+    const { bytes, mime } = await downscaleForGemini(input.image.buffer);
+    parts.push({
+      inlineData: {
+        data: bytes.toString("base64"),
+        mimeType: mime || input.image.mimeType,
+      },
+    } as Part);
   }
-  return parsed;
+
+  const response = await ai.models.generateContent({
+    model: env.GEMINI_TEXT_MODEL,
+    contents: [{ role: "user", parts }],
+    config: { responseMimeType: "application/json" },
+  });
+
+  return parseGeminiJson(
+    response.text,
+    productMetadataSuggestionSchema,
+    "préremplissage produit",
+  );
 }
 
 // ------------------------------------------------------------------
@@ -332,4 +420,42 @@ function firstInline(
     }
   }
   return null;
+}
+
+function parseGeminiJson<T>(text: string | undefined, schema: z.ZodType<T>, label: string): T {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text ?? "null");
+  } catch {
+    throw new Error(`Gemini a renvoyé un JSON invalide pour ${label}.`);
+  }
+
+  const result = schema.safeParse(parsed);
+  if (!result.success) {
+    throw new Error(`Gemini a renvoyé une structure invalide pour ${label}.`);
+  }
+  return result.data;
+}
+
+async function imageMeanAbsoluteDifference(a: Buffer, b: Buffer): Promise<number> {
+  const [left, right] = await Promise.all([
+    normalizedTinyGrayscale(a),
+    normalizedTinyGrayscale(b),
+  ]);
+  if (left.length !== right.length) return 1;
+
+  let diff = 0;
+  for (let i = 0; i < left.length; i += 1) {
+    diff += Math.abs((left[i] ?? 0) - (right[i] ?? 0));
+  }
+  return diff / (left.length * 255);
+}
+
+async function normalizedTinyGrayscale(input: Buffer): Promise<Buffer> {
+  return sharp(input)
+    .rotate()
+    .resize(32, 32, { fit: "fill" })
+    .grayscale()
+    .raw()
+    .toBuffer();
 }

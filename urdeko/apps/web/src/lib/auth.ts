@@ -5,6 +5,7 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { smtpServerOptions } from "./email/smtp";
 import { db } from "./db/client";
 import { accounts, sessions, users, verificationTokens } from "./db/schema";
+import { rateLimit, RATE_LIMITS } from "./rate-limit";
 import { env } from "@/env";
 
 declare module "next-auth" {
@@ -67,6 +68,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       server: smtpServerOptions(),
       from: env.AUTH_EMAIL_FROM,
       async sendVerificationRequest({ identifier: to, url, provider }) {
+        const limit = await rateLimit(to.toLowerCase(), RATE_LIMITS.authMagicLink);
+        if (!limit.allowed) {
+          throw new Error(
+            "Trop de liens de connexion demandés. Réessaie dans quelques minutes.",
+          );
+        }
         const { host } = new URL(url);
         const transport = createTransport(provider.server);
         const result = await transport.sendMail({

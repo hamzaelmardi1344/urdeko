@@ -1,7 +1,10 @@
+import { readResponseBufferLimited, safeFetch } from "@/lib/safe-fetch";
+
 const USER_AGENT =
   "UrdekoBot/1.0 (+https://urdeko.app/robots ; contact=hello@urdeko.app)";
 
 const DEFAULT_TIMEOUT_MS = 20_000;
+const MAX_HTML_BYTES = 4 * 1024 * 1024;
 
 export class ScrapeFetchError extends Error {
   constructor(
@@ -18,19 +21,16 @@ export async function fetchHtml(
   url: string,
   opts: { timeoutMs?: number } = {},
 ): Promise<{ html: string; finalUrl: string; contentType: string }> {
-  const controller = new AbortController();
-  const t = setTimeout(() => controller.abort(), opts.timeoutMs ?? DEFAULT_TIMEOUT_MS);
-
   try {
-    const res = await fetch(url, {
+    const { response: res, finalUrl } = await safeFetch(url, {
       headers: {
         "user-agent": USER_AGENT,
         accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "accept-language": "fr-FR,fr;q=0.9,en;q=0.8",
       },
-      redirect: "follow",
-      signal: controller.signal,
       cache: "no-store",
+    }, {
+      timeoutMs: opts.timeoutMs ?? DEFAULT_TIMEOUT_MS,
     });
 
     if (!res.ok) {
@@ -50,16 +50,14 @@ export async function fetchHtml(
       );
     }
 
-    const html = await res.text();
-    return { html, finalUrl: res.url || url, contentType };
+    const html = (await readResponseBufferLimited(res, MAX_HTML_BYTES)).toString("utf-8");
+    return { html, finalUrl, contentType };
   } catch (err) {
     if (err instanceof ScrapeFetchError) throw err;
     if ((err as Error).name === "AbortError") {
       throw new ScrapeFetchError("Délai dépassé (timeout)", null, url);
     }
     throw new ScrapeFetchError((err as Error).message, null, url);
-  } finally {
-    clearTimeout(t);
   }
 }
 

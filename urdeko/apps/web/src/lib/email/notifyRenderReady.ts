@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { db } from "../db/client";
 import { contacts, projectRenders, projects } from "../db/schema";
 import { sendEmail } from "./send";
@@ -15,7 +15,7 @@ export async function notifyRenderReady(projectId: string): Promise<void> {
     .select()
     .from(projectRenders)
     .where(eq(projectRenders.projectId, projectId))
-    .orderBy(projectRenders.createdAt)
+    .orderBy(desc(projectRenders.createdAt))
     .limit(1);
   if (!render) return;
 

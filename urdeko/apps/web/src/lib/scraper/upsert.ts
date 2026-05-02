@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import { db } from "../db/client";
 import { products as productsTable } from "../db/schema";
+import { fetchImageBuffer, imageExtensionForMime } from "../safe-fetch";
 import { uploadObject } from "../storage";
 import type { ExtractedProduct } from "./types";
 
@@ -31,12 +32,15 @@ export async function upsertProducts(
 
       const id = product.externalId.replace(/[^a-zA-Z0-9_-]/g, "_");
 
-      const imageBuffer = await fetchImage(product.imageUrl);
+      const image = await fetchImageBuffer(product.imageUrl, {
+        maxBytes: 20 * 1024 * 1024,
+        headers: { "user-agent": "UrdekoBot/1.0" },
+      });
       const uploaded = await uploadObject({
-        buffer: imageBuffer,
-        contentType: "image/jpeg",
+        buffer: image.buffer,
+        contentType: image.mimeType,
         keyPrefix: "catalogue",
-        extension: ".jpg",
+        extension: imageExtensionForMime(image.mimeType),
       });
 
       await db
@@ -82,13 +86,4 @@ export async function upsertProducts(
   }
 
   return result;
-}
-
-async function fetchImage(url: string): Promise<Buffer> {
-  const res = await fetch(url, {
-    headers: { "user-agent": "UrdekoBot/1.0" },
-    cache: "no-store",
-  });
-  if (!res.ok) throw new Error(`Image ${url} unreachable (${res.status})`);
-  return Buffer.from(await res.arrayBuffer());
 }

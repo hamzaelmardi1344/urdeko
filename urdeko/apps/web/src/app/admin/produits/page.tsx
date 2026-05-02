@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Icon } from "@urdeko/design-system";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { ProductList } from "@/components/admin/ProductList";
 import { listAdminProducts } from "@/lib/admin/products";
@@ -33,12 +34,22 @@ export default async function AdminProductsPage({
       title="Catalogue produits"
       subtitle={`${total.toLocaleString("fr-MA")} produits dans le catalogue`}
       action={
-        <Link
-          href="/admin/produits/scraper"
-          className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-bold text-on-primary shadow-glow-sm"
-        >
-          + Importer depuis le web
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/admin/produits/nouveau"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-bold text-on-primary shadow-glow-sm"
+          >
+            <Icon name="add" size={18} />
+            Ajouter manuellement
+          </Link>
+          <Link
+            href="/admin/produits/scraper"
+            className="inline-flex items-center gap-2 rounded-full border border-outline/20 bg-surface-container-lowest px-4 py-2 text-sm font-bold text-on-surface-variant hover:bg-surface-container-low"
+          >
+            <Icon name="travel_explore" size={18} />
+            Importer depuis le web
+          </Link>
+        </div>
       }
     >
       <ProductList

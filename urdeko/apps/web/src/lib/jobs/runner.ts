@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { db } from "../db/client";
 import {
   jobs,
@@ -51,24 +51,36 @@ export async function runJob(jobId: string): Promise<void> {
     return;
   }
 
-  await db
+  const [claimed] = await db
     .update(jobs)
-    .set({ status: "running", progress: 5, startedAt: new Date() })
-    .where(eq(jobs.id, jobId));
+    .set({
+      status: "running",
+      progress: 5,
+      error: null,
+      startedAt: new Date(),
+      finishedAt: null,
+    })
+    .where(and(eq(jobs.id, jobId), inArray(jobs.status, ["queued", "failed"])))
+    .returning();
+
+  if (!claimed) {
+    console.info(`[jobs] runJob: ${jobId} was claimed by another runner, skip`);
+    return;
+  }
 
   try {
-    switch (job.kind as JobKind) {
+    switch (claimed.kind as JobKind) {
       case "analyze_photo":
-        await handleAnalyzePhoto(job);
+        await handleAnalyzePhoto(claimed);
         break;
       case "empty_room":
-        await handleEmptyRoom(job);
+        await handleEmptyRoom(claimed);
         break;
       case "render":
-        await handleRender(job);
+        await handleRender(claimed);
         break;
       default:
-        throw new Error(`Unknown job kind: ${job.kind}`);
+        throw new Error(`Unknown job kind: ${claimed.kind}`);
     }
   } catch (error) {
     await failJob(jobId, (error as Error).message);

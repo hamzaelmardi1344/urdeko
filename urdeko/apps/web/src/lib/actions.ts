@@ -23,6 +23,7 @@ import { enqueueJob } from "./jobs/dispatch";
 import { rateLimit, RATE_LIMITS } from "./rate-limit";
 import { auth } from "./auth";
 import { getGuestId } from "./guest";
+import { getProduct } from "./catalogue";
 import {
   DEFAULT_BUDGET_MAD,
   DEFAULT_FLEXIBILITY,
@@ -173,9 +174,12 @@ export async function selectProductAction(input: {
   projectId: string;
   category: string;
   productId: string;
-  priceMad: number;
 }) {
   await assertProjectAccess(input.projectId);
+  const product = await getProduct(input.productId);
+  if (!product || product.category !== input.category) {
+    throw new Error("Produit invalide pour cette catégorie");
+  }
   await db
     .delete(projectSelections)
     .where(
@@ -188,7 +192,7 @@ export async function selectProductAction(input: {
     projectId: input.projectId,
     category: input.category as never,
     productId: input.productId,
-    priceMad: input.priceMad,
+    priceMad: product.priceMad,
   });
   revalidatePath(`/projets/${input.projectId}`, "layout");
 }

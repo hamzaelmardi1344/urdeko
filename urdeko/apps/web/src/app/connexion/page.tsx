@@ -7,11 +7,24 @@ import { signIn } from "@/lib/auth";
 
 export const metadata = { title: "Connexion" };
 
-export default function SignInPage() {
+function safeNextPath(value: FormDataEntryValue | string[] | null | undefined): string {
+  if (typeof value !== "string") return "/projets";
+  if (!value.startsWith("/") || value.startsWith("//")) return "/projets";
+  return value;
+}
+
+export default async function SignInPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string | string[] }>;
+}) {
+  const { next } = await searchParams;
+  const nextPath = safeNextPath(next);
+
   async function action(formData: FormData) {
     "use server";
     const email = String(formData.get("email") ?? "");
-    await signIn("nodemailer", { email, redirectTo: "/projets" });
+    await signIn("nodemailer", { email, redirectTo: safeNextPath(formData.get("next")) });
   }
 
   return (
@@ -31,6 +44,7 @@ export default function SignInPage() {
         </section>
 
         <form id="signin-form" action={action} className="flex flex-col gap-4">
+          <input type="hidden" name="next" value={nextPath} />
           <InputField
             label="Adresse email"
             name="email"

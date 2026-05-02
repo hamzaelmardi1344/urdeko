@@ -16,6 +16,10 @@ export default async function PhotoPreparationPage({
   const photo = bundle?.photos[0];
   const originalUrl = photo?.originalUrl ?? null;
 
+  if (!photo) {
+    redirect(`/projets/${id}/photo/guide`);
+  }
+
   // Le job empty_room est déjà terminé (ex. retour arrière, refresh après
   // completion) : on saute l'étape de polling et on va directement à /pret.
   if (photo?.emptiedUrl) {

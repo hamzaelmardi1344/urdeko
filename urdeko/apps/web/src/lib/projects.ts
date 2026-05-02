@@ -77,7 +77,6 @@ export async function assertProjectAccess(id: string): Promise<Project> {
   }
   if (row.guestId) {
     if (guestId && row.guestId === guestId) return row;
-    if (userId) return row;
     throw new ForbiddenError();
   }
   // Projet orphelin (ni user ni guest) : on refuse par défaut en prod.
