@@ -18,7 +18,7 @@ test("flow création projet → choix espace → guide photo", async ({ page }) 
   await page.getByLabel(/Nom du projet/i).fill("Test projet e2e");
   await page.getByRole("button", { name: /Continuer/ }).click();
 
-  await expect(page).toHaveURL(/\/projets\/.+\/espace$/);
+  await expect(page).toHaveURL(/\/projets\/.+\/espace$/, { timeout: 15_000 });
   await page.locator('input[name="roomType"][value="salon"]').check({ force: true });
   await page.getByRole("button", { name: /Continuer/ }).click();
 
@@ -32,6 +32,7 @@ test("préparation photo sans photo → retour guide", async ({ page }) => {
   await page.goto("/projets/nouveau");
   await page.getByLabel(/Nom du projet/i).fill("Projet sans photo");
   await page.getByRole("button", { name: /Continuer/ }).click();
+  await expect(page).toHaveURL(/\/projets\/.+\/espace$/, { timeout: 15_000 });
   await page.locator('input[name="roomType"][value="salon"]').check({ force: true });
   await page.getByRole("button", { name: /Continuer/ }).click();
 

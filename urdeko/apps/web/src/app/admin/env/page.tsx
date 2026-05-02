@@ -140,14 +140,14 @@ export default async function AdminEnvPage() {
           </ul>
         </div>
 
-        <div className="sticky bottom-4 flex items-center justify-between rounded-2xl bg-surface-container-high p-3 shadow-glow-sm">
+        <div className="sticky bottom-4 flex flex-col gap-3 rounded-2xl bg-surface-container-high p-3 shadow-glow-sm sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-on-surface-variant">
             Un fichier <code>{`.env.local.bak`}</code> est créé automatiquement
             avant chaque sauvegarde.
           </p>
           <button
             type="submit"
-            className="rounded-full bg-primary px-6 py-2 text-sm font-bold text-on-primary"
+            className="w-full rounded-full bg-primary px-6 py-2 text-sm font-bold text-on-primary sm:w-auto"
           >
             Sauvegarder le fichier
           </button>

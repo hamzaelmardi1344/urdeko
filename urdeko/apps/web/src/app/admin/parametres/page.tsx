@@ -94,7 +94,7 @@ export default async function AdminSettingsPage() {
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
                     {def.kind === "boolean" ? (
                       <label className="relative inline-flex cursor-pointer items-center">
                         <input
@@ -111,19 +111,19 @@ export default async function AdminSettingsPage() {
                         type="number"
                         name="value"
                         defaultValue={String(value ?? "")}
-                        className="w-32 rounded-lg border border-outline/20 bg-surface px-3 py-2 text-sm outline-none focus:border-primary"
+                        className="w-full rounded-lg border border-outline/20 bg-surface px-3 py-2 text-sm outline-none focus:border-primary sm:w-32"
                       />
                     ) : (
                       <input
                         type="text"
                         name="value"
                         defaultValue={String(value ?? "")}
-                        className="min-w-[240px] rounded-lg border border-outline/20 bg-surface px-3 py-2 text-sm outline-none focus:border-primary"
+                        className="w-full rounded-lg border border-outline/20 bg-surface px-3 py-2 text-sm outline-none focus:border-primary sm:min-w-[240px]"
                       />
                     )}
                     <button
                       type="submit"
-                      className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-on-primary"
+                      className="w-full rounded-full bg-primary px-4 py-2 text-sm font-bold text-on-primary sm:w-auto"
                     >
                       Sauvegarder
                     </button>

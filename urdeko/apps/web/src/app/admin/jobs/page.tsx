@@ -72,8 +72,8 @@ export default async function AdminJobsPage({
         <FilterChip href="/admin/jobs?kind=render" active={kind === "render"} label="Rendu" />
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-outline/10 bg-surface-container-lowest">
-        <table className="w-full border-collapse text-sm">
+      <div className="overflow-x-auto rounded-2xl border border-outline/10 bg-surface-container-lowest">
+        <table className="min-w-[900px] w-full border-collapse text-sm">
           <thead className="bg-surface-container-low text-left text-xs uppercase tracking-widest text-on-surface-variant/70">
             <tr>
               <th className="p-3">Type</th>

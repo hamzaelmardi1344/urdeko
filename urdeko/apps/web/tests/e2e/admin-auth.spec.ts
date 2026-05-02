@@ -21,6 +21,8 @@ async function seedAdminToken(
 }
 
 test.describe("Accès admin dédié", () => {
+  test.describe.configure({ mode: "serial" });
+
   test("/admin non connecté redirige vers /admin/connexion", async ({ page }) => {
     await page.goto("/admin");
     await expect(page).toHaveURL(/\/admin\/connexion$/);
@@ -71,12 +73,46 @@ test.describe("Accès admin dédié", () => {
     await expect(page).toHaveURL(/\/admin\/connexion\?error=invalid$/);
   });
 
+  test("mounafi@gmail.com est autorisé comme admin", async ({ page }) => {
+    const email = "mounafi@gmail.com";
+    const token = `valid-mounafi-${Date.now()}`;
+    await seedAdminToken(email, token);
+
+    await page.goto(
+      `/admin/session?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`,
+    );
+    await expect(page).toHaveURL(/\/admin$/);
+    await expect(page).toHaveTitle(/Tableau de bord/);
+  });
+
+  test("le menu backoffice est visible et ouvrable sur mobile", async ({ page }) => {
+    const email = "mounafi@gmail.com";
+    const token = `valid-mobile-menu-${Date.now()}`;
+    await page.setViewportSize({ width: 360, height: 800 });
+    await seedAdminToken(email, token);
+
+    await page.goto(
+      `/admin/session?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`,
+    );
+    await expect(page).toHaveURL(/\/admin$/);
+
+    const menuButton = page.getByRole("button", { name: /ouvrir le menu admin/i });
+    await expect(menuButton).toBeVisible();
+    await expect(page.getByRole("navigation").first()).toBeVisible();
+
+    await menuButton.click();
+    const drawer = page.getByLabel("Menu admin mobile");
+    await expect(drawer.getByText("Configuration")).toBeVisible();
+    await expect(drawer.getByRole("link", { name: /Produits/i }).first()).toBeVisible();
+  });
+
   test("email non allowlist ne crée pas de session admin", async ({ page }) => {
     await page.goto("/admin/connexion");
     await page.getByLabel(/Email administrateur/i).fill("personne@example.com");
     await page.getByRole("button", { name: /Recevoir le lien admin/i }).click();
 
-    await expect(page).toHaveURL(/\/admin\/verification\?email=personne%40example\.com$/);
+    await expect(page.getByRole("heading", { name: /Lien admin envoyé/i })).toBeVisible();
+    await expect(page.getByText("personne@example.com")).toBeVisible();
     await page.goto("/admin");
     await expect(page).toHaveURL(/\/admin\/connexion$/);
   });

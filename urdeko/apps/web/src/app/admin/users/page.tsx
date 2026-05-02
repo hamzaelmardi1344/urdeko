@@ -22,8 +22,8 @@ export default async function AdminUsersPage({
       title="Utilisateurs"
       subtitle={`${total.toLocaleString("fr-MA")} comptes UrdeKo`}
     >
-      <div className="overflow-hidden rounded-2xl border border-outline/10 bg-surface-container-lowest">
-        <table className="w-full border-collapse text-sm">
+      <div className="overflow-x-auto rounded-2xl border border-outline/10 bg-surface-container-lowest">
+        <table className="min-w-[760px] w-full border-collapse text-sm">
           <thead className="bg-surface-container-low text-left text-xs uppercase tracking-widest text-on-surface-variant/70">
             <tr>
               <th className="p-3">Utilisateur</th>

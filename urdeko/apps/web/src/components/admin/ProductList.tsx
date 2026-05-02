@@ -111,7 +111,7 @@ export function ProductList({
         <select
           value={category}
           onChange={(e) => updateQuery({ category: e.target.value, page: 0 })}
-          className="rounded-full border border-outline/20 bg-surface px-4 py-2.5 text-sm outline-none focus:border-primary"
+          className="w-full rounded-full border border-outline/20 bg-surface px-4 py-2.5 text-sm outline-none focus:border-primary md:w-auto"
         >
           {CATEGORIES.map((c) => (
             <option key={c.id || "all"} value={c.id}>
@@ -121,7 +121,7 @@ export function ProductList({
         </select>
         <button
           type="submit"
-          className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-on-primary"
+          className="w-full rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-on-primary md:w-auto"
         >
           Filtrer
         </button>
@@ -177,8 +177,8 @@ export function ProductList({
           </p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-outline/10">
-          <table className="w-full border-collapse bg-surface-container-lowest text-sm">
+        <div className="overflow-x-auto rounded-2xl border border-outline/10">
+          <table className="min-w-[820px] w-full border-collapse bg-surface-container-lowest text-sm">
             <thead className="bg-surface-container-low text-left text-xs uppercase tracking-widest text-on-surface-variant/70">
               <tr>
                 <th className="w-10 p-3"></th>
