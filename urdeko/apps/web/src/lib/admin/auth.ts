@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { env } from "@/env";
+import { isAdminAllowedEmail } from "./emails";
 
 export class AdminForbiddenError extends Error {
   constructor(message = "Accès admin refusé") {
@@ -12,7 +12,7 @@ export class AdminForbiddenError extends Error {
 /**
  * Vérifie que l'utilisateur est connecté ET que son email est dans
  * la liste `ADMIN_EMAILS` de la config. Utilisable :
- *  - dans un Server Component → redirige vers `/connexion?next=/admin`
+ *  - dans un Server Component → redirige vers `/admin/connexion`
  *  - dans un Server Action / route → retourne la session ou throw
  */
 export async function requireAdmin(opts: { redirectOnFail?: boolean } = {}) {
@@ -20,12 +20,10 @@ export async function requireAdmin(opts: { redirectOnFail?: boolean } = {}) {
   const session = await auth();
   const email = session?.user?.email?.toLowerCase() ?? null;
 
-  const allowed = Boolean(email && env.ADMIN_EMAILS.includes(email));
+  const allowed = isAdminAllowedEmail(email);
   if (!allowed) {
     if (redirectOnFail) {
-      redirect(
-        email ? "/acces-admin-refuse" : `/connexion?next=${encodeURIComponent("/admin")}`,
-      );
+      redirect(email ? "/acces-admin-refuse" : "/admin/connexion");
     }
     throw new AdminForbiddenError();
   }
@@ -33,5 +31,5 @@ export async function requireAdmin(opts: { redirectOnFail?: boolean } = {}) {
 }
 
 export function isAdminEmail(email: string | null | undefined): boolean {
-  return Boolean(email && env.ADMIN_EMAILS.includes(email.toLowerCase()));
+  return isAdminAllowedEmail(email);
 }

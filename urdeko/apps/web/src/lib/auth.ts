@@ -1,4 +1,5 @@
 import NextAuth, { type DefaultSession } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
 import Nodemailer from "next-auth/providers/nodemailer";
 import { createTransport } from "nodemailer";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
@@ -6,6 +7,7 @@ import { smtpServerOptions } from "./email/smtp";
 import { db } from "./db/client";
 import { accounts, sessions, users, verificationTokens } from "./db/schema";
 import { rateLimit, RATE_LIMITS } from "./rate-limit";
+import { consumeAdminMagicToken } from "./admin/magic-link";
 import { env } from "@/env";
 
 declare module "next-auth" {
@@ -64,6 +66,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: "/connexion/erreur",
   },
   providers: [
+    Credentials({
+      id: "admin-magic",
+      name: "Admin Magic Link",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        token: { label: "Token", type: "text" },
+      },
+      async authorize(credentials) {
+        return consumeAdminMagicToken(credentials?.email, credentials?.token);
+      },
+    }),
     Nodemailer({
       server: smtpServerOptions(),
       from: env.AUTH_EMAIL_FROM,

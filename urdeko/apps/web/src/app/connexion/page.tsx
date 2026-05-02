@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { Icon, InputField } from "@urdeko/design-system";
 import { TopAppBar } from "@/components/layout/TopAppBar";
 import { FlowShell } from "@/components/layout/FlowShell";
@@ -13,18 +14,42 @@ function safeNextPath(value: FormDataEntryValue | string[] | null | undefined): 
   return value;
 }
 
+function safePathFromCallback(value: string | string[] | undefined): string {
+  if (typeof value !== "string") return "/projets";
+  if (value.startsWith("/") && !value.startsWith("//")) return value;
+  try {
+    const url = new URL(value);
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return "/projets";
+  }
+}
+
+function isAdminPath(path: string): boolean {
+  return path === "/admin" || path.startsWith("/admin/");
+}
+
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string | string[] }>;
+  searchParams: Promise<{ next?: string | string[]; callbackUrl?: string | string[] }>;
 }) {
-  const { next } = await searchParams;
-  const nextPath = safeNextPath(next);
+  const { next, callbackUrl } = await searchParams;
+  const nextPath = safePathFromCallback(
+    typeof next === "string" ? next : typeof callbackUrl === "string" ? callbackUrl : undefined,
+  );
+  if (isAdminPath(nextPath)) {
+    redirect("/admin/connexion");
+  }
 
   async function action(formData: FormData) {
     "use server";
     const email = String(formData.get("email") ?? "");
-    await signIn("nodemailer", { email, redirectTo: safeNextPath(formData.get("next")) });
+    const next = safeNextPath(formData.get("next"));
+    if (isAdminPath(next)) {
+      redirect("/admin/connexion");
+    }
+    await signIn("nodemailer", { email, redirectTo: next });
   }
 
   return (
