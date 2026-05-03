@@ -4,7 +4,7 @@ import { TopAppBar } from "@/components/layout/TopAppBar";
 import { FlowShell } from "@/components/layout/FlowShell";
 import { StickyCTA } from "@/components/layout/StickyCTA";
 import { LinkButton } from "@/components/ui/LinkButton";
-import { getProjectBundle } from "@/lib/projects";
+import { getAccessibleProjectBundle } from "@/lib/projects";
 import type { PhotoAnalysis } from "@/lib/ai/gemini";
 
 export const metadata = { title: "Photo à améliorer" };
@@ -15,7 +15,7 @@ export default async function PhotoAmeliorerPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const bundle = await getProjectBundle(id);
+  const bundle = await getAccessibleProjectBundle(id);
   const photo = bundle?.photos[0];
   const analysis = (photo?.analysisJson as PhotoAnalysis | null) ?? null;
   const reasons = analysis?.reasons?.length

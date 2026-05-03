@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Icon } from "@urdeko/design-system";
@@ -73,6 +74,9 @@ export function AdminShell({
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const navGroups = navGroupsForRole(role);
+  const handleSignOut = () => {
+    void signOut({ redirectTo: "/admin/connexion" });
+  };
 
   return (
     <div className="min-h-dvh overflow-x-hidden bg-surface text-on-surface">
@@ -82,6 +86,7 @@ export function AdminShell({
           userEmail={userEmail}
           role={role}
           navGroups={navGroups}
+          onSignOut={handleSignOut}
         />
         <MobileAdminDrawer
           open={menuOpen}
@@ -90,6 +95,7 @@ export function AdminShell({
           role={role}
           navGroups={navGroups}
           onClose={() => setMenuOpen(false)}
+          onSignOut={handleSignOut}
         />
         <main className="flex-1 min-w-0 lg:pl-[280px]">
           <header className="sticky top-0 z-30 border-b border-outline/10 bg-surface/90 backdrop-blur-xl">
@@ -178,11 +184,13 @@ function AdminSidebar({
   userEmail,
   role,
   navGroups,
+  onSignOut,
 }: {
   pathname: string;
   userEmail: string;
   role: BackofficeRole;
   navGroups: NavGroup[];
+  onSignOut: () => void;
 }) {
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-[280px] border-r border-outline/10 bg-surface-container-lowest px-4 py-6 lg:block">
@@ -200,6 +208,14 @@ function AdminSidebar({
         </p>
         <p className="mt-0.5 truncate text-sm font-bold">{userEmail}</p>
         <p className="mt-1 text-xs font-semibold text-on-surface-variant">{roleLabel(role)}</p>
+        <button
+          type="button"
+          onClick={onSignOut}
+          className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-surface-container-lowest px-3 py-2 text-sm font-bold text-on-surface transition-colors hover:bg-error/10 hover:text-error"
+        >
+          <Icon name="logout" size={17} />
+          Se déconnecter
+        </button>
       </div>
     </aside>
   );
@@ -316,6 +332,7 @@ function MobileAdminDrawer({
   role,
   navGroups,
   onClose,
+  onSignOut,
 }: {
   open: boolean;
   pathname: string;
@@ -323,6 +340,7 @@ function MobileAdminDrawer({
   role: BackofficeRole;
   navGroups: NavGroup[];
   onClose: () => void;
+  onSignOut: () => void;
 }) {
   return (
     <AnimatePresence>
@@ -369,6 +387,14 @@ function MobileAdminDrawer({
               </p>
               <p className="mt-0.5 truncate text-sm font-bold">{userEmail}</p>
               <p className="mt-1 text-xs font-semibold text-on-surface-variant">{roleLabel(role)}</p>
+              <button
+                type="button"
+                onClick={onSignOut}
+                className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-surface-container-lowest px-3 py-2 text-sm font-bold text-on-surface"
+              >
+                <Icon name="logout" size={17} />
+                Se déconnecter
+              </button>
               <Link
                 href="/"
                 onClick={onClose}

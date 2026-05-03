@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getProjectBundle } from "@/lib/projects";
+import { getAccessibleProjectBundle } from "@/lib/projects";
 
 // Route pivot : redirige vers la prochaine etape manquante du projet.
 export default async function ProjectIndexPage({
@@ -8,7 +8,7 @@ export default async function ProjectIndexPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const bundle = await getProjectBundle(id);
+  const bundle = await getAccessibleProjectBundle(id);
   if (!bundle) redirect(`/projets/${id}/espace`);
   const { project, photos, selections, renders } = bundle;
 

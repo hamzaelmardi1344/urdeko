@@ -6,7 +6,7 @@ import { StickyCTA } from "@/components/layout/StickyCTA";
 import { LinkButton } from "@/components/ui/LinkButton";
 import { BudgetBar } from "@/components/flow/BudgetBar";
 import { ELEMENT_CATEGORIES, getPalette, getStyle } from "@/lib/domain";
-import { getProjectBundle } from "@/lib/projects";
+import { getAccessibleProjectBundle } from "@/lib/projects";
 import { getProduct } from "@/lib/catalogue";
 
 export const metadata = { title: "Récapitulatif" };
@@ -17,7 +17,7 @@ export default async function RecapPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const bundle = await getProjectBundle(id);
+  const bundle = await getAccessibleProjectBundle(id);
   if (!bundle) notFound();
 
   const style = getStyle(bundle.project.style);

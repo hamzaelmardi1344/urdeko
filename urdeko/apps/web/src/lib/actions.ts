@@ -15,6 +15,7 @@ import {
 import {
   assertProjectAccess,
   createProject,
+  getProjectBundle,
   getProjectOrThrow,
   updateProject,
 } from "./projects";
@@ -208,7 +209,7 @@ export async function completeSelectionsAction(projectId: string) {
 // ---------------------------------------------------------------
 
 export async function saveContactAction(projectId: string, formData: FormData) {
-  await assertProjectAccess(projectId);
+  const project = await assertProjectAccess(projectId);
   const schema = z.object({
     fullName: z.string().min(2, "Nom trop court"),
     email: z.string().email("Email invalide"),
@@ -233,11 +234,44 @@ export async function saveContactAction(projectId: string, formData: FormData) {
   await db.delete(contacts).where(eq(contacts.projectId, projectId));
   await db.insert(contacts).values({ projectId, ...parsed });
   await getProjectOrThrow(projectId);
+  const session = await auth();
+  if (!session?.user?.id) {
+    redirect(`/projets/${projectId}/compte`);
+  }
+  if (project.userId !== session.user.id) {
+    redirect(
+      `/connexion/rattacher?projectId=${projectId}&next=${encodeURIComponent(
+        `/projets/${projectId}/generation`,
+      )}`,
+    );
+  }
   redirect(`/projets/${projectId}/generation`);
 }
 
 export async function requestRenderAction(projectId: string) {
-  await assertProjectAccess(projectId);
+  const project = await assertProjectAccess(projectId);
+  const session = await auth();
+  if (!session?.user?.id) {
+    redirect(`/projets/${projectId}/compte`);
+  }
+  if (project.userId !== session.user.id) {
+    redirect(
+      `/connexion/rattacher?projectId=${projectId}&next=${encodeURIComponent(
+        `/projets/${projectId}/generation`,
+      )}`,
+    );
+  }
+  const bundle = await getProjectBundle(projectId);
+  const readyForRender = Boolean(
+    bundle?.contact &&
+      bundle.project.style &&
+      bundle.project.palette &&
+      bundle.photos[0]?.emptiedUrl &&
+      bundle.selections.length,
+  );
+  if (!readyForRender) {
+    throw new Error("Projet incomplet : finalise les étapes avant de lancer le rendu.");
+  }
   const who = await currentIdentity();
   const limit = await rateLimit(who, RATE_LIMITS.aiGenerate);
   if (!limit.allowed) {

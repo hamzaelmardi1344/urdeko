@@ -7,7 +7,7 @@ import { BeforeAfter } from "@/components/flow/BeforeAfter";
 import { LinkButton } from "@/components/ui/LinkButton";
 import { RetryEmptyRoomButton } from "@/components/flow/RetryEmptyRoomButton";
 import { RscAlignOnMount } from "@/components/flow/RscAlignOnMount";
-import { getProjectBundle } from "@/lib/projects";
+import { getAccessibleProjectBundle } from "@/lib/projects";
 
 export const metadata = { title: "Espace prêt" };
 export const dynamic = "force-dynamic";
@@ -18,7 +18,7 @@ export default async function ReadyPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const bundle = await getProjectBundle(id);
+  const bundle = await getAccessibleProjectBundle(id);
   const photo = bundle?.photos[0];
   if (!photo?.emptiedUrl || !photo.originalUrl) {
     redirect(`/projets/${id}/photo/preparation`);

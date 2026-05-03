@@ -1,12 +1,13 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Icon } from "@urdeko/design-system";
 import { TopAppBar } from "@/components/layout/TopAppBar";
 import { FlowShell } from "@/components/layout/FlowShell";
 import { StickyCTA } from "@/components/layout/StickyCTA";
 import { BeforeAfter } from "@/components/flow/BeforeAfter";
 import { LinkButton } from "@/components/ui/LinkButton";
-import { getProjectBundle } from "@/lib/projects";
+import { getAccessibleProjectBundle } from "@/lib/projects";
+import { auth } from "@/lib/auth";
 
 export const metadata = { title: "Votre rendu final" };
 
@@ -16,8 +17,18 @@ export default async function RenderPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const bundle = await getProjectBundle(id);
+  const [bundle, session] = await Promise.all([getAccessibleProjectBundle(id), auth()]);
   if (!bundle) notFound();
+  if (!session?.user?.id) {
+    redirect(`/projets/${id}/compte`);
+  }
+  if (bundle.project.userId !== session.user.id) {
+    redirect(
+      `/connexion/rattacher?projectId=${id}&next=${encodeURIComponent(
+        `/projets/${id}/rendu`,
+      )}`,
+    );
+  }
   const latest = bundle.renders[0];
   const beforeUrl = bundle.photos[0]?.originalUrl ?? bundle.photos[0]?.emptiedUrl ?? "";
 

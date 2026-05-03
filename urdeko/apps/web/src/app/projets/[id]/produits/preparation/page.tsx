@@ -3,7 +3,7 @@ import { Icon } from "@urdeko/design-system";
 import { TopAppBar } from "@/components/layout/TopAppBar";
 import { FlowShell } from "@/components/layout/FlowShell";
 import { LinkButton } from "@/components/ui/LinkButton";
-import { getProjectBundle } from "@/lib/projects";
+import { getAccessibleProjectBundle } from "@/lib/projects";
 import { ELEMENT_CATEGORIES } from "@/lib/domain";
 
 export const metadata = { title: "Préparation de la sélection" };
@@ -14,7 +14,7 @@ export default async function ProduitsPreparationPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const bundle = await getProjectBundle(id);
+  const bundle = await getAccessibleProjectBundle(id);
   if (!bundle) redirect(`/projets/${id}`);
   const ordered = ELEMENT_CATEGORIES.filter((c) => bundle.elements.includes(c.id));
   const first = ordered[0];

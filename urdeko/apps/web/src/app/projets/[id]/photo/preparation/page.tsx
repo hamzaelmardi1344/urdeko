@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { TopAppBar } from "@/components/layout/TopAppBar";
 import { FlowShell } from "@/components/layout/FlowShell";
 import { PreparationScreen } from "@/components/flow/PreparationScreen";
-import { getProjectBundle } from "@/lib/projects";
+import { getAccessibleProjectBundle } from "@/lib/projects";
 
 export const metadata = { title: "Préparation de l'espace" };
 
@@ -12,7 +12,7 @@ export default async function PhotoPreparationPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const bundle = await getProjectBundle(id);
+  const bundle = await getAccessibleProjectBundle(id);
   const photo = bundle?.photos[0];
   const originalUrl = photo?.originalUrl ?? null;
 

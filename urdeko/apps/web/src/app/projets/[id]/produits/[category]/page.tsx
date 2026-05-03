@@ -3,7 +3,7 @@ import { TopAppBar } from "@/components/layout/TopAppBar";
 import { FlowShell } from "@/components/layout/FlowShell";
 import { BudgetBar } from "@/components/flow/BudgetBar";
 import { ProductPicker } from "@/components/flow/ProductPicker";
-import { getProjectBundle } from "@/lib/projects";
+import { getAccessibleProjectBundle } from "@/lib/projects";
 import { listProducts } from "@/lib/catalogue";
 import { ELEMENT_CATEGORIES, type ElementCategoryId } from "@/lib/domain";
 
@@ -18,7 +18,7 @@ export default async function CategoryProductsPage({
   const meta = ELEMENT_CATEGORIES.find((c) => c.id === category);
   if (!meta) notFound();
 
-  const bundle = await getProjectBundle(id);
+  const bundle = await getAccessibleProjectBundle(id);
   if (!bundle) notFound();
 
   const products = await listProducts({

@@ -3,7 +3,7 @@ import { FlowShell } from "@/components/layout/FlowShell";
 import { StickyCTA } from "@/components/layout/StickyCTA";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { saveContactAction } from "@/lib/actions";
-import { getProjectBundle } from "@/lib/projects";
+import { getAccessibleProjectBundle } from "@/lib/projects";
 import { ContactFormClient } from "@/components/flow/ContactFormClient";
 
 export const metadata = { title: "Vos coordonnées" };
@@ -14,7 +14,7 @@ export default async function CoordonneesPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const bundle = await getProjectBundle(id);
+  const bundle = await getAccessibleProjectBundle(id);
   const contact = bundle?.contact ?? null;
   const action = saveContactAction.bind(null, id);
 

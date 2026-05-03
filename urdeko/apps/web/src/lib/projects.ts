@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 import { db } from "./db/client";
 import {
   contacts,
@@ -19,6 +19,29 @@ export class ForbiddenError extends Error {
     super(message);
     this.name = "ForbiddenError";
   }
+}
+
+export type ProjectClaimErrorCode =
+  | "missing_session"
+  | "missing_guest"
+  | "project_not_found"
+  | "already_owned"
+  | "guest_mismatch"
+  | "missing_contact"
+  | "email_mismatch";
+
+export class ProjectClaimError extends Error {
+  constructor(
+    public readonly code: ProjectClaimErrorCode,
+    message = "Impossible de rattacher ce projet au compte",
+  ) {
+    super(message);
+    this.name = "ProjectClaimError";
+  }
+}
+
+function normalizeEmail(value: string | null | undefined): string {
+  return value?.trim().toLowerCase() ?? "";
 }
 
 export async function resolveOwnership() {
@@ -69,7 +92,7 @@ export async function assertProjectAccess(id: string): Promise<Project> {
   if (!row) throw new ForbiddenError("Projet introuvable");
   const session = await auth();
   const userId = session?.user?.id ?? null;
-  const guestId = userId ? null : await getGuestId();
+  const guestId = await getGuestId();
 
   if (row.userId) {
     if (userId && row.userId === userId) return row;
@@ -150,6 +173,82 @@ export async function getProjectBundle(id: string) {
 }
 
 export type ProjectBundle = NonNullable<Awaited<ReturnType<typeof getProjectBundle>>>;
+
+export async function getAccessibleProjectBundle(id: string): Promise<ProjectBundle | null> {
+  try {
+    await assertProjectAccess(id);
+  } catch (error) {
+    if (error instanceof ForbiddenError) return null;
+    throw error;
+  }
+  return getProjectBundle(id);
+}
+
+export async function getClaimableGuestProjectBundle(
+  id: string,
+): Promise<ProjectBundle | null> {
+  const [session, guestId, bundle] = await Promise.all([
+    auth(),
+    getGuestId(),
+    getProjectBundle(id),
+  ]);
+  if (!bundle) return null;
+
+  const userId = session?.user?.id ?? null;
+  if (bundle.project.userId) {
+    return userId && bundle.project.userId === userId ? bundle : null;
+  }
+  if (bundle.project.guestId) {
+    return guestId && bundle.project.guestId === guestId ? bundle : null;
+  }
+  return null;
+}
+
+export async function claimGuestProjectsForCurrentUser(projectId: string) {
+  const session = await auth();
+  const userId = session?.user?.id ?? null;
+  const email = normalizeEmail(session?.user?.email);
+  if (!userId || !email) {
+    throw new ProjectClaimError("missing_session");
+  }
+
+  const project = await getProject(projectId);
+  if (!project) {
+    throw new ProjectClaimError("project_not_found");
+  }
+  if (project.userId) {
+    if (project.userId === userId) return { claimed: 0, alreadyOwned: true };
+    throw new ProjectClaimError("already_owned");
+  }
+
+  const guestId = await getGuestId();
+  if (!guestId) {
+    throw new ProjectClaimError("missing_guest");
+  }
+  if (!project.guestId || project.guestId !== guestId) {
+    throw new ProjectClaimError("guest_mismatch");
+  }
+
+  const [contact] = await db
+    .select({ email: contacts.email })
+    .from(contacts)
+    .where(eq(contacts.projectId, projectId))
+    .limit(1);
+  if (!contact?.email) {
+    throw new ProjectClaimError("missing_contact");
+  }
+  if (normalizeEmail(contact.email) !== email) {
+    throw new ProjectClaimError("email_mismatch");
+  }
+
+  const claimed = await db
+    .update(projects)
+    .set({ userId, guestId: null, updatedAt: new Date() })
+    .where(and(eq(projects.guestId, guestId), isNull(projects.userId)))
+    .returning({ id: projects.id });
+
+  return { claimed: claimed.length, alreadyOwned: false };
+}
 
 export async function setElements(projectId: string, categories: string[]): Promise<void> {
   await db.delete(projectElements).where(eq(projectElements.projectId, projectId));

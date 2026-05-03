@@ -5,7 +5,7 @@ import { StickyCTA } from "@/components/layout/StickyCTA";
 import { MotionIn, MotionStagger, MotionStaggerItem } from "@/components/motion";
 import { ELEMENT_CATEGORIES } from "@/lib/domain";
 import { setElementsAction } from "@/lib/actions";
-import { getProjectBundle } from "@/lib/projects";
+import { getAccessibleProjectBundle } from "@/lib/projects";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 
 export const metadata = { title: "Choisir les éléments" };
@@ -16,7 +16,7 @@ export default async function ElementsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const bundle = await getProjectBundle(id);
+  const bundle = await getAccessibleProjectBundle(id);
   const selected = new Set(bundle?.elements ?? []);
   const action = setElementsAction.bind(null, id);
 

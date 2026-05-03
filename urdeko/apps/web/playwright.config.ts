@@ -26,6 +26,7 @@ export default defineConfig({
         command: "pnpm dev",
         env: {
           ...process.env,
+          AUTH_URL: process.env.AUTH_URL ?? "http://localhost:3000",
           SUPER_ADMIN_EMAILS: process.env.SUPER_ADMIN_EMAILS ?? "owner@example.com",
           ADMIN_EMAILS: "",
         },
