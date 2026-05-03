@@ -24,10 +24,13 @@ export default async function AdminUsersPage({
     <AdminShell
       userEmail={email}
       role={user.role}
-      title="Utilisateurs"
+      title="Utilisateurs & partenaires"
       subtitle={`${total.toLocaleString("fr-MA")} comptes UrdeKo`}
     >
-      <section className="mb-6 rounded-2xl border border-outline/10 bg-surface-container-lowest p-4">
+      <section
+        id="invite-partner"
+        className="mb-6 scroll-mt-28 rounded-2xl border border-outline/10 bg-surface-container-lowest p-4"
+      >
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h2 className="font-headline text-lg font-extrabold tracking-tight">

@@ -143,6 +143,12 @@ test.describe("Accès backoffice dédié", () => {
     await page.goto(link);
     await expect(page).toHaveURL(/\/admin$/);
     await expect(page.getByRole("heading", { name: "Tableau de bord" })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Inviter un partenaire/i })).toBeVisible();
+    await page.getByRole("link", { name: /Inviter un partenaire/i }).click();
+    await expect(page).toHaveURL(/\/admin\/users#invite-partner$/);
+    await expect(page.locator("#invite-partner")).toBeVisible();
+    await expect(page.locator('#invite-partner input[name="email"]')).toBeVisible();
+    await page.goto("/admin");
     await expect(page.getByRole("button", { name: /Se déconnecter/i })).toBeVisible();
     await page.getByRole("button", { name: /Se déconnecter/i }).click();
     await expect(page).toHaveURL(/\/admin\/connexion$/);
@@ -181,7 +187,10 @@ test.describe("Accès backoffice dédié", () => {
     await expect(drawer.getByRole("link", { name: /Produits/i }).first()).toBeVisible();
     await expect(drawer.getByRole("button", { name: /Se déconnecter/i })).toBeVisible();
     await expect(drawer.getByText("Configuration")).toHaveCount(0);
-    await expect(drawer.getByRole("link", { name: /Utilisateurs/i })).toHaveCount(0);
+    await expect(
+      drawer.getByRole("link", { name: /Utilisateurs & partenaires/i }),
+    ).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /Inviter un partenaire/i })).toHaveCount(0);
 
     await page.goto("/admin/users");
     await expect(page).toHaveURL(/\/acces-admin-refuse$/);

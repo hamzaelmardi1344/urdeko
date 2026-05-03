@@ -140,13 +140,22 @@ export default async function AdminDashboard() {
       title="Tableau de bord"
       subtitle="Vue d'ensemble de l'activité UrdeKo en temps réel"
       action={
-        <Link
-          href="/admin/produits/scraper"
-          className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-bold text-on-primary shadow-glow-sm"
-        >
-          <Icon name="travel_explore" size={18} />
-          Importer des produits
-        </Link>
+        <>
+          <Link
+            href="/admin/users#invite-partner"
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-bold text-on-primary shadow-glow-sm"
+          >
+            <Icon name="person_add" size={18} />
+            Inviter un partenaire
+          </Link>
+          <Link
+            href="/admin/produits/scraper"
+            className="inline-flex shrink-0 items-center gap-2 rounded-full border border-outline/20 bg-surface-container-lowest px-4 py-2 text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-low"
+          >
+            <Icon name="travel_explore" size={18} />
+            Importer des produits
+          </Link>
+        </>
       }
     >
       <MotionStagger className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4" staggerChildren={0.04}>

@@ -41,7 +41,12 @@ const NAV: NavGroup[] = [
     group: "Activité",
     items: [
       { href: "/admin/projets", label: "Projets", icon: "folder_open" },
-      { href: "/admin/users", label: "Utilisateurs", icon: "group", roles: ["super_admin"] },
+      {
+        href: "/admin/users",
+        label: "Utilisateurs & partenaires",
+        icon: "group",
+        roles: ["super_admin"],
+      },
       { href: "/admin/jobs", label: "Jobs IA", icon: "bolt" },
     ],
     roles: ["super_admin"],
