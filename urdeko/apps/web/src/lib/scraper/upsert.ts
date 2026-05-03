@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { db } from "../db/client";
+import { ensureBackofficeSchema } from "../db/bootstrap";
 import { products as productsTable } from "../db/schema";
 import { fetchImageBuffer, imageExtensionForMime } from "../safe-fetch";
 import { uploadObject } from "../storage";
@@ -22,6 +23,7 @@ export async function upsertProducts(
   products: ExtractedProduct[],
   opts: { ownerUserId?: string | null } = {},
 ): Promise<UpsertResult> {
+  await ensureBackofficeSchema();
   const result: UpsertResult = { imported: 0, skipped: 0, errors: [] };
 
   for (const product of products) {

@@ -1,5 +1,6 @@
 import { and, count, desc, eq, ilike, inArray, sql, type SQL } from "drizzle-orm";
 import { db } from "../db/client";
+import { ensureBackofficeSchema } from "../db/bootstrap";
 import { products as productsTable } from "../db/schema";
 import type { ElementCategoryId } from "../domain";
 import { AdminForbiddenError, canManageProduct, type BackofficeUser } from "./auth";
@@ -55,6 +56,7 @@ export async function listAdminProducts({
   page?: number;
   pageSize?: number;
 } = {}): Promise<{ items: AdminProduct[]; total: number }> {
+  await ensureBackofficeSchema();
   const filters: SQL[] = [];
   if (viewer?.role === "partner") {
     filters.push(eq(productsTable.ownerUserId, viewer.id));
@@ -105,6 +107,7 @@ export async function getAdminProduct(
   id: string,
   viewer?: BackofficeUser,
 ): Promise<AdminProductDetail | null> {
+  await ensureBackofficeSchema();
   const [row] = await db
     .select()
     .from(productsTable)
@@ -136,6 +139,7 @@ export async function createManualProduct(
   input: ManualProductInput,
   ownerUserId: string | null,
 ): Promise<AdminProductDetail> {
+  await ensureBackofficeSchema();
   if (!input.image) {
     throw new Error("Image produit requise");
   }
@@ -167,6 +171,7 @@ export async function updateManualProduct(
   input: ManualProductInput,
   viewer: BackofficeUser,
 ): Promise<AdminProductDetail> {
+  await ensureBackofficeSchema();
   const existing = await getAdminProduct(id);
   if (!existing) throw new Error("Produit introuvable");
   if (!canManageProduct(viewer, existing)) {
@@ -210,6 +215,7 @@ export async function deleteProducts(
   ids: string[],
   viewer: BackofficeUser,
 ): Promise<{ deleted: number }> {
+  await ensureBackofficeSchema();
   if (ids.length === 0) return { deleted: 0 };
   const filters: SQL[] = [inArray(productsTable.id, ids)];
   if (viewer.role === "partner") {
@@ -223,6 +229,7 @@ export async function deleteProducts(
 }
 
 export async function getCategoryCounts(): Promise<Record<string, number>> {
+  await ensureBackofficeSchema();
   const rows = await db
     .select({
       category: productsTable.category,

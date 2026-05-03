@@ -3,6 +3,7 @@ import type { Session } from "next-auth";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/client";
+import { ensureBackofficeSchema } from "@/lib/db/bootstrap";
 import { users } from "@/lib/db/schema";
 import { isBootstrapSuperAdminEmail, normalizeAdminEmail } from "./emails";
 
@@ -49,6 +50,7 @@ function toBackofficeUser(row: {
 export async function resolveBackofficeUser(emailInput: unknown): Promise<BackofficeUser | null> {
   const email = normalizeAdminEmail(emailInput);
   if (!email) return null;
+  await ensureBackofficeSchema();
 
   if (isBootstrapSuperAdminEmail(email)) {
     const now = new Date();

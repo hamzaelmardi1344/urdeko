@@ -1,5 +1,6 @@
 import { and, desc, eq, sql, type SQL } from "drizzle-orm";
 import { db } from "@/lib/db/client";
+import { ensureBackofficeSchema } from "@/lib/db/bootstrap";
 import {
   contacts,
   jobs,
@@ -126,6 +127,7 @@ export async function listAdminUsers({
   page?: number;
   pageSize?: number;
 }): Promise<{ items: AdminUserRow[]; total: number }> {
+  await ensureBackofficeSchema();
   const rows = await db
     .select({
       id: users.id,

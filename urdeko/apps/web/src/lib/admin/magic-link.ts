@@ -2,6 +2,7 @@ import { randomBytes, createHash } from "node:crypto";
 import { and, eq, gt } from "drizzle-orm";
 import { createSmtpTransport } from "@/lib/email/smtp";
 import { db } from "@/lib/db/client";
+import { ensureBackofficeSchema } from "@/lib/db/bootstrap";
 import { users, verificationTokens } from "@/lib/db/schema";
 import { rateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 import { env } from "@/env";
@@ -61,6 +62,7 @@ function adminMagicEmailText(url: string): string {
 }
 
 async function getBackofficeRole(email: string): Promise<"partner" | "super_admin" | null> {
+  await ensureBackofficeSchema();
   if (isBootstrapSuperAdminEmail(email)) return "super_admin";
 
   const [row] = await db
