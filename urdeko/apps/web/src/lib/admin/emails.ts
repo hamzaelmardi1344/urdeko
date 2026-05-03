@@ -12,16 +12,23 @@ export function normalizeAdminEmail(value: unknown): string | null {
 }
 
 export function configuredSuperAdminEmails(): string[] {
-  const value = env.SUPER_ADMIN_EMAILS as unknown;
-  const configured = Array.isArray(value)
+  const configured = parseEmailList(env.SUPER_ADMIN_EMAILS as unknown);
+  if (configured.length > 0) return configured;
+
+  // Transition prod: old deployments may still only have ADMIN_EMAILS.
+  // Use the first legacy entry as a one-person bootstrap, then invite partners from DB.
+  return parseEmailList(env.ADMIN_EMAILS as unknown).slice(0, 1);
+}
+
+function parseEmailList(value: unknown): string[] {
+  const raw = Array.isArray(value)
     ? value
     : typeof value === "string"
       ? value.split(",")
       : [];
-
   return Array.from(
     new Set(
-      configured
+      raw
         .map((email) => normalizeAdminEmail(email))
         .filter((email): email is string => Boolean(email)),
     ),
