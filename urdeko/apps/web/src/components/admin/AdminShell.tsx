@@ -5,15 +5,23 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Icon } from "@urdeko/design-system";
 import { useState, type ReactNode } from "react";
+import type { BackofficeRole } from "@/lib/admin/auth";
 
 type NavItem = {
   href: string;
   label: string;
   icon: string;
   badge?: string | number;
+  roles?: BackofficeRole[];
 };
 
-const NAV: Array<{ group: string; items: NavItem[] }> = [
+type NavGroup = {
+  group: string;
+  items: NavItem[];
+  roles?: BackofficeRole[];
+};
+
+const NAV: NavGroup[] = [
   {
     group: "Général",
     items: [
@@ -32,9 +40,10 @@ const NAV: Array<{ group: string; items: NavItem[] }> = [
     group: "Activité",
     items: [
       { href: "/admin/projets", label: "Projets", icon: "folder_open" },
-      { href: "/admin/users", label: "Utilisateurs", icon: "group" },
+      { href: "/admin/users", label: "Utilisateurs", icon: "group", roles: ["super_admin"] },
       { href: "/admin/jobs", label: "Jobs IA", icon: "bolt" },
     ],
+    roles: ["super_admin"],
   },
   {
     group: "Configuration",
@@ -42,33 +51,44 @@ const NAV: Array<{ group: string; items: NavItem[] }> = [
       { href: "/admin/parametres", label: "Paramètres app", icon: "tune" },
       { href: "/admin/env", label: "Variables .env", icon: "settings" },
     ],
+    roles: ["super_admin"],
   },
 ];
 
 export function AdminShell({
   children,
   userEmail,
+  role,
   title,
   subtitle,
   action,
 }: {
   children: ReactNode;
   userEmail: string;
+  role: BackofficeRole;
   title: string;
   subtitle?: string;
   action?: ReactNode;
 }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const navGroups = navGroupsForRole(role);
 
   return (
     <div className="min-h-dvh overflow-x-hidden bg-surface text-on-surface">
       <div className="mx-auto flex max-w-[1440px]">
-        <AdminSidebar pathname={pathname} userEmail={userEmail} />
+        <AdminSidebar
+          pathname={pathname}
+          userEmail={userEmail}
+          role={role}
+          navGroups={navGroups}
+        />
         <MobileAdminDrawer
           open={menuOpen}
           pathname={pathname}
           userEmail={userEmail}
+          role={role}
+          navGroups={navGroups}
           onClose={() => setMenuOpen(false)}
         />
         <main className="flex-1 min-w-0 lg:pl-[280px]">
@@ -118,7 +138,7 @@ export function AdminShell({
                 </div>
               </div>
             ) : null}
-            <MobileQuickNav pathname={pathname} />
+            <MobileQuickNav pathname={pathname} navGroups={navGroups} />
           </header>
           <div className="px-4 py-5 sm:px-6 sm:py-8">{children}</div>
         </main>
@@ -136,22 +156,50 @@ function isActivePath(pathname: string, item: NavItem): boolean {
   );
 }
 
-function allNavItems(): NavItem[] {
-  return NAV.flatMap((group) => group.items);
+function navGroupsForRole(role: BackofficeRole) {
+  return NAV.map((group) => ({
+    ...group,
+    items: group.items.filter((item) => !item.roles || item.roles.includes(role)),
+  })).filter(
+    (group) => group.items.length > 0 && (!group.roles || group.roles.includes(role)),
+  );
 }
 
-function AdminSidebar({ pathname, userEmail }: { pathname: string; userEmail: string }) {
+function allNavItems(navGroups: NavGroup[]): NavItem[] {
+  return navGroups.flatMap((group) => group.items);
+}
+
+function roleLabel(role: BackofficeRole): string {
+  return role === "super_admin" ? "Super admin" : "Partenaire";
+}
+
+function AdminSidebar({
+  pathname,
+  userEmail,
+  role,
+  navGroups,
+}: {
+  pathname: string;
+  userEmail: string;
+  role: BackofficeRole;
+  navGroups: NavGroup[];
+}) {
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-[280px] border-r border-outline/10 bg-surface-container-lowest px-4 py-6 lg:block">
       <AdminBrand />
 
-      <AdminNavGroups pathname={pathname} indicatorLayoutId="admin-nav-indicator-desktop" />
+      <AdminNavGroups
+        pathname={pathname}
+        navGroups={navGroups}
+        indicatorLayoutId="admin-nav-indicator-desktop"
+      />
 
       <div className="absolute inset-x-4 bottom-6 rounded-2xl bg-surface-container-low p-3">
         <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/70">
           Connecté
         </p>
         <p className="mt-0.5 truncate text-sm font-bold">{userEmail}</p>
+        <p className="mt-1 text-xs font-semibold text-on-surface-variant">{roleLabel(role)}</p>
       </div>
     </aside>
   );
@@ -173,16 +221,18 @@ function AdminBrand() {
 
 function AdminNavGroups({
   pathname,
+  navGroups,
   onNavigate,
   indicatorLayoutId,
 }: {
   pathname: string;
+  navGroups: NavGroup[];
   onNavigate?: () => void;
   indicatorLayoutId?: string;
 }) {
   return (
     <nav className="mt-8 space-y-6">
-      {NAV.map((group) => (
+      {navGroups.map((group) => (
         <div key={group.group}>
           <p className="mb-2 px-3 text-[11px] font-bold uppercase tracking-[0.15em] text-on-surface-variant/60">
             {group.group}
@@ -226,11 +276,17 @@ function AdminNavGroups({
   );
 }
 
-function MobileQuickNav({ pathname }: { pathname: string }) {
+function MobileQuickNav({
+  pathname,
+  navGroups,
+}: {
+  pathname: string;
+  navGroups: NavGroup[];
+}) {
   return (
     <nav className="lg:hidden border-t border-outline/10 px-4 py-2">
       <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
-        {allNavItems().map((item) => {
+        {allNavItems(navGroups).map((item) => {
           const active = isActivePath(pathname, item);
           return (
             <Link
@@ -257,11 +313,15 @@ function MobileAdminDrawer({
   open,
   pathname,
   userEmail,
+  role,
+  navGroups,
   onClose,
 }: {
   open: boolean;
   pathname: string;
   userEmail: string;
+  role: BackofficeRole;
+  navGroups: NavGroup[];
   onClose: () => void;
 }) {
   return (
@@ -297,13 +357,18 @@ function MobileAdminDrawer({
               </button>
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto pb-4">
-              <AdminNavGroups pathname={pathname} onNavigate={onClose} />
+              <AdminNavGroups
+                pathname={pathname}
+                navGroups={navGroups}
+                onNavigate={onClose}
+              />
             </div>
             <div className="rounded-2xl bg-surface-container-low p-3">
               <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/70">
                 Connecté
               </p>
               <p className="mt-0.5 truncate text-sm font-bold">{userEmail}</p>
+              <p className="mt-1 text-xs font-semibold text-on-surface-variant">{roleLabel(role)}</p>
               <Link
                 href="/"
                 onClick={onClose}

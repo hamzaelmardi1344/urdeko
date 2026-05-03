@@ -115,8 +115,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     session({ session, token }) {
       if (token.sub) session.user.id = token.sub;
-      // Indispensable pour ADMIN_EMAILS / requireAdmin : sans ça, user.email est
-      // souvent absent en JWT alors que le client le voit par d’autres chemins.
+      // Indispensable pour le backoffice : sans ça, user.email est souvent
+      // absent en JWT alors que le client le voit par d’autres chemins.
       if (typeof token.email === "string") session.user.email = token.email;
       if (typeof token.name === "string") session.user.name = token.name;
       return session;

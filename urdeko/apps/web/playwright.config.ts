@@ -24,6 +24,11 @@ export default defineConfig({
     ? undefined
     : {
         command: "pnpm dev",
+        env: {
+          ...process.env,
+          SUPER_ADMIN_EMAILS: process.env.SUPER_ADMIN_EMAILS ?? "owner@example.com",
+          ADMIN_EMAILS: "",
+        },
         url: "http://localhost:3000",
         reuseExistingServer: true,
         timeout: 120_000,

@@ -2,7 +2,8 @@ import Link from "next/link";
 import { Icon } from "@urdeko/design-system";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { MotionIn, MotionStagger, MotionStaggerItem } from "@/components/motion";
-import { requireAdmin } from "@/lib/admin/auth";
+import { requireBackoffice } from "@/lib/admin/auth";
+import { listAdminProducts } from "@/lib/admin/products";
 import { getDashboardStats, getRecentProjects } from "@/lib/admin/stats";
 
 export const metadata = { title: "Tableau de bord" };
@@ -10,7 +11,68 @@ export const metadata = { title: "Tableau de bord" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
-  const { email } = await requireAdmin();
+  const { email, user } = await requireBackoffice();
+
+  if (user.role === "partner") {
+    const { total } = await listAdminProducts({ viewer: user, pageSize: 1 });
+    return (
+      <AdminShell
+        userEmail={email}
+        role={user.role}
+        title="Espace partenaire"
+        subtitle="Gère tes produits publiés dans UrdeKo"
+        action={
+          <Link
+            href="/admin/produits/nouveau"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-bold text-on-primary shadow-glow-sm"
+          >
+            <Icon name="add" size={18} />
+            Ajouter un produit
+          </Link>
+        }
+      >
+        <MotionStagger className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" staggerChildren={0.04}>
+          <MotionStaggerItem>
+            <KpiCard
+              label="Mes produits"
+              value={total}
+              sub="publiés immédiatement dans le flow client"
+              icon="inventory_2"
+              tint={total === 0 ? "warning" : "success"}
+            />
+          </MotionStaggerItem>
+        </MotionStagger>
+
+        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <SectionCard title="Catalogue partenaire">
+            <p className="text-sm text-on-surface-variant">
+              Ajoute, modifie et duplique uniquement les produits rattachés à ton compte.
+            </p>
+            <Link
+              href="/admin/produits"
+              className="mt-4 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-bold text-on-primary"
+            >
+              <Icon name="inventory_2" size={18} />
+              Ouvrir mes produits
+            </Link>
+          </SectionCard>
+          <SectionCard title="Import web">
+            <p className="text-sm text-on-surface-variant">
+              Importe des produits depuis une boutique, puis vérifie les fiches avant publication.
+            </p>
+            <Link
+              href="/admin/produits/scraper"
+              className="mt-4 inline-flex items-center gap-2 rounded-full border border-outline/20 px-4 py-2 text-sm font-bold text-on-surface-variant"
+            >
+              <Icon name="travel_explore" size={18} />
+              Importer depuis le web
+            </Link>
+          </SectionCard>
+        </div>
+      </AdminShell>
+    );
+  }
+
   const [stats, recent] = await Promise.all([getDashboardStats(), getRecentProjects()]);
 
   const kpis: Array<{
@@ -74,6 +136,7 @@ export default async function AdminDashboard() {
   return (
     <AdminShell
       userEmail={email}
+      role={user.role}
       title="Tableau de bord"
       subtitle="Vue d'ensemble de l'activité UrdeKo en temps réel"
       action={

@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { requireAdmin } from "@/lib/admin/auth";
+import { requireSuperAdmin } from "@/lib/admin/auth";
 import { getAllSettings, setSetting, type SettingKey } from "@/lib/admin/settings";
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema";
@@ -19,7 +19,7 @@ const GROUP_LABELS: Record<string, string> = {
 
 async function updateSettingAction(formData: FormData) {
   "use server";
-  const { email } = await requireAdmin();
+  const { email } = await requireSuperAdmin();
   const key = formData.get("key");
   const kind = formData.get("kind");
   if (typeof key !== "string" || typeof kind !== "string") return;
@@ -39,7 +39,7 @@ async function updateSettingAction(formData: FormData) {
 }
 
 export default async function AdminSettingsPage() {
-  const { email } = await requireAdmin();
+  const { email, user } = await requireSuperAdmin();
   const all = await getAllSettings();
 
   const groups = all.reduce<Record<string, typeof all>>((acc, item) => {
@@ -51,6 +51,7 @@ export default async function AdminSettingsPage() {
   return (
     <AdminShell
       userEmail={email}
+      role={user.role}
       title="Paramètres application"
       subtitle="Feature flags, quotas IA, valeurs par défaut — modifiables à chaud"
     >

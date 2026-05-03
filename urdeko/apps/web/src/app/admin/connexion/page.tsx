@@ -6,7 +6,8 @@ import { FlowShell } from "@/components/layout/FlowShell";
 import { StickyCTA } from "@/components/layout/StickyCTA";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { auth } from "@/lib/auth";
-import { isAdminAllowedEmail, normalizeAdminEmail } from "@/lib/admin/emails";
+import { resolveBackofficeUser } from "@/lib/admin/auth";
+import { normalizeAdminEmail } from "@/lib/admin/emails";
 import { sendAdminMagicLink } from "@/lib/admin/magic-link";
 import { env } from "@/env";
 
@@ -41,7 +42,7 @@ export default async function AdminConnexionPage({
 }) {
   const session = await auth();
   const currentEmail = session?.user?.email ?? null;
-  if (isAdminAllowedEmail(currentEmail)) {
+  if (await resolveBackofficeUser(currentEmail)) {
     redirect("/admin");
   }
 

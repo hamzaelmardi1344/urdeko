@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { listAdminJobs } from "@/lib/admin/queries";
-import { requireAdmin } from "@/lib/admin/auth";
+import { requireSuperAdmin } from "@/lib/admin/auth";
 import { adminRetryJobAction } from "@/lib/admin/actions";
 
 export const metadata = { title: "Jobs IA" };
@@ -26,7 +26,7 @@ export default async function AdminJobsPage({
 }: {
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
-  const { email } = await requireAdmin();
+  const { email, user } = await requireSuperAdmin();
   const sp = await searchParams;
   const status = sp.status ?? "";
   const kind = sp.kind ?? "";
@@ -42,6 +42,7 @@ export default async function AdminJobsPage({
   return (
     <AdminShell
       userEmail={email}
+      role={user.role}
       title="Jobs IA"
       subtitle={`${total.toLocaleString("fr-MA")} exécutions enregistrées`}
     >

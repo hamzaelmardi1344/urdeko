@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { AdminForbiddenError, requireAdmin } from "@/lib/admin/auth";
+import { AdminForbiddenError, requireBackoffice } from "@/lib/admin/auth";
 import { readManualProductImageForAi } from "@/lib/admin/product-manual";
 import { normalizeProductList } from "@/lib/admin/products";
 import { ELEMENT_CATEGORIES, STYLES } from "@/lib/domain";
@@ -20,7 +20,7 @@ const styles = new Set<string>(STYLES.map((style) => style.id));
 
 export async function POST(req: Request) {
   try {
-    await requireAdmin({ redirectOnFail: false });
+    await requireBackoffice({ redirectOnFail: false });
   } catch (err) {
     if (err instanceof AdminForbiddenError) {
       return NextResponse.json({ error: "forbidden" }, { status: 403 });

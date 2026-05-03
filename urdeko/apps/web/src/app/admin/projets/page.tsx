@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { listAdminProjects } from "@/lib/admin/queries";
-import { requireAdmin } from "@/lib/admin/auth";
+import { requireSuperAdmin } from "@/lib/admin/auth";
 
 export const metadata = { title: "Projets" };
 export const dynamic = "force-dynamic";
@@ -21,7 +21,7 @@ export default async function AdminProjectsPage({
 }: {
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
-  const { email } = await requireAdmin();
+  const { email, user } = await requireSuperAdmin();
   const sp = await searchParams;
   const status = sp.status ?? "";
   const search = sp.search ?? "";
@@ -37,6 +37,7 @@ export default async function AdminProjectsPage({
   return (
     <AdminShell
       userEmail={email}
+      role={user.role}
       title="Projets"
       subtitle={`${total.toLocaleString("fr-MA")} projets créés sur la plateforme`}
     >

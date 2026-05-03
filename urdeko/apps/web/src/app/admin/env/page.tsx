@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { Icon } from "@urdeko/design-system";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { requireAdmin } from "@/lib/admin/auth";
+import { requireSuperAdmin } from "@/lib/admin/auth";
 import {
   findEnvFile,
   readEnvFile,
@@ -17,7 +17,7 @@ const IS_DEV = process.env.NODE_ENV !== "production";
 
 async function saveEnvAction(formData: FormData) {
   "use server";
-  await requireAdmin();
+  await requireSuperAdmin();
   if (!IS_DEV) throw new Error("Édition .env désactivée en production");
 
   const path = formData.get("path");
@@ -35,12 +35,13 @@ async function saveEnvAction(formData: FormData) {
 }
 
 export default async function AdminEnvPage() {
-  const { email } = await requireAdmin();
+  const { email, user } = await requireSuperAdmin();
 
   if (!IS_DEV) {
     return (
       <AdminShell
         userEmail={email}
+        role={user.role}
         title="Variables d'environnement"
         subtitle="Édition du .env"
       >
@@ -65,6 +66,7 @@ export default async function AdminEnvPage() {
     return (
       <AdminShell
         userEmail={email}
+        role={user.role}
         title="Variables d'environnement"
         subtitle="Édition du .env.local"
       >
@@ -87,6 +89,7 @@ export default async function AdminEnvPage() {
   return (
     <AdminShell
       userEmail={email}
+      role={user.role}
       title="Variables d'environnement"
       subtitle={`${kvLines.length} variables · ${path}`}
       action={

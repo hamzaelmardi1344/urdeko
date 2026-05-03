@@ -67,8 +67,20 @@ const envSchema = z.object({
   LEGAL_COMPANY_ADDRESS: z.string().default("Casablanca, Maroc"),
   LEGAL_CONTACT_EMAIL: z.string().email().default("hello@urdeko.app"),
 
-  // Backoffice admin — liste d'emails autorisés (séparés par virgule).
-  // Toute personne connectée dont l'email est dans cette liste accède à /admin.
+  // Backoffice — bootstrapping privé des super admins (séparés par virgule).
+  // Les partenaires sont invités et stockés en base ; aucun email partenaire ici.
+  SUPER_ADMIN_EMAILS: z
+    .string()
+    .default("")
+    .transform((v) =>
+      v
+        .split(",")
+        .map((s) => s.trim().toLowerCase())
+        .filter(Boolean),
+    ),
+
+  // Déprécié : conservé pour ne pas casser les environnements existants,
+  // mais ne donne plus accès au backoffice.
   ADMIN_EMAILS: z
     .string()
     .default("")

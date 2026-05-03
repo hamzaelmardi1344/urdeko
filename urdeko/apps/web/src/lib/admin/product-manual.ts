@@ -8,6 +8,7 @@ import {
   type ManualProductInput,
   type ProductImageInput,
 } from "./products";
+import type { BackofficeUser } from "./auth";
 
 const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
 
@@ -68,7 +69,7 @@ export function parseManualProductInput(
 
 export async function uploadManualProductImage(
   formData: FormData,
-  opts: { duplicateFrom?: string | null } = {},
+  opts: { duplicateFrom?: string | null; viewer?: BackofficeUser } = {},
 ): Promise<ProductImageInput | undefined> {
   const file = formData.get("imageFile");
   if (file instanceof File && file.size > 0) {
@@ -81,7 +82,7 @@ export async function uploadManualProductImage(
   }
 
   if (opts.duplicateFrom) {
-    const source = await getAdminProduct(opts.duplicateFrom);
+    const source = await getAdminProduct(opts.duplicateFrom, opts.viewer);
     if (!source) throw new Error("Produit à dupliquer introuvable");
     return { imageUrl: source.imageUrl ?? "", imageKey: source.imageKey };
   }

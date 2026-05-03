@@ -60,12 +60,19 @@ export const jobStatusEnum = pgEnum("job_status", [
 
 export const productSourceEnum = pgEnum("product_source", ["manual", "scraped"]);
 
+export const userRoleEnum = pgEnum("user_role", [
+  "customer",
+  "partner",
+  "super_admin",
+]);
+
 // ===== Auth tables (Auth.js / Drizzle adapter) ======================
 
 export const users = pgTable("user", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name"),
   email: text("email").unique().notNull(),
+  role: userRoleEnum("role").notNull().default("customer"),
   emailVerified: timestamp("email_verified", { mode: "date" }),
   image: text("image"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -175,6 +182,9 @@ export const products = pgTable(
   "products",
   {
     id: text("id").primaryKey(),
+    ownerUserId: uuid("owner_user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
     name: text("name").notNull(),
     brand: text("brand").notNull(),
     category: elementCategoryEnum("category"),
@@ -191,6 +201,7 @@ export const products = pgTable(
   },
   (t) => ({
     catIdx: index("products_category_idx").on(t.category),
+    ownerIdx: index("products_owner_user_idx").on(t.ownerUserId),
   }),
 );
 
@@ -259,6 +270,11 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
 
 export const usersRelations = relations(users, ({ many }) => ({
   projects: many(projects),
+  products: many(products),
+}));
+
+export const productsRelations = relations(products, ({ one }) => ({
+  owner: one(users, { fields: [products.ownerUserId], references: [users.id] }),
 }));
 
 // Type helpers

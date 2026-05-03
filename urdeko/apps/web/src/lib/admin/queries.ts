@@ -113,6 +113,7 @@ export type AdminUserRow = {
   email: string;
   name: string | null;
   image: string | null;
+  role: "customer" | "partner" | "super_admin";
   createdAt: Date;
   projectCount: number;
   lastActivityAt: Date | null;
@@ -131,6 +132,7 @@ export async function listAdminUsers({
       email: users.email,
       name: users.name,
       image: users.image,
+      role: users.role,
       createdAt: users.createdAt,
       projectCount: sql<number>`(SELECT count(*)::int FROM ${projects} WHERE ${projects.userId} = ${users.id})`,
       lastActivityAt: sql<Date | null>`(SELECT max(${projects.updatedAt}) FROM ${projects} WHERE ${projects.userId} = ${users.id})`,

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { requireAdmin, AdminForbiddenError } from "@/lib/admin/auth";
+import { requireBackoffice, AdminForbiddenError } from "@/lib/admin/auth";
 import { deleteProducts } from "@/lib/admin/products";
 
 export const runtime = "nodejs";
@@ -9,8 +9,9 @@ export const dynamic = "force-dynamic";
 const schema = z.object({ ids: z.array(z.string().min(1)).min(1).max(100) });
 
 export async function POST(req: Request) {
+  let user: Awaited<ReturnType<typeof requireBackoffice>>["user"];
   try {
-    await requireAdmin({ redirectOnFail: false });
+    ({ user } = await requireBackoffice({ redirectOnFail: false }));
   } catch (err) {
     if (err instanceof AdminForbiddenError) {
       return NextResponse.json({ error: "forbidden" }, { status: 403 });
@@ -24,6 +25,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "invalid_payload" }, { status: 400 });
   }
 
-  const result = await deleteProducts(parsed.data.ids);
+  const result = await deleteProducts(parsed.data.ids, user);
   return NextResponse.json(result);
 }

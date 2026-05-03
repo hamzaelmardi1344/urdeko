@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { requireAdmin, AdminForbiddenError } from "@/lib/admin/auth";
+import { requireBackoffice, AdminForbiddenError } from "@/lib/admin/auth";
 import { detectAndExtract } from "@/lib/scraper";
 
 export const runtime = "nodejs";
@@ -13,7 +13,7 @@ const payloadSchema = z.object({
 
 export async function POST(req: Request) {
   try {
-    await requireAdmin({ redirectOnFail: false });
+    await requireBackoffice({ redirectOnFail: false });
   } catch (err) {
     if (err instanceof AdminForbiddenError) {
       return NextResponse.json({ error: "forbidden" }, { status: 403 });

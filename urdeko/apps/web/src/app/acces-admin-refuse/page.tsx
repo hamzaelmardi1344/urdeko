@@ -29,13 +29,13 @@ export default async function AccesAdminRefusePage() {
               en tant que <strong className="text-on-surface">{email}</strong>
             </>
           ) : null}
-          , mais ce compte n’est <strong>pas</strong> autorisé à ouvrir le backoffice.
+          , mais ce compte n’a <strong>pas</strong> le rôle requis pour cette page.
         </p>
         <div className="mb-8 rounded-xl bg-surface-container-low px-4 py-4 text-sm text-on-surface-variant">
           <p className="mb-2 font-semibold text-on-surface">Connexion admin dédiée</p>
           <p>
-            Déconnecte ce compte puis demande un lien admin avec une adresse autorisée.
-            Les accès admin passent désormais par une entrée séparée du parcours client.
+            Déconnecte ce compte puis demande un lien backoffice avec une adresse invitée.
+            Les partenaires doivent être invités par un super admin avant leur première connexion.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { ManualProductForm } from "@/components/admin/ManualProductForm";
-import { requireAdmin } from "@/lib/admin/auth";
+import { requireBackoffice } from "@/lib/admin/auth";
 import { getAdminProduct } from "@/lib/admin/products";
 
 export const metadata = { title: "Modifier un produit" };
@@ -12,14 +12,15 @@ export default async function EditManualProductPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { email } = await requireAdmin();
+  const { email, user } = await requireBackoffice();
   const { id } = await params;
-  const product = await getAdminProduct(id);
+  const product = await getAdminProduct(id, user);
   if (!product) notFound();
 
   return (
     <AdminShell
       userEmail={email}
+      role={user.role}
       title="Modifier un produit"
       subtitle={`${product.brand} · ${product.name}`}
     >

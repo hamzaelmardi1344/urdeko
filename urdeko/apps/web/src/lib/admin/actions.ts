@@ -1,19 +1,23 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { eq, sql } from "drizzle-orm";
+import { env } from "@/env";
 import { db } from "@/lib/db/client";
-import { jobs, projectPhotos, projects } from "@/lib/db/schema";
+import { jobs, projectPhotos, projects, users } from "@/lib/db/schema";
 import { enqueueJob } from "@/lib/jobs/dispatch";
-import { requireAdmin } from "./auth";
+import { normalizeAdminEmail } from "./emails";
+import { sendAdminMagicLink } from "./magic-link";
+import { requireSuperAdmin } from "./auth";
 
 // =====================================================================
-// Server actions admin : retry jobs, annuler un projet, etc.
-// Toutes protégées par requireAdmin().
+// Server actions super admin : retry jobs, annuler un projet, inviter des partenaires.
 // =====================================================================
 
 export async function adminRetryJobAction(formData: FormData) {
-  await requireAdmin();
+  await requireSuperAdmin();
   const jobId = formData.get("jobId");
   if (typeof jobId !== "string") throw new Error("jobId manquant");
 
@@ -75,11 +79,47 @@ export async function adminRetryJobAction(formData: FormData) {
 }
 
 export async function adminDeleteProjectAction(formData: FormData) {
-  await requireAdmin();
+  await requireSuperAdmin();
   const projectId = formData.get("projectId");
   if (typeof projectId !== "string") throw new Error("projectId manquant");
 
   await db.delete(projects).where(eq(projects.id, projectId));
   revalidatePath("/admin/projets");
   revalidatePath("/admin");
+}
+
+export async function invitePartnerAction(formData: FormData) {
+  await requireSuperAdmin();
+  const email = normalizeAdminEmail(formData.get("email"));
+  if (!email) redirect("/admin/users?invite=invalid");
+
+  await db
+    .insert(users)
+    .values({ email, role: "partner" })
+    .onConflictDoUpdate({
+      target: users.email,
+      set: {
+        role: sql`case when ${users.role} = 'super_admin' then ${users.role} else 'partner' end`,
+      },
+    });
+
+  let sent = true;
+  try {
+    await sendAdminMagicLink(email, requestOrigin(await headers()));
+  } catch (error) {
+    console.error("[admin/users] partner invite email failed", error);
+    sent = false;
+  }
+
+  revalidatePath("/admin/users");
+  redirect(`/admin/users?invite=${sent ? "sent" : "created"}&email=${encodeURIComponent(email)}`);
+}
+
+function requestOrigin(headersList: Headers): string {
+  const host = headersList.get("x-forwarded-host") ?? headersList.get("host");
+  if (!host) return env.AUTH_URL.replace(/\/$/, "");
+  const proto =
+    headersList.get("x-forwarded-proto") ??
+    (/^(localhost|127\.0\.0\.1|0\.0\.0\.0)(:|$)/.test(host) ? "http" : "https");
+  return `${proto}://${host}`;
 }

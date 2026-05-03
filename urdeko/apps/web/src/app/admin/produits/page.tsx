@@ -3,7 +3,7 @@ import { Icon } from "@urdeko/design-system";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { ProductList } from "@/components/admin/ProductList";
 import { listAdminProducts } from "@/lib/admin/products";
-import { requireAdmin } from "@/lib/admin/auth";
+import { requireBackoffice } from "@/lib/admin/auth";
 
 export const metadata = { title: "Produits" };
 export const dynamic = "force-dynamic";
@@ -15,7 +15,7 @@ export default async function AdminProductsPage({
 }: {
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
-  const { email } = await requireAdmin();
+  const { email, user } = await requireBackoffice();
   const sp = await searchParams;
   const category = sp.category ?? "";
   const search = sp.search ?? "";
@@ -24,6 +24,7 @@ export default async function AdminProductsPage({
   const { items, total } = await listAdminProducts({
     category: category || null,
     search: search || null,
+    viewer: user,
     page,
     pageSize: PAGE_SIZE,
   });
@@ -31,8 +32,13 @@ export default async function AdminProductsPage({
   return (
     <AdminShell
       userEmail={email}
+      role={user.role}
       title="Catalogue produits"
-      subtitle={`${total.toLocaleString("fr-MA")} produits dans le catalogue`}
+      subtitle={
+        user.role === "partner"
+          ? `${total.toLocaleString("fr-MA")} produits rattachés à ton compte`
+          : `${total.toLocaleString("fr-MA")} produits dans le catalogue`
+      }
       action={
         <div className="flex flex-wrap items-center gap-2">
           <Link

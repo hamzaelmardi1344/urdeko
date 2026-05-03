@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { ManualProductForm } from "@/components/admin/ManualProductForm";
-import { requireAdmin } from "@/lib/admin/auth";
+import { requireBackoffice } from "@/lib/admin/auth";
 import { duplicateSourceProduct } from "@/lib/admin/products";
 
 export const metadata = { title: "Ajouter un produit" };
@@ -12,10 +12,10 @@ export default async function NewManualProductPage({
 }: {
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
-  const { email } = await requireAdmin();
+  const { email, user } = await requireBackoffice();
   const sp = await searchParams;
   const duplicateFrom = sp.dupliquer ?? sp.duplicate ?? null;
-  const source = duplicateFrom ? await duplicateSourceProduct(duplicateFrom) : null;
+  const source = duplicateFrom ? await duplicateSourceProduct(duplicateFrom, user) : null;
 
   if (duplicateFrom && !source) notFound();
 
@@ -36,6 +36,7 @@ export default async function NewManualProductPage({
   return (
     <AdminShell
       userEmail={email}
+      role={user.role}
       title={source ? "Dupliquer un produit" : "Ajouter un produit"}
       subtitle={
         source

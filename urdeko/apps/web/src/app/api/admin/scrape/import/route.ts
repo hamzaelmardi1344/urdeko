@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { requireAdmin, AdminForbiddenError } from "@/lib/admin/auth";
+import { requireBackoffice, AdminForbiddenError } from "@/lib/admin/auth";
 import { extractedProductSchema } from "@/lib/scraper/types";
 import { upsertProducts } from "@/lib/scraper/upsert";
 
@@ -13,8 +13,9 @@ const payloadSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  let user: Awaited<ReturnType<typeof requireBackoffice>>["user"];
   try {
-    await requireAdmin({ redirectOnFail: false });
+    ({ user } = await requireBackoffice({ redirectOnFail: false }));
   } catch (err) {
     if (err instanceof AdminForbiddenError) {
       return NextResponse.json({ error: "forbidden" }, { status: 403 });
@@ -37,6 +38,8 @@ export async function POST(req: Request) {
     );
   }
 
-  const result = await upsertProducts(parsed.data.products);
+  const result = await upsertProducts(parsed.data.products, {
+    ownerUserId: user.role === "partner" ? user.id : null,
+  });
   return NextResponse.json(result);
 }

@@ -5,7 +5,7 @@ import { db } from "@/lib/db/client";
 import { users, verificationTokens } from "@/lib/db/schema";
 import { rateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 import { env } from "@/env";
-import { isAdminAllowedEmail, normalizeAdminEmail } from "./emails";
+import { isBootstrapSuperAdminEmail, normalizeAdminEmail } from "./emails";
 
 const ADMIN_TOKEN_TTL_MS = 15 * 60 * 1000;
 
@@ -60,11 +60,60 @@ function adminMagicEmailText(url: string): string {
   return `UrdeKo Admin\nOuvre ce lien pour accéder au backoffice :\n${url}\n\nCe lien expire dans 15 minutes.\n`;
 }
 
+async function getBackofficeRole(email: string): Promise<"partner" | "super_admin" | null> {
+  if (isBootstrapSuperAdminEmail(email)) return "super_admin";
+
+  const [row] = await db
+    .select({ role: users.role })
+    .from(users)
+    .where(eq(users.email, email))
+    .limit(1);
+
+  return row?.role === "partner" || row?.role === "super_admin" ? row.role : null;
+}
+
+async function ensureBackofficeUserForMagic(email: string) {
+  const now = new Date();
+
+  if (isBootstrapSuperAdminEmail(email)) {
+    const [user] = await db
+      .insert(users)
+      .values({ email, emailVerified: now, role: "super_admin" })
+      .onConflictDoUpdate({
+        target: users.email,
+        set: { emailVerified: now, role: "super_admin" },
+      })
+      .returning({
+        id: users.id,
+        email: users.email,
+        name: users.name,
+        image: users.image,
+        role: users.role,
+      });
+    return user;
+  }
+
+  const [user] = await db
+    .update(users)
+    .set({ emailVerified: now })
+    .where(eq(users.email, email))
+    .returning({
+      id: users.id,
+      email: users.email,
+      name: users.name,
+      image: users.image,
+      role: users.role,
+    });
+
+  if (!user || (user.role !== "partner" && user.role !== "super_admin")) return null;
+  return user;
+}
+
 export async function sendAdminMagicLink(emailInput: unknown, origin: string): Promise<void> {
   const email = normalizeAdminEmail(emailInput);
   if (!email) return;
 
-  if (!isAdminAllowedEmail(email)) {
+  if (!(await getBackofficeRole(email))) {
     return;
   }
 
@@ -103,7 +152,7 @@ export async function sendAdminMagicLink(emailInput: unknown, origin: string): P
 export async function consumeAdminMagicToken(emailInput: unknown, tokenInput: unknown) {
   const email = normalizeAdminEmail(emailInput);
   const token = typeof tokenInput === "string" ? tokenInput : "";
-  if (!email || !token || !isAdminAllowedEmail(email)) return null;
+  if (!email || !token || !(await getBackofficeRole(email))) return null;
 
   const [consumed] = await db
     .delete(verificationTokens)
@@ -118,20 +167,7 @@ export async function consumeAdminMagicToken(emailInput: unknown, tokenInput: un
 
   if (!consumed) return null;
 
-  const now = new Date();
-  const [user] = await db
-    .insert(users)
-    .values({ email, emailVerified: now })
-    .onConflictDoUpdate({
-      target: users.email,
-      set: { emailVerified: now },
-    })
-    .returning({
-      id: users.id,
-      email: users.email,
-      name: users.name,
-      image: users.image,
-    });
+  const user = await ensureBackofficeUserForMagic(email);
 
   if (!user) return null;
   return {
@@ -148,7 +184,7 @@ export async function hasValidAdminMagicToken(
 ): Promise<boolean> {
   const email = normalizeAdminEmail(emailInput);
   const token = typeof tokenInput === "string" ? tokenInput : "";
-  if (!email || !token || !isAdminAllowedEmail(email)) return false;
+  if (!email || !token || !(await getBackofficeRole(email))) return false;
 
   const [row] = await db
     .select({ token: verificationTokens.token })

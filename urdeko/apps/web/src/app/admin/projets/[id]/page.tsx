@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { getAdminProjectDetail } from "@/lib/admin/queries";
-import { requireAdmin } from "@/lib/admin/auth";
+import { requireSuperAdmin } from "@/lib/admin/auth";
 import {
   adminDeleteProjectAction,
   adminRetryJobAction,
@@ -16,7 +16,7 @@ export default async function AdminProjectDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { email } = await requireAdmin();
+  const { email, user } = await requireSuperAdmin();
   const { id } = await params;
   const data = await getAdminProjectDetail(id);
   if (!data) notFound();
@@ -26,6 +26,7 @@ export default async function AdminProjectDetailPage({
   return (
     <AdminShell
       userEmail={email}
+      role={user.role}
       title={project.name}
       subtitle={`Projet ${project.id}`}
       action={

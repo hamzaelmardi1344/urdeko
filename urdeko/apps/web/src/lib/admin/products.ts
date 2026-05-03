@@ -1,7 +1,8 @@
-import { and, count, desc, eq, ilike, inArray, sql } from "drizzle-orm";
+import { and, count, desc, eq, ilike, inArray, sql, type SQL } from "drizzle-orm";
 import { db } from "../db/client";
 import { products as productsTable } from "../db/schema";
 import type { ElementCategoryId } from "../domain";
+import { AdminForbiddenError, canManageProduct, type BackofficeUser } from "./auth";
 
 export type AdminProduct = {
   id: string;
@@ -14,6 +15,7 @@ export type AdminProduct = {
   sourceUrl: string | null;
   styles: string[];
   tags: string[];
+  ownerUserId: string | null;
   updatedAt: string;
 };
 
@@ -43,15 +45,20 @@ export type ManualProductInput = {
 export async function listAdminProducts({
   category,
   search,
+  viewer,
   page = 0,
   pageSize = 40,
 }: {
   category?: string | null;
   search?: string | null;
+  viewer?: BackofficeUser;
   page?: number;
   pageSize?: number;
 } = {}): Promise<{ items: AdminProduct[]; total: number }> {
-  const filters = [] as Array<ReturnType<typeof eq>>;
+  const filters: SQL[] = [];
+  if (viewer?.role === "partner") {
+    filters.push(eq(productsTable.ownerUserId, viewer.id));
+  }
   if (category) {
     filters.push(eq(productsTable.category, category as never));
   }
@@ -87,13 +94,17 @@ export async function listAdminProducts({
     sourceUrl: r.sourceUrl,
     styles: r.styles ?? [],
     tags: r.tags ?? [],
+    ownerUserId: r.ownerUserId,
     updatedAt: r.updatedAt.toISOString(),
   }));
 
   return { items, total: totalRows[0]?.value ?? 0 };
 }
 
-export async function getAdminProduct(id: string): Promise<AdminProductDetail | null> {
+export async function getAdminProduct(
+  id: string,
+  viewer?: BackofficeUser,
+): Promise<AdminProductDetail | null> {
   const [row] = await db
     .select()
     .from(productsTable)
@@ -101,8 +112,10 @@ export async function getAdminProduct(id: string): Promise<AdminProductDetail | 
     .limit(1);
 
   if (!row) return null;
+  if (viewer && !canManageProduct(viewer, row)) return null;
   return {
     id: row.id,
+    ownerUserId: row.ownerUserId,
     name: row.name,
     brand: row.brand,
     category: row.category,
@@ -119,7 +132,10 @@ export async function getAdminProduct(id: string): Promise<AdminProductDetail | 
   };
 }
 
-export async function createManualProduct(input: ManualProductInput): Promise<AdminProductDetail> {
+export async function createManualProduct(
+  input: ManualProductInput,
+  ownerUserId: string | null,
+): Promise<AdminProductDetail> {
   if (!input.image) {
     throw new Error("Image produit requise");
   }
@@ -127,6 +143,7 @@ export async function createManualProduct(input: ManualProductInput): Promise<Ad
   const id = await generateUniqueProductId(input.brand, input.name);
   await db.insert(productsTable).values({
     id,
+    ownerUserId,
     name: input.name,
     brand: input.brand,
     category: input.category as never,
@@ -148,9 +165,13 @@ export async function createManualProduct(input: ManualProductInput): Promise<Ad
 export async function updateManualProduct(
   id: string,
   input: ManualProductInput,
+  viewer: BackofficeUser,
 ): Promise<AdminProductDetail> {
   const existing = await getAdminProduct(id);
   if (!existing) throw new Error("Produit introuvable");
+  if (!canManageProduct(viewer, existing)) {
+    throw new AdminForbiddenError("Produit non autorisé");
+  }
 
   await db
     .update(productsTable)
@@ -173,20 +194,30 @@ export async function updateManualProduct(
     })
     .where(eq(productsTable.id, id));
 
-  const product = await getAdminProduct(id);
+  const product = await getAdminProduct(id, viewer);
   if (!product) throw new Error("Produit mis à jour introuvable");
   return product;
 }
 
-export async function duplicateSourceProduct(id: string): Promise<AdminProductDetail | null> {
-  return getAdminProduct(id);
+export async function duplicateSourceProduct(
+  id: string,
+  viewer: BackofficeUser,
+): Promise<AdminProductDetail | null> {
+  return getAdminProduct(id, viewer);
 }
 
-export async function deleteProducts(ids: string[]): Promise<{ deleted: number }> {
+export async function deleteProducts(
+  ids: string[],
+  viewer: BackofficeUser,
+): Promise<{ deleted: number }> {
   if (ids.length === 0) return { deleted: 0 };
+  const filters: SQL[] = [inArray(productsTable.id, ids)];
+  if (viewer.role === "partner") {
+    filters.push(eq(productsTable.ownerUserId, viewer.id));
+  }
   const deleted = await db
     .delete(productsTable)
-    .where(inArray(productsTable.id, ids))
+    .where(and(...filters))
     .returning({ id: productsTable.id });
   return { deleted: deleted.length };
 }

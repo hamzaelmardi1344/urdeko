@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
-import { AdminForbiddenError, requireAdmin } from "@/lib/admin/auth";
+import { AdminForbiddenError, requireBackoffice } from "@/lib/admin/auth";
 import {
   parseManualProductInput,
   uploadManualProductImage,
@@ -12,8 +12,9 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+  let user: Awaited<ReturnType<typeof requireBackoffice>>["user"];
   try {
-    await requireAdmin({ redirectOnFail: false });
+    ({ user } = await requireBackoffice({ redirectOnFail: false }));
   } catch (err) {
     if (err instanceof AdminForbiddenError) {
       return NextResponse.json({ error: "forbidden" }, { status: 403 });
@@ -26,9 +27,13 @@ export async function POST(req: Request) {
     const duplicateFrom = formData.get("duplicateFrom");
     const image = await uploadManualProductImage(formData, {
       duplicateFrom: typeof duplicateFrom === "string" ? duplicateFrom : null,
+      viewer: user,
     });
     const input = parseManualProductInput(formData, image);
-    const product = await createManualProduct(input);
+    const product = await createManualProduct(
+      input,
+      user.role === "partner" ? user.id : null,
+    );
     revalidatePath("/admin/produits");
     return NextResponse.json({ product }, { status: 201 });
   } catch (err) {
@@ -37,6 +42,9 @@ export async function POST(req: Request) {
 }
 
 function productErrorResponse(err: unknown) {
+  if (err instanceof AdminForbiddenError) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  }
   if (err instanceof ZodError) {
     return NextResponse.json(
       { error: "invalid_payload", issues: err.issues },
